@@ -267,33 +267,55 @@ function EventDetailPage() {
           )}
 
           <div className="mt-10 flex flex-wrap gap-3">
+            {event.external_ticket_url && (
+              <a
+                href={event.external_ticket_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                <TicketIcon className="h-4 w-4" />
+                Comprar ingresso
+              </a>
+            )}
             <a
               href="#reservas"
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              className={`inline-flex items-center gap-2 rounded-md px-6 py-3 text-sm font-semibold transition-opacity hover:opacity-90 ${
+                event.external_ticket_url
+                  ? "border border-border-strong text-foreground"
+                  : "bg-primary text-primary-foreground"
+              }`}
             >
               Solicitar reserva <ArrowRight className="h-4 w-4" />
             </a>
+            {event.instagram_url && (
+              <a
+                href={event.instagram_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md border border-border-strong px-6 py-3 text-sm font-medium hover:bg-accent"
+              >
+                <Instagram className="h-4 w-4" />
+                Instagram oficial
+              </a>
+            )}
           </div>
         </div>
       </section>
 
-      {/* LINE-UP / ATRAÇÕES — placeholder estrutural */}
-      <section className="border-b border-border">
-        <div className="container-page py-14 md:py-20">
-          <SectionEyebrow icon={<Music2 className="h-4 w-4" />}>
-            Line-up e atrações
-          </SectionEyebrow>
-          <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
-            Atrações confirmadas
-          </h2>
-          <div className="mt-8 rounded-2xl border border-dashed border-border-strong bg-surface/40 p-8 text-center md:p-12">
-            <p className="text-sm text-muted-foreground">
-              As atrações deste evento serão publicadas aqui assim que forem
-              oficializadas. Nada de conteúdo especulativo.
-            </p>
+      {event.long_description && (
+        <section className="border-b border-border bg-surface/20">
+          <div className="container-page py-12 md:py-16">
+            <div className="max-w-3xl whitespace-pre-line text-base leading-relaxed text-muted-foreground md:text-lg">
+              {event.long_description}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* LINE-UP / ATRAÇÕES — dados reais */}
+      <LineupSection slug={slug} />
+
 
       {/* SETORES E EXPERIÊNCIAS — placeholder estrutural */}
       <section className="border-b border-border bg-surface/30">
