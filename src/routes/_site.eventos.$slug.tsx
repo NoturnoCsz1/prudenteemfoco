@@ -375,6 +375,109 @@ function SectionEyebrow({
   );
 }
 
+function groupByDay(list: PublicAttraction[]): { day: string | null; items: PublicAttraction[] }[] {
+  const map = new Map<string | null, PublicAttraction[]>();
+  for (const a of list) {
+    const key = a.performs_on ?? null;
+    if (!map.has(key)) map.set(key, []);
+    map.get(key)!.push(a);
+  }
+  return Array.from(map.entries())
+    .sort(([a], [b]) => {
+      if (a === b) return 0;
+      if (a === null) return 1;
+      if (b === null) return -1;
+      return a < b ? -1 : 1;
+    })
+    .map(([day, items]) => ({ day, items }));
+}
+
+function formatDayLabel(iso: string): { day: string; month: string; weekday: string } {
+  // ISO date "YYYY-MM-DD" — parse locally
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(y, (m ?? 1) - 1, d ?? 1);
+  return {
+    day: String(d ?? "").padStart(2, "0"),
+    month: dt.toLocaleString("pt-BR", { month: "short" }).replace(".", "").toUpperCase(),
+    weekday: dt.toLocaleString("pt-BR", { weekday: "short" }).replace(".", ""),
+  };
+}
+
+function LineupSection({ slug }: { slug: string }) {
+  const q = useQuery(attractionsQueryOptions(slug));
+  const items = q.data ?? [];
+  if (q.isLoading) {
+    return (
+      <section className="border-b border-border">
+        <div className="container-page flex items-center justify-center py-16">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      </section>
+    );
+  }
+  if (items.length === 0) return null;
+  const groups = groupByDay(items);
+  return (
+    <section className="border-b border-border">
+      <div className="container-page py-14 md:py-20">
+        <SectionEyebrow icon={<Music2 className="h-4 w-4" />}>
+          Line-up e atrações
+        </SectionEyebrow>
+        <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
+          Programação por dia
+        </h2>
+        <div className="mt-8 space-y-8 md:space-y-10">
+          {groups.map(({ day, items: dayItems }) => (
+            <div
+              key={day ?? "sem-data"}
+              className="grid gap-5 md:grid-cols-[auto,1fr] md:gap-8"
+            >
+              <div className="md:min-w-[7rem]">
+                {day ? (
+                  (() => {
+                    const l = formatDayLabel(day);
+                    return (
+                      <div className="inline-flex items-baseline gap-2 rounded-xl border border-border-strong bg-surface/60 px-4 py-3 md:flex-col md:items-center md:gap-0 md:px-5 md:py-4">
+                        <span className="font-display text-4xl font-black leading-none tracking-tight md:text-5xl">
+                          {l.day}
+                        </span>
+                        <span className="font-display text-xs uppercase tracking-[0.25em] text-primary md:mt-1">
+                          {l.month}
+                        </span>
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground md:mt-0.5">
+                          {l.weekday}
+                        </span>
+                      </div>
+                    );
+                  })()
+                ) : (
+                  <div className="inline-flex rounded-xl border border-dashed border-border-strong bg-surface/40 px-4 py-3 text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                    Data a definir
+                  </div>
+                )}
+              </div>
+              <ul className="grid gap-2 self-center sm:grid-cols-2">
+                {dayItems.map((a) => (
+                  <li
+                    key={a.id}
+                    className="rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium"
+                  >
+                    {a.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p className="mt-8 text-xs text-muted-foreground">
+          Horários e ordem de apresentação serão divulgados pela produção próximo ao evento.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+
 function SpacesSection({
   slug,
   promoterCode,
