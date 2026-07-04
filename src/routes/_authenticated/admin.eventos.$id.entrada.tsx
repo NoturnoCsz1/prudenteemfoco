@@ -238,7 +238,7 @@ function EntrancePage() {
         eventTitle={eventQuery.data?.title}
       />
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <div className="mt-6 grid min-w-0 gap-6 lg:grid-cols-2">
         {/* Emissão de tokens */}
         <section className="rounded-lg border border-border p-4">
           <div className="flex items-center gap-2">
