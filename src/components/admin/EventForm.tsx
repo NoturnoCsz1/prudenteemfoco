@@ -41,7 +41,8 @@ export function EventForm({
   const { data: membership } = useOrgMembership();
   const [submitting, setSubmitting] = useState(false);
 
-  const form = useForm<EventFormValues>({
+  type FormInput = import("zod").input<typeof eventFormSchema>;
+  const form = useForm<FormInput, unknown, EventFormValues>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
       title: initial?.title ?? "",
