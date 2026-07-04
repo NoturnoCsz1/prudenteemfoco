@@ -34,6 +34,8 @@ export type PublicEvent = {
   long_description: string | null;
   instagram_url: string | null;
   external_ticket_url: string | null;
+  kind: "festival" | "show" | "special_event" | "other";
+  format: "recurring" | "one_off";
 };
 
 export type PublicAttraction = {
