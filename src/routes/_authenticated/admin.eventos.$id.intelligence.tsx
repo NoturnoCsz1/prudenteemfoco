@@ -134,9 +134,9 @@ function IntelligencePage() {
 
   const leadToInvitePct = totalLeads > 0 ? (totalInvites / totalLeads) * 100 : 0;
 
-  const allow = attempts.filter((a) => a.status === "allow").length;
-  const deny = attempts.filter((a) => a.status === "deny").length;
-  const capacityFull = attempts.filter((a) => a.status === "capacity_full").length;
+  const allow = attempts.filter((a) => a.status === "allowed").length;
+  const deny = attempts.filter((a) => a.status === "denied").length;
+  const capacityFull = attempts.filter((a) => a.status === "capacity_full" || a.status === "full").length;
   const totalAttempts = attempts.length;
   const inviteToEntryPct = totalInvites > 0 ? (allow / totalInvites) * 100 : 0;
 
