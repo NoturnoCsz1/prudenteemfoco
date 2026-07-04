@@ -768,6 +768,63 @@ export type Database = {
           },
         ]
       }
+      promotions: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          event_id: string
+          id: string
+          organization_id: string
+          promoter_id: string | null
+          rules: Json
+          title: string
+          type: Database["public"]["Enums"]["promotion_type"]
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          event_id: string
+          id?: string
+          organization_id: string
+          promoter_id?: string | null
+          rules?: Json
+          title: string
+          type: Database["public"]["Enums"]["promotion_type"]
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          event_id?: string
+          id?: string
+          organization_id?: string
+          promoter_id?: string | null
+          rules?: Json
+          title?: string
+          type?: Database["public"]["Enums"]["promotion_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promotions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promotions_promoter_id_fkey"
+            columns: ["promoter_id"]
+            isOneToOne: false
+            referencedRelation: "promoters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reservable_space_types: {
         Row: {
           base_price: number | null
@@ -1035,6 +1092,17 @@ export type Database = {
         Args: { _role: Database["public"]["Enums"]["member_role"] }
         Returns: number
       }
+      track_public_lead: {
+        Args: {
+          _contact?: string
+          _event_slug: string
+          _metadata?: Json
+          _name?: string
+          _promoter_code?: string
+          _source?: Database["public"]["Enums"]["lead_source"]
+        }
+        Returns: string
+      }
       update_member_role: {
         Args: {
           _member_id: string
@@ -1086,6 +1154,7 @@ export type Database = {
       member_status: "active" | "invited" | "suspended" | "removed"
       org_status: "active" | "inactive" | "archived"
       org_type: "institutional" | "partner" | "other"
+      promotion_type: "discount" | "vip_access" | "early_access"
       sector_status: "active" | "inactive" | "archived"
       space_operational_status:
         | "available"
@@ -1266,6 +1335,7 @@ export const Constants = {
       member_status: ["active", "invited", "suspended", "removed"],
       org_status: ["active", "inactive", "archived"],
       org_type: ["institutional", "partner", "other"],
+      promotion_type: ["discount", "vip_access", "early_access"],
       sector_status: ["active", "inactive", "archived"],
       space_operational_status: [
         "available",

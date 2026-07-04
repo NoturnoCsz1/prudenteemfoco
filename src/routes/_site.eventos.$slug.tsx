@@ -1,11 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { z } from "zod";
 import { ArrowLeft, CalendarDays, MapPin } from "lucide-react";
 import {
   getPublishedEventBySlug,
   type PublicEvent,
 } from "@/lib/events.functions";
 import { formatEventDateRange } from "@/lib/events";
+import { supabase } from "@/integrations/supabase/client";
 
 function eventQueryOptions(slug: string) {
   return queryOptions({
@@ -14,7 +17,12 @@ function eventQueryOptions(slug: string) {
   });
 }
 
+const searchSchema = z.object({
+  promoter: z.string().trim().min(1).max(64).optional(),
+});
+
 export const Route = createFileRoute("/_site/eventos/$slug")({
+  validateSearch: (s) => searchSchema.parse(s),
   loader: async ({ context, params }) => {
     const event = await context.queryClient.ensureQueryData(
       eventQueryOptions(params.slug),
@@ -105,7 +113,29 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
 
 function EventDetailPage() {
   const { slug } = Route.useParams();
+  const { promoter } = Route.useSearch();
   const { data: event } = useSuspenseQuery(eventQueryOptions(slug));
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const key = `pf:lead:${slug}:${promoter ?? ""}`;
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, "1");
+    supabase
+      .rpc("track_public_lead", {
+        _event_slug: slug,
+        _promoter_code: promoter ?? null,
+        _source: promoter ? "promoter" : "direct",
+        _metadata: {
+          referrer: document.referrer || null,
+          ua: navigator.userAgent,
+        },
+      })
+      .then(({ error }) => {
+        if (error) console.warn("[track_public_lead]", error.message);
+      });
+  }, [slug, promoter]);
+
   if (!event) return null;
 
   return (
