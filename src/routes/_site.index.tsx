@@ -149,15 +149,13 @@ function HeroWithLinks({
 }: {
   featured: (HomeFeaturedEvent & { external_ticket_url: string | null })[];
 }) {
-  // Busca commercial links para cada slug em paralelo (curto — máximo poucos slides).
-  const linkQueries = featured.map((f) =>
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useQuery({
+  const linkQueries = useQueries({
+    queries: featured.map((f) => ({
       queryKey: ["public", "event", f.slug, "commercial-links"],
       queryFn: () => listCommercialLinksBySlug({ data: { slug: f.slug } }),
       staleTime: 60_000,
-    }),
-  );
+    })),
+  });
 
   const slides: HeroSlide[] = featured.map((event, i) => ({
     event,
