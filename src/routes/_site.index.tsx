@@ -77,6 +77,8 @@ export const Route = createFileRoute("/_site/")({
     context.queryClient.ensureQueryData(featuredQO);
     context.queryClient.prefetchQuery(newsQO);
     context.queryClient.prefetchQuery(experiencesQO);
+    context.queryClient.prefetchQuery(siteHomeQO);
+    context.queryClient.prefetchQuery(siteMemoryQO);
   },
   component: HomePage,
 });
