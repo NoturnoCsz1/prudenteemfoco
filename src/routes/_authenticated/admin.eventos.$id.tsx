@@ -49,7 +49,7 @@ function EditEventPage() {
   return (
     <div className="p-5 md:p-8">
       <OperationsNav
-        eventId={eventId}
+        eventId={id}
         active="details"
         eventTitle={query.data?.title}
       />
