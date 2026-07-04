@@ -22,6 +22,7 @@ export type OperationsTab =
   | "credentials"
   | "engine"
   | "spaces"
+  | "reservations"
   | "leads"
   | "promoters"
   | "promotions"
