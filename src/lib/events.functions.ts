@@ -31,6 +31,18 @@ export type PublicEvent = {
   city: string | null;
   short_description: string | null;
   cover_image_url: string | null;
+  long_description: string | null;
+  instagram_url: string | null;
+  external_ticket_url: string | null;
+};
+
+export type PublicAttraction = {
+  id: string;
+  name: string;
+  performs_on: string | null;
+  sort_order: number;
+  image_url: string | null;
+  notes: string | null;
 };
 
 /** Lista eventos publicados via RPC pública (`public.list_published_events`). */
@@ -64,3 +76,22 @@ export const getPublishedEventBySlug = createServerFn({ method: "GET" })
     const row = (rows ?? [])[0];
     return (row as PublicEvent | undefined) ?? null;
   });
+
+/** Lista atrações do line-up de um evento publicado. */
+export const listEventAttractionsBySlug = createServerFn({ method: "GET" })
+  .inputValidator((data: unknown) =>
+    z.object({ slug: z.string().min(1).max(200) }).parse(data),
+  )
+  .handler(async ({ data }): Promise<PublicAttraction[]> => {
+    const supabase = serverPublicClient();
+    const { data: rows, error } = await supabase.rpc(
+      "list_event_attractions_by_slug",
+      { _slug: data.slug },
+    );
+    if (error) {
+      console.error("[listEventAttractionsBySlug]", error);
+      return [];
+    }
+    return (rows ?? []) as PublicAttraction[];
+  });
+

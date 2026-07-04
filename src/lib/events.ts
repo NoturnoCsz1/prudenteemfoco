@@ -81,11 +81,36 @@ export const eventFormSchema = z
       .optional()
       .transform((v) => (v && v.length ? v : null))
       .refine(
-        (v) =>
-          v === null ||
-          /^https:\/\/[^\s"<>]+$/.test(v),
+        (v) => v === null || /^https:\/\/[^\s"<>]+$/.test(v),
         "Use uma URL https:// válida.",
       ),
+    long_description: z
+      .string()
+      .trim()
+      .max(8000, "Máximo 8000 caracteres.")
+      .optional()
+      .transform((v) => (v && v.length ? v : null)),
+    instagram_url: z
+      .string()
+      .trim()
+      .max(2000, "URL muito longa.")
+      .optional()
+      .transform((v) => (v && v.length ? v : null))
+      .refine(
+        (v) => v === null || /^https:\/\/[^\s"<>]+$/.test(v),
+        "Use uma URL https:// válida.",
+      ),
+    external_ticket_url: z
+      .string()
+      .trim()
+      .max(2000, "URL muito longa.")
+      .optional()
+      .transform((v) => (v && v.length ? v : null))
+      .refine(
+        (v) => v === null || /^https:\/\/[^\s"<>]+$/.test(v),
+        "Use uma URL https:// válida.",
+      ),
+
   })
   .refine(
     (v) =>

@@ -31,6 +31,7 @@ import { Route as AuthenticatedAdminEventosIdSetoresRouteImport } from './routes
 import { Route as AuthenticatedAdminEventosIdReservasRouteImport } from './routes/_authenticated/admin.eventos.$id.reservas'
 import { Route as AuthenticatedAdminEventosIdPromotionsRouteImport } from './routes/_authenticated/admin.eventos.$id.promotions'
 import { Route as AuthenticatedAdminEventosIdPromotersRouteImport } from './routes/_authenticated/admin.eventos.$id.promoters'
+import { Route as AuthenticatedAdminEventosIdLineupRouteImport } from './routes/_authenticated/admin.eventos.$id.lineup'
 import { Route as AuthenticatedAdminEventosIdLeadsRouteImport } from './routes/_authenticated/admin.eventos.$id.leads'
 import { Route as AuthenticatedAdminEventosIdIntelligenceRouteImport } from './routes/_authenticated/admin.eventos.$id.intelligence'
 import { Route as AuthenticatedAdminEventosIdEspacosRouteImport } from './routes/_authenticated/admin.eventos.$id.espacos'
@@ -160,6 +161,12 @@ const AuthenticatedAdminEventosIdPromotersRoute =
     path: '/eventos/$id/promoters',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminEventosIdLineupRoute =
+  AuthenticatedAdminEventosIdLineupRouteImport.update({
+    id: '/eventos/$id/lineup',
+    path: '/eventos/$id/lineup',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminEventosIdLeadsRoute =
   AuthenticatedAdminEventosIdLeadsRouteImport.update({
     id: '/eventos/$id/leads',
@@ -240,6 +247,7 @@ export interface FileRoutesByFullPath {
   '/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/admin/eventos/$id/intelligence': typeof AuthenticatedAdminEventosIdIntelligenceRoute
   '/admin/eventos/$id/leads': typeof AuthenticatedAdminEventosIdLeadsRoute
+  '/admin/eventos/$id/lineup': typeof AuthenticatedAdminEventosIdLineupRoute
   '/admin/eventos/$id/promoters': typeof AuthenticatedAdminEventosIdPromotersRoute
   '/admin/eventos/$id/promotions': typeof AuthenticatedAdminEventosIdPromotionsRoute
   '/admin/eventos/$id/reservas': typeof AuthenticatedAdminEventosIdReservasRoute
@@ -270,6 +278,7 @@ export interface FileRoutesByTo {
   '/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/admin/eventos/$id/intelligence': typeof AuthenticatedAdminEventosIdIntelligenceRoute
   '/admin/eventos/$id/leads': typeof AuthenticatedAdminEventosIdLeadsRoute
+  '/admin/eventos/$id/lineup': typeof AuthenticatedAdminEventosIdLineupRoute
   '/admin/eventos/$id/promoters': typeof AuthenticatedAdminEventosIdPromotersRoute
   '/admin/eventos/$id/promotions': typeof AuthenticatedAdminEventosIdPromotionsRoute
   '/admin/eventos/$id/reservas': typeof AuthenticatedAdminEventosIdReservasRoute
@@ -304,6 +313,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/_authenticated/admin/eventos/$id/intelligence': typeof AuthenticatedAdminEventosIdIntelligenceRoute
   '/_authenticated/admin/eventos/$id/leads': typeof AuthenticatedAdminEventosIdLeadsRoute
+  '/_authenticated/admin/eventos/$id/lineup': typeof AuthenticatedAdminEventosIdLineupRoute
   '/_authenticated/admin/eventos/$id/promoters': typeof AuthenticatedAdminEventosIdPromotersRoute
   '/_authenticated/admin/eventos/$id/promotions': typeof AuthenticatedAdminEventosIdPromotionsRoute
   '/_authenticated/admin/eventos/$id/reservas': typeof AuthenticatedAdminEventosIdReservasRoute
@@ -337,6 +347,7 @@ export interface FileRouteTypes {
     | '/admin/eventos/$id/espacos'
     | '/admin/eventos/$id/intelligence'
     | '/admin/eventos/$id/leads'
+    | '/admin/eventos/$id/lineup'
     | '/admin/eventos/$id/promoters'
     | '/admin/eventos/$id/promotions'
     | '/admin/eventos/$id/reservas'
@@ -367,6 +378,7 @@ export interface FileRouteTypes {
     | '/admin/eventos/$id/espacos'
     | '/admin/eventos/$id/intelligence'
     | '/admin/eventos/$id/leads'
+    | '/admin/eventos/$id/lineup'
     | '/admin/eventos/$id/promoters'
     | '/admin/eventos/$id/promotions'
     | '/admin/eventos/$id/reservas'
@@ -400,6 +412,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/eventos/$id/espacos'
     | '/_authenticated/admin/eventos/$id/intelligence'
     | '/_authenticated/admin/eventos/$id/leads'
+    | '/_authenticated/admin/eventos/$id/lineup'
     | '/_authenticated/admin/eventos/$id/promoters'
     | '/_authenticated/admin/eventos/$id/promotions'
     | '/_authenticated/admin/eventos/$id/reservas'
@@ -569,6 +582,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminEventosIdPromotersRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/eventos/$id/lineup': {
+      id: '/_authenticated/admin/eventos/$id/lineup'
+      path: '/eventos/$id/lineup'
+      fullPath: '/admin/eventos/$id/lineup'
+      preLoaderRoute: typeof AuthenticatedAdminEventosIdLineupRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/eventos/$id/leads': {
       id: '/_authenticated/admin/eventos/$id/leads'
       path: '/eventos/$id/leads'
@@ -652,6 +672,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminEventosIdEspacosRoute: typeof AuthenticatedAdminEventosIdEspacosRoute
   AuthenticatedAdminEventosIdIntelligenceRoute: typeof AuthenticatedAdminEventosIdIntelligenceRoute
   AuthenticatedAdminEventosIdLeadsRoute: typeof AuthenticatedAdminEventosIdLeadsRoute
+  AuthenticatedAdminEventosIdLineupRoute: typeof AuthenticatedAdminEventosIdLineupRoute
   AuthenticatedAdminEventosIdPromotersRoute: typeof AuthenticatedAdminEventosIdPromotersRoute
   AuthenticatedAdminEventosIdPromotionsRoute: typeof AuthenticatedAdminEventosIdPromotionsRoute
   AuthenticatedAdminEventosIdReservasRoute: typeof AuthenticatedAdminEventosIdReservasRoute
@@ -684,6 +705,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminEventosIdIntelligenceRoute:
     AuthenticatedAdminEventosIdIntelligenceRoute,
   AuthenticatedAdminEventosIdLeadsRoute: AuthenticatedAdminEventosIdLeadsRoute,
+  AuthenticatedAdminEventosIdLineupRoute:
+    AuthenticatedAdminEventosIdLineupRoute,
   AuthenticatedAdminEventosIdPromotersRoute:
     AuthenticatedAdminEventosIdPromotersRoute,
   AuthenticatedAdminEventosIdPromotionsRoute:

@@ -29,7 +29,11 @@ export type EventFormRecord = {
   city: string | null;
   short_description: string | null;
   cover_image_url: string | null;
+  long_description: string | null;
+  instagram_url: string | null;
+  external_ticket_url: string | null;
 };
+
 
 export function EventForm({
   mode,
@@ -57,7 +61,11 @@ export function EventForm({
       city: initial?.city ?? "",
       short_description: initial?.short_description ?? "",
       cover_image_url: initial?.cover_image_url ?? "",
+      long_description: initial?.long_description ?? "",
+      instagram_url: initial?.instagram_url ?? "",
+      external_ticket_url: initial?.external_ticket_url ?? "",
     },
+
   });
 
   const titleValue = form.watch("title");
@@ -97,7 +105,11 @@ export function EventForm({
         city: values.city,
         short_description: values.short_description,
         cover_image_url: values.cover_image_url,
+        long_description: values.long_description,
+        instagram_url: values.instagram_url,
+        external_ticket_url: values.external_ticket_url,
       };
+
 
       if (mode === "create") {
         const { data, error } = await supabase
@@ -231,6 +243,47 @@ export function EventForm({
           maxLength={600}
         />
       </Field>
+
+      <Field
+        label="Descrição longa (editorial)"
+        error={errors.long_description?.message}
+        hint="Texto completo exibido na página pública do evento. Aceita quebras de linha."
+      >
+        <textarea
+          {...form.register("long_description")}
+          rows={6}
+          className="input resize-y"
+          maxLength={8000}
+        />
+      </Field>
+
+      <div className="grid gap-5 md:grid-cols-2">
+        <Field
+          label="Instagram oficial (https://)"
+          error={errors.instagram_url?.message}
+          hint="Link para o perfil oficial do evento."
+        >
+          <input
+            type="url"
+            {...form.register("instagram_url")}
+            className="input"
+            placeholder="https://instagram.com/..."
+          />
+        </Field>
+        <Field
+          label="Link de venda externa (https://)"
+          error={errors.external_ticket_url?.message}
+          hint="URL da bilheteira externa. Aparece como CTA principal se preenchido."
+        >
+          <input
+            type="url"
+            {...form.register("external_ticket_url")}
+            className="input"
+            placeholder="https://..."
+          />
+        </Field>
+      </div>
+
 
       {mode === "edit" && initial?.id && membership ? (
         <CoverUpload

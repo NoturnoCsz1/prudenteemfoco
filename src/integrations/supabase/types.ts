@@ -349,6 +349,60 @@ export type Database = {
           },
         ]
       }
+      event_attractions: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          image_url: string | null
+          name: string
+          notes: string | null
+          organization_id: string
+          performs_on: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          image_url?: string | null
+          name: string
+          notes?: string | null
+          organization_id: string
+          performs_on?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          notes?: string | null
+          organization_id?: string
+          performs_on?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attractions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attractions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_credentials: {
         Row: {
           access_scope: Json
@@ -502,7 +556,10 @@ export type Database = {
           cover_image_url: string | null
           created_at: string
           ends_at: string | null
+          external_ticket_url: string | null
           id: string
+          instagram_url: string | null
+          long_description: string | null
           organization_id: string
           short_description: string | null
           slug: string
@@ -517,7 +574,10 @@ export type Database = {
           cover_image_url?: string | null
           created_at?: string
           ends_at?: string | null
+          external_ticket_url?: string | null
           id?: string
+          instagram_url?: string | null
+          long_description?: string | null
           organization_id: string
           short_description?: string | null
           slug: string
@@ -532,7 +592,10 @@ export type Database = {
           cover_image_url?: string | null
           created_at?: string
           ends_at?: string | null
+          external_ticket_url?: string | null
           id?: string
+          instagram_url?: string | null
+          long_description?: string | null
           organization_id?: string
           short_description?: string | null
           slug?: string
@@ -1141,6 +1204,9 @@ export type Database = {
           city: string
           cover_image_url: string
           ends_at: string
+          external_ticket_url: string
+          instagram_url: string
+          long_description: string
           short_description: string
           slug: string
           starts_at: string
@@ -1183,12 +1249,26 @@ export type Database = {
           total_units: number
         }[]
       }
+      list_event_attractions_by_slug: {
+        Args: { _slug: string }
+        Returns: {
+          id: string
+          image_url: string
+          name: string
+          notes: string
+          performs_on: string
+          sort_order: number
+        }[]
+      }
       list_published_events: {
         Args: never
         Returns: {
           city: string
           cover_image_url: string
           ends_at: string
+          external_ticket_url: string
+          instagram_url: string
+          long_description: string
           short_description: string
           slug: string
           starts_at: string

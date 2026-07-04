@@ -13,10 +13,14 @@ import {
   Music2,
   Layers,
   History,
+  Instagram,
+  Ticket as TicketIcon,
 } from "lucide-react";
 import {
   getPublishedEventBySlug,
+  listEventAttractionsBySlug,
   type PublicEvent,
+  type PublicAttraction,
 } from "@/lib/events.functions";
 import {
   listAvailableSpaceTypes,
@@ -24,6 +28,7 @@ import {
   type PublicSpaceType,
 } from "@/lib/reservations.functions";
 import { formatEventDateRange } from "@/lib/events";
+
 import { supabase } from "@/integrations/supabase/client";
 import {
   SPACE_TYPE_CATEGORY_LABEL,
@@ -40,6 +45,14 @@ function eventQueryOptions(slug: string) {
   });
 }
 
+function attractionsQueryOptions(slug: string) {
+  return queryOptions({
+    queryKey: ["public", "event", slug, "attractions"],
+    queryFn: () => listEventAttractionsBySlug({ data: { slug } }),
+  });
+}
+
+
 const searchSchema = z.object({
   promoter: z.string().trim().min(1).max(64).optional(),
 });
@@ -51,8 +64,11 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
       eventQueryOptions(params.slug),
     );
     if (!event) throw notFound();
+    // pré-carrega line-up (opcional, sem falhar a rota)
+    void context.queryClient.prefetchQuery(attractionsQueryOptions(params.slug));
     return event;
   },
+
   head: ({ loaderData, params }) => {
     const ev = loaderData as PublicEvent | undefined;
     const title = ev
@@ -102,6 +118,14 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
                   "@type": "Organization",
                   name: "Prudente em Foco",
                 },
+                offers: ev.external_ticket_url
+                  ? {
+                      "@type": "Offer",
+                      url: ev.external_ticket_url,
+                      availability: "https://schema.org/InStock",
+                    }
+                  : undefined,
+
               }),
             },
           ]
@@ -243,33 +267,55 @@ function EventDetailPage() {
           )}
 
           <div className="mt-10 flex flex-wrap gap-3">
+            {event.external_ticket_url && (
+              <a
+                href={event.external_ticket_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                <TicketIcon className="h-4 w-4" />
+                Comprar ingresso
+              </a>
+            )}
             <a
               href="#reservas"
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              className={`inline-flex items-center gap-2 rounded-md px-6 py-3 text-sm font-semibold transition-opacity hover:opacity-90 ${
+                event.external_ticket_url
+                  ? "border border-border-strong text-foreground"
+                  : "bg-primary text-primary-foreground"
+              }`}
             >
               Solicitar reserva <ArrowRight className="h-4 w-4" />
             </a>
+            {event.instagram_url && (
+              <a
+                href={event.instagram_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-md border border-border-strong px-6 py-3 text-sm font-medium hover:bg-accent"
+              >
+                <Instagram className="h-4 w-4" />
+                Instagram oficial
+              </a>
+            )}
           </div>
         </div>
       </section>
 
-      {/* LINE-UP / ATRAÇÕES — placeholder estrutural */}
-      <section className="border-b border-border">
-        <div className="container-page py-14 md:py-20">
-          <SectionEyebrow icon={<Music2 className="h-4 w-4" />}>
-            Line-up e atrações
-          </SectionEyebrow>
-          <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
-            Atrações confirmadas
-          </h2>
-          <div className="mt-8 rounded-2xl border border-dashed border-border-strong bg-surface/40 p-8 text-center md:p-12">
-            <p className="text-sm text-muted-foreground">
-              As atrações deste evento serão publicadas aqui assim que forem
-              oficializadas. Nada de conteúdo especulativo.
-            </p>
+      {event.long_description && (
+        <section className="border-b border-border bg-surface/20">
+          <div className="container-page py-12 md:py-16">
+            <div className="max-w-3xl whitespace-pre-line text-base leading-relaxed text-muted-foreground md:text-lg">
+              {event.long_description}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* LINE-UP / ATRAÇÕES — dados reais */}
+      <LineupSection slug={slug} />
+
 
       {/* SETORES E EXPERIÊNCIAS — placeholder estrutural */}
       <section className="border-b border-border bg-surface/30">
@@ -328,6 +374,109 @@ function SectionEyebrow({
     </div>
   );
 }
+
+function groupByDay(list: PublicAttraction[]): { day: string | null; items: PublicAttraction[] }[] {
+  const map = new Map<string | null, PublicAttraction[]>();
+  for (const a of list) {
+    const key = a.performs_on ?? null;
+    if (!map.has(key)) map.set(key, []);
+    map.get(key)!.push(a);
+  }
+  return Array.from(map.entries())
+    .sort(([a], [b]) => {
+      if (a === b) return 0;
+      if (a === null) return 1;
+      if (b === null) return -1;
+      return a < b ? -1 : 1;
+    })
+    .map(([day, items]) => ({ day, items }));
+}
+
+function formatDayLabel(iso: string): { day: string; month: string; weekday: string } {
+  // ISO date "YYYY-MM-DD" — parse locally
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(y, (m ?? 1) - 1, d ?? 1);
+  return {
+    day: String(d ?? "").padStart(2, "0"),
+    month: dt.toLocaleString("pt-BR", { month: "short" }).replace(".", "").toUpperCase(),
+    weekday: dt.toLocaleString("pt-BR", { weekday: "short" }).replace(".", ""),
+  };
+}
+
+function LineupSection({ slug }: { slug: string }) {
+  const q = useQuery(attractionsQueryOptions(slug));
+  const items = q.data ?? [];
+  if (q.isLoading) {
+    return (
+      <section className="border-b border-border">
+        <div className="container-page flex items-center justify-center py-16">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      </section>
+    );
+  }
+  if (items.length === 0) return null;
+  const groups = groupByDay(items);
+  return (
+    <section className="border-b border-border">
+      <div className="container-page py-14 md:py-20">
+        <SectionEyebrow icon={<Music2 className="h-4 w-4" />}>
+          Line-up e atrações
+        </SectionEyebrow>
+        <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
+          Programação por dia
+        </h2>
+        <div className="mt-8 space-y-8 md:space-y-10">
+          {groups.map(({ day, items: dayItems }) => (
+            <div
+              key={day ?? "sem-data"}
+              className="grid gap-5 md:grid-cols-[auto,1fr] md:gap-8"
+            >
+              <div className="md:min-w-[7rem]">
+                {day ? (
+                  (() => {
+                    const l = formatDayLabel(day);
+                    return (
+                      <div className="inline-flex items-baseline gap-2 rounded-xl border border-border-strong bg-surface/60 px-4 py-3 md:flex-col md:items-center md:gap-0 md:px-5 md:py-4">
+                        <span className="font-display text-4xl font-black leading-none tracking-tight md:text-5xl">
+                          {l.day}
+                        </span>
+                        <span className="font-display text-xs uppercase tracking-[0.25em] text-primary md:mt-1">
+                          {l.month}
+                        </span>
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground md:mt-0.5">
+                          {l.weekday}
+                        </span>
+                      </div>
+                    );
+                  })()
+                ) : (
+                  <div className="inline-flex rounded-xl border border-dashed border-border-strong bg-surface/40 px-4 py-3 text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                    Data a definir
+                  </div>
+                )}
+              </div>
+              <ul className="grid gap-2 self-center sm:grid-cols-2">
+                {dayItems.map((a) => (
+                  <li
+                    key={a.id}
+                    className="rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium"
+                  >
+                    {a.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p className="mt-8 text-xs text-muted-foreground">
+          Horários e ordem de apresentação serão divulgados pela produção próximo ao evento.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 
 function SpacesSection({
   slug,

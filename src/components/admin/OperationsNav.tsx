@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   MapPin,
   Megaphone,
+  Music2,
   PencilLine,
   Sparkles,
   ShieldCheck,
@@ -23,6 +24,7 @@ export type OperationsTab =
   | "engine"
   | "spaces"
   | "reservations"
+  | "lineup"
   | "leads"
   | "promoters"
   | "promotions"
@@ -31,6 +33,7 @@ export type OperationsTab =
   | "details"
   | "sectors"
   | "access";
+
 
 export function OperationsNav({
   eventId,
@@ -54,6 +57,7 @@ export function OperationsNav({
     { key: "engine", label: "Engine", to: `/admin/eventos/${eventId}/engine`, icon: <Gauge className="h-3.5 w-3.5" /> },
     { key: "spaces", label: "Espaços", to: `/admin/eventos/${eventId}/espacos`, icon: <MapPin className="h-3.5 w-3.5" /> },
     { key: "reservations", label: "Reservas", to: `/admin/eventos/${eventId}/reservas`, icon: <Ticket className="h-3.5 w-3.5" /> },
+    { key: "lineup", label: "Line-up", to: `/admin/eventos/${eventId}/lineup`, icon: <Music2 className="h-3.5 w-3.5" /> },
     { key: "leads", label: "Leads", to: `/admin/eventos/${eventId}/leads`, icon: <UserPlus className="h-3.5 w-3.5" /> },
     { key: "promoters", label: "Promoters", to: `/admin/eventos/${eventId}/promoters`, icon: <Megaphone className="h-3.5 w-3.5" /> },
     { key: "promotions", label: "Promoções", to: `/admin/eventos/${eventId}/promotions`, icon: <Sparkles className="h-3.5 w-3.5" /> },
