@@ -23,6 +23,7 @@ import { Route as SiteEventosSlugRouteImport } from './routes/_site.eventos.$slu
 import { Route as AuthenticatedAdminOperacaoRouteImport } from './routes/_authenticated/admin.operacao'
 import { Route as AuthenticatedAdminExperienciasRouteImport } from './routes/_authenticated/admin.experiencias'
 import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
+import { Route as AuthenticatedAdminEquipeRouteImport } from './routes/_authenticated/admin.equipe'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
 import { Route as AuthenticatedAdminEventosNovoRouteImport } from './routes/_authenticated/admin.eventos.novo'
 import { Route as AuthenticatedAdminEventosIdRouteImport } from './routes/_authenticated/admin.eventos.$id'
@@ -106,6 +107,12 @@ const AuthenticatedAdminEventosRoute =
   AuthenticatedAdminEventosRouteImport.update({
     id: '/eventos',
     path: '/eventos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminEquipeRoute =
+  AuthenticatedAdminEquipeRouteImport.update({
+    id: '/equipe',
+    path: '/equipe',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminConfiguracoesRoute =
@@ -196,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRouteWithChildren
   '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
   '/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
@@ -222,6 +230,7 @@ export interface FileRoutesByTo {
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRouteWithChildren
   '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
   '/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
@@ -252,6 +261,7 @@ export interface FileRoutesById {
   '/_site/sobre': typeof SiteSobreRoute
   '/_site/': typeof SiteIndexRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/_authenticated/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRouteWithChildren
   '/_authenticated/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
   '/_authenticated/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
@@ -281,6 +291,7 @@ export interface FileRouteTypes {
     | '/experiencias'
     | '/sobre'
     | '/admin/configuracoes'
+    | '/admin/equipe'
     | '/admin/eventos'
     | '/admin/experiencias'
     | '/admin/operacao'
@@ -307,6 +318,7 @@ export interface FileRouteTypes {
     | '/experiencias'
     | '/sobre'
     | '/admin/configuracoes'
+    | '/admin/equipe'
     | '/admin/eventos'
     | '/admin/experiencias'
     | '/admin/operacao'
@@ -336,6 +348,7 @@ export interface FileRouteTypes {
     | '/_site/sobre'
     | '/_site/'
     | '/_authenticated/admin/configuracoes'
+    | '/_authenticated/admin/equipe'
     | '/_authenticated/admin/eventos'
     | '/_authenticated/admin/experiencias'
     | '/_authenticated/admin/operacao'
@@ -459,6 +472,13 @@ declare module '@tanstack/react-router' {
       path: '/eventos'
       fullPath: '/admin/eventos'
       preLoaderRoute: typeof AuthenticatedAdminEventosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/equipe': {
+      id: '/_authenticated/admin/equipe'
+      path: '/equipe'
+      fullPath: '/admin/equipe'
+      preLoaderRoute: typeof AuthenticatedAdminEquipeRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/configuracoes': {
@@ -616,6 +636,7 @@ const AuthenticatedAdminEventosRouteWithChildren =
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
+  AuthenticatedAdminEquipeRoute: typeof AuthenticatedAdminEquipeRoute
   AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRouteWithChildren
   AuthenticatedAdminExperienciasRoute: typeof AuthenticatedAdminExperienciasRoute
   AuthenticatedAdminOperacaoRoute: typeof AuthenticatedAdminOperacaoRoute
@@ -624,6 +645,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
+  AuthenticatedAdminEquipeRoute: AuthenticatedAdminEquipeRoute,
   AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRouteWithChildren,
   AuthenticatedAdminExperienciasRoute: AuthenticatedAdminExperienciasRoute,
   AuthenticatedAdminOperacaoRoute: AuthenticatedAdminOperacaoRoute,
