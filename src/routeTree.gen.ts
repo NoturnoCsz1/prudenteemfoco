@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SiteRouteImport } from './routes/_site'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as SiteIndexRouteImport } from './routes/_site.index'
 import { Route as SiteSobreRouteImport } from './routes/_site.sobre'
 import { Route as SiteExperienciasRouteImport } from './routes/_site.experiencias'
@@ -22,8 +24,17 @@ import { Route as AuthenticatedAdminExperienciasRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SiteRoute = SiteRouteImport.update({
   id: '/_site',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SiteIndexRoute = SiteIndexRouteImport.update({
@@ -52,9 +63,9 @@ const SiteContatoRoute = SiteContatoRouteImport.update({
   getParentRoute: () => SiteRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/_authenticated/admin',
+  id: '/admin',
   path: '/admin',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
@@ -88,6 +99,7 @@ const AuthenticatedAdminConfiguracoesRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
+  '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/contato': typeof SiteContatoRoute
   '/eventos': typeof SiteEventosRoute
@@ -100,11 +112,12 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof SiteIndexRoute
+  '/auth': typeof AuthRoute
   '/contato': typeof SiteContatoRoute
   '/eventos': typeof SiteEventosRoute
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
-  '/': typeof SiteIndexRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
@@ -113,7 +126,9 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_site': typeof SiteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_site/contato': typeof SiteContatoRoute
   '/_site/eventos': typeof SiteEventosRoute
@@ -130,6 +145,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/admin'
     | '/contato'
     | '/eventos'
@@ -142,11 +158,12 @@ export interface FileRouteTypes {
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
+    | '/auth'
     | '/contato'
     | '/eventos'
     | '/experiencias'
     | '/sobre'
-    | '/'
     | '/admin/configuracoes'
     | '/admin/eventos'
     | '/admin/experiencias'
@@ -154,7 +171,9 @@ export interface FileRouteTypes {
     | '/admin'
   id:
     | '__root__'
+    | '/_authenticated'
     | '/_site'
+    | '/auth'
     | '/_authenticated/admin'
     | '/_site/contato'
     | '/_site/eventos'
@@ -169,17 +188,32 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   SiteRoute: typeof SiteRouteWithChildren
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_site': {
       id: '/_site'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof SiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_site/': {
@@ -222,7 +256,7 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -262,24 +296,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface SiteRouteChildren {
-  SiteContatoRoute: typeof SiteContatoRoute
-  SiteEventosRoute: typeof SiteEventosRoute
-  SiteExperienciasRoute: typeof SiteExperienciasRoute
-  SiteSobreRoute: typeof SiteSobreRoute
-  SiteIndexRoute: typeof SiteIndexRoute
-}
-
-const SiteRouteChildren: SiteRouteChildren = {
-  SiteContatoRoute: SiteContatoRoute,
-  SiteEventosRoute: SiteEventosRoute,
-  SiteExperienciasRoute: SiteExperienciasRoute,
-  SiteSobreRoute: SiteSobreRoute,
-  SiteIndexRoute: SiteIndexRoute,
-}
-
-const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
-
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
@@ -299,9 +315,39 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
-const rootRouteChildren: RootRouteChildren = {
-  SiteRoute: SiteRouteWithChildren,
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface SiteRouteChildren {
+  SiteContatoRoute: typeof SiteContatoRoute
+  SiteEventosRoute: typeof SiteEventosRoute
+  SiteExperienciasRoute: typeof SiteExperienciasRoute
+  SiteSobreRoute: typeof SiteSobreRoute
+  SiteIndexRoute: typeof SiteIndexRoute
+}
+
+const SiteRouteChildren: SiteRouteChildren = {
+  SiteContatoRoute: SiteContatoRoute,
+  SiteEventosRoute: SiteEventosRoute,
+  SiteExperienciasRoute: SiteExperienciasRoute,
+  SiteSobreRoute: SiteSobreRoute,
+  SiteIndexRoute: SiteIndexRoute,
+}
+
+const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  SiteRoute: SiteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
