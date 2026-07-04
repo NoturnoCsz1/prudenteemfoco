@@ -184,15 +184,16 @@ function EventDetailPage() {
   }, [slug, promoter]);
 
   if (!event) return null;
+  const cover = normalizeCoverUrl(event.cover_image_url);
 
   return (
     <article>
       {/* HERO — CARTAZ DO EVENTO */}
       <section className="relative isolate -mt-14 md:-mt-16">
-        {event.cover_image_url ? (
+        {cover ? (
           <div className="absolute inset-0 -z-10">
             <img
-              src={event.cover_image_url}
+              src={cover}
               alt=""
               className="h-full w-full object-cover"
             />
@@ -217,9 +218,7 @@ function EventDetailPage() {
         )}
         <div
           className={`container-page flex flex-col justify-end pb-16 pt-32 md:pb-24 md:pt-40 ${
-            event.cover_image_url
-              ? "min-h-[92vh] md:min-h-[100vh]"
-              : "min-h-[70vh]"
+            cover ? "min-h-[92vh] md:min-h-[100vh]" : "min-h-[70vh]"
           }`}
         >
           <Link
