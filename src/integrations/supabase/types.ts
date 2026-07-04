@@ -960,6 +960,122 @@ export type Database = {
           },
         ]
       }
+      space_reservation_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          event_id: string
+          id: string
+          lead_id: string | null
+          message: string | null
+          metadata: Json
+          organization_id: string
+          party_size: number | null
+          promoter_id: string | null
+          promotion_id: string | null
+          requester_contact: string
+          requester_name: string
+          space_id: string | null
+          space_type_id: string
+          status: Database["public"]["Enums"]["space_reservation_status"]
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          event_id: string
+          id?: string
+          lead_id?: string | null
+          message?: string | null
+          metadata?: Json
+          organization_id: string
+          party_size?: number | null
+          promoter_id?: string | null
+          promotion_id?: string | null
+          requester_contact: string
+          requester_name: string
+          space_id?: string | null
+          space_type_id: string
+          status?: Database["public"]["Enums"]["space_reservation_status"]
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          event_id?: string
+          id?: string
+          lead_id?: string | null
+          message?: string | null
+          metadata?: Json
+          organization_id?: string
+          party_size?: number | null
+          promoter_id?: string | null
+          promotion_id?: string | null
+          requester_contact?: string
+          requester_name?: string
+          space_id?: string | null
+          space_type_id?: string
+          status?: Database["public"]["Enums"]["space_reservation_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "space_reservation_requests_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "space_reservation_requests_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "space_reservation_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "space_reservation_requests_promoter_id_fkey"
+            columns: ["promoter_id"]
+            isOneToOne: false
+            referencedRelation: "promoters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "space_reservation_requests_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "promotions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "space_reservation_requests_space_id_fkey"
+            columns: ["space_id"]
+            isOneToOne: false
+            referencedRelation: "reservable_spaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "space_reservation_requests_space_type_id_fkey"
+            columns: ["space_type_id"]
+            isOneToOne: false
+            referencedRelation: "reservable_space_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -984,6 +1100,19 @@ export type Database = {
           token_id: string
           token_plain: string
         }[]
+      }
+      create_public_space_reservation_request: {
+        Args: {
+          _event_slug: string
+          _message?: string
+          _metadata?: Json
+          _party_size?: number
+          _promoter_code?: string
+          _requester_contact: string
+          _requester_name: string
+          _space_type_id: string
+        }
+        Returns: string
       }
       current_user_org: {
         Args: never
@@ -1038,6 +1167,21 @@ export type Database = {
       is_active_org_member: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
+      }
+      list_available_space_types_by_slug: {
+        Args: { _slug: string }
+        Returns: {
+          available_units: number
+          base_price: number
+          capacity_per_unit: number
+          category: Database["public"]["Enums"]["space_type_category"]
+          currency: string
+          description: string
+          image_url: string
+          name: string
+          space_type_id: string
+          total_units: number
+        }[]
       }
       list_published_events: {
         Args: never
@@ -1129,6 +1273,41 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      set_space_reservation_status: {
+        Args: {
+          _admin_notes?: string
+          _new_status: Database["public"]["Enums"]["space_reservation_status"]
+          _request_id: string
+          _space_id?: string
+        }
+        Returns: {
+          admin_notes: string | null
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          event_id: string
+          id: string
+          lead_id: string | null
+          message: string | null
+          metadata: Json
+          organization_id: string
+          party_size: number | null
+          promoter_id: string | null
+          promotion_id: string | null
+          requester_contact: string
+          requester_name: string
+          space_id: string | null
+          space_type_id: string
+          status: Database["public"]["Enums"]["space_reservation_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "space_reservation_requests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       track_public_lead: {
         Args: {
           _contact?: string
@@ -1204,6 +1383,13 @@ export type Database = {
         | "blocked"
         | "maintenance"
         | "inactive"
+      space_reservation_status:
+        | "pending"
+        | "negotiating"
+        | "approved"
+        | "rejected"
+        | "cancelled"
+        | "confirmed"
       space_type_category: "camarote" | "bistro" | "mesa" | "outro"
       space_type_status: "active" | "inactive" | "archived"
     }
@@ -1393,6 +1579,14 @@ export const Constants = {
         "blocked",
         "maintenance",
         "inactive",
+      ],
+      space_reservation_status: [
+        "pending",
+        "negotiating",
+        "approved",
+        "rejected",
+        "cancelled",
+        "confirmed",
       ],
       space_type_category: ["camarote", "bistro", "mesa", "outro"],
       space_type_status: ["active", "inactive", "archived"],
