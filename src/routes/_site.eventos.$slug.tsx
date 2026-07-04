@@ -13,10 +13,14 @@ import {
   Music2,
   Layers,
   History,
+  Instagram,
+  Ticket as TicketIcon,
 } from "lucide-react";
 import {
   getPublishedEventBySlug,
+  listEventAttractionsBySlug,
   type PublicEvent,
+  type PublicAttraction,
 } from "@/lib/events.functions";
 import {
   listAvailableSpaceTypes,
@@ -24,6 +28,7 @@ import {
   type PublicSpaceType,
 } from "@/lib/reservations.functions";
 import { formatEventDateRange } from "@/lib/events";
+
 import { supabase } from "@/integrations/supabase/client";
 import {
   SPACE_TYPE_CATEGORY_LABEL,
