@@ -35,12 +35,8 @@ export const Route = createFileRoute("/_site/")({
   component: HomePage,
 });
 
-function isFestival(ev: PublicEvent): boolean {
-  if (!ev.starts_at || !ev.ends_at) return false;
-  const start = Date.parse(ev.starts_at);
-  const end = Date.parse(ev.ends_at);
-  if (Number.isNaN(start) || Number.isNaN(end)) return false;
-  return end - start >= 24 * 60 * 60 * 1000;
+function isBigEvent(ev: PublicEvent): boolean {
+  return ev.kind === "festival" || ev.kind === "special_event";
 }
 
 function isUpcoming(ev: PublicEvent): boolean {
@@ -58,9 +54,10 @@ function HomePage() {
     const bx = b.starts_at ? Date.parse(b.starts_at) : Infinity;
     return ax - bx;
   });
-  const festivals = upcoming.filter(isFestival);
-  const shows = upcoming.filter((ev) => !isFestival(ev));
+  const festivals = upcoming.filter(isBigEvent);
+  const shows = upcoming.filter((ev) => !isBigEvent(ev));
   const featured = upcoming[0] ?? null;
+  const featuredCover = featured ? normalizeCoverUrl(featured.cover_image_url) : null;
   const past = events.filter((ev) => !isUpcoming(ev));
 
   return (
