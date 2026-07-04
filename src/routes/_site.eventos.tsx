@@ -133,7 +133,8 @@ function EventRow({ event }: { event: PublicEvent }) {
             </div>
           ) : (
             <div
-              className="flex aspect-[16/10] w-full flex-col justify-between p-6 md:p-10"
+              className="flex aspect-[4/3] w-full flex-col justify-between p-5 md:aspect-[16/10] md:p-10"
+
               style={{
                 background:
                   "radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--primary) 20%, transparent) 0%, transparent 55%), linear-gradient(180deg, color-mix(in oklab, var(--foreground) 4%, var(--background)) 0%, var(--background) 100%)",
