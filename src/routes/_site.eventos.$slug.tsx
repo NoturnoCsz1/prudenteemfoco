@@ -1,14 +1,26 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { queryOptions, useSuspenseQuery, useQuery, useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { z } from "zod";
-import { ArrowLeft, CalendarDays, MapPin } from "lucide-react";
+import { ArrowLeft, CalendarDays, MapPin, Users, Check, Loader2 } from "lucide-react";
 import {
   getPublishedEventBySlug,
   type PublicEvent,
 } from "@/lib/events.functions";
+import {
+  listAvailableSpaceTypes,
+  createSpaceReservationRequest,
+  type PublicSpaceType,
+} from "@/lib/reservations.functions";
 import { formatEventDateRange } from "@/lib/events";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  SPACE_TYPE_CATEGORY_LABEL,
+  SPACE_TYPE_CATEGORY_PLURAL,
+  SPACE_TYPE_CATEGORIES,
+  formatCurrencyBRL,
+  type SpaceTypeCategory,
+} from "@/lib/operations";
 
 function eventQueryOptions(slug: string) {
   return queryOptions({
@@ -197,6 +209,330 @@ function EventDetailPage() {
           </p>
         )}
       </section>
+
+      <SpacesSection slug={slug} promoterCode={promoter ?? null} />
     </article>
+  );
+}
+
+function SpacesSection({
+  slug,
+  promoterCode,
+}: {
+  slug: string;
+  promoterCode: string | null;
+}) {
+  const typesQuery = useQuery({
+    queryKey: ["public", "event", slug, "space-types"],
+    queryFn: () => listAvailableSpaceTypes({ data: { slug } }),
+    staleTime: 60_000,
+  });
+
+  const [selected, setSelected] = useState<PublicSpaceType | null>(null);
+
+  const grouped: Record<SpaceTypeCategory, PublicSpaceType[]> = {
+    camarote: [],
+    bistro: [],
+    mesa: [],
+    outro: [],
+  };
+  for (const t of typesQuery.data ?? []) grouped[t.category].push(t);
+
+  const hasAny = (typesQuery.data?.length ?? 0) > 0;
+
+  return (
+    <section className="border-t border-border bg-surface/40">
+      <div className="container-page py-12 md:py-16">
+        <p className="font-display text-xs uppercase tracking-[0.3em] text-primary">
+          Espaços comerciais
+        </p>
+        <h2 className="mt-3 text-3xl font-semibold md:text-4xl">
+          Reserve seu espaço
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+          Solicite reserva de camarote, bistrô ou mesa. Nossa equipe entra em
+          contato para confirmar disponibilidade e condições.
+        </p>
+
+        {typesQuery.isLoading ? (
+          <div className="mt-10 flex items-center justify-center py-16">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          </div>
+        ) : !hasAny ? (
+          <div className="mt-10 rounded-lg border border-dashed border-border-strong bg-background p-10 text-center text-sm text-muted-foreground">
+            Ainda não há espaços comerciais disponíveis para este evento.
+          </div>
+        ) : (
+          <div className="mt-10 space-y-10">
+            {SPACE_TYPE_CATEGORIES.map((cat) =>
+              grouped[cat].length === 0 ? null : (
+                <div key={cat}>
+                  <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                    {SPACE_TYPE_CATEGORY_PLURAL[cat]}
+                  </h3>
+                  <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {grouped[cat].map((t) => (
+                      <SpaceCard
+                        key={t.space_type_id}
+                        type={t}
+                        onSelect={() => setSelected(t)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ),
+            )}
+          </div>
+        )}
+      </div>
+
+      {selected && (
+        <ReservationDialog
+          slug={slug}
+          type={selected}
+          promoterCode={promoterCode}
+          onClose={() => setSelected(null)}
+        />
+      )}
+    </section>
+  );
+}
+
+function SpaceCard({
+  type,
+  onSelect,
+}: {
+  type: PublicSpaceType;
+  onSelect: () => void;
+}) {
+  const available = type.available_units > 0;
+  return (
+    <article className="flex flex-col overflow-hidden rounded-lg border border-border bg-background">
+      {type.image_url ? (
+        <div className="aspect-video w-full overflow-hidden bg-muted">
+          <img src={type.image_url} alt="" className="h-full w-full object-cover" />
+        </div>
+      ) : (
+        <div className="flex aspect-video items-center justify-center bg-muted text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          {SPACE_TYPE_CATEGORY_LABEL[type.category]}
+        </div>
+      )}
+      <div className="flex flex-1 flex-col gap-3 p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-primary">
+              {SPACE_TYPE_CATEGORY_LABEL[type.category]}
+            </p>
+            <h4 className="mt-1 truncate font-semibold">{type.name}</h4>
+          </div>
+          {type.base_price != null && (
+            <p className="whitespace-nowrap text-sm font-semibold">
+              {formatCurrencyBRL(type.base_price, type.currency)}
+            </p>
+          )}
+        </div>
+        {type.description && (
+          <p className="line-clamp-3 text-sm text-muted-foreground">
+            {type.description}
+          </p>
+        )}
+        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+          {type.capacity_per_unit != null && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5">
+              <Users className="h-3 w-3" />
+              {type.capacity_per_unit} pessoas
+            </span>
+          )}
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 ${
+              available
+                ? "bg-emerald-500/15 text-emerald-400"
+                : "bg-muted text-muted-foreground"
+            }`}
+          >
+            {available
+              ? `${type.available_units} disponível(is)`
+              : "Sob consulta"}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={onSelect}
+          className="mt-auto inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+        >
+          Solicitar reserva
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function ReservationDialog({
+  slug,
+  type,
+  promoterCode,
+  onClose,
+}: {
+  slug: string;
+  type: PublicSpaceType;
+  promoterCode: string | null;
+  onClose: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [contact, setContact] = useState("");
+  const [partySize, setPartySize] = useState<string>(
+    type.capacity_per_unit != null ? String(type.capacity_per_unit) : "",
+  );
+  const [message, setMessage] = useState("");
+  const [done, setDone] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: () =>
+      createSpaceReservationRequest({
+        data: {
+          event_slug: slug,
+          space_type_id: type.space_type_id,
+          requester_name: name.trim(),
+          requester_contact: contact.trim(),
+          promoter_code: promoterCode || undefined,
+          party_size: partySize.trim() ? Number(partySize) : undefined,
+          message: message.trim() || undefined,
+        },
+      }),
+  });
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (name.trim().length < 1 || name.trim().length > 120) return;
+    if (contact.trim().length < 3 || contact.trim().length > 200) return;
+    const res = await mutation.mutateAsync();
+    if ("error" in res) return;
+    setDone(true);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 md:items-center md:p-6"
+      role="dialog"
+      aria-modal="true"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg overflow-hidden rounded-t-2xl border border-border bg-background md:rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {done ? (
+          <div className="p-8 text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
+              <Check className="h-6 w-6" />
+            </div>
+            <h3 className="mt-4 text-xl font-semibold">Solicitação recebida</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Nossa equipe entrará em contato pelo canal informado para confirmar
+              disponibilidade e condições.
+            </p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-6 inline-flex items-center rounded-md border border-border-strong px-4 py-2 text-sm hover:bg-accent"
+            >
+              Fechar
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={submit} className="grid gap-4 p-6">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-primary">
+                {SPACE_TYPE_CATEGORY_LABEL[type.category]}
+              </p>
+              <h3 className="mt-1 text-lg font-semibold">{type.name}</h3>
+              {promoterCode && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Indicado por promoter{" "}
+                  <span className="font-medium">{promoterCode}</span>
+                </p>
+              )}
+            </div>
+            <label className="block">
+              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Nome
+              </span>
+              <input
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={120}
+                className="input mt-2"
+              />
+            </label>
+            <label className="block">
+              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Contato (WhatsApp ou e-mail)
+              </span>
+              <input
+                required
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
+                maxLength={200}
+                className="input mt-2"
+                placeholder="(18) 90000-0000 ou email@exemplo.com"
+              />
+            </label>
+            <label className="block">
+              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Nº de pessoas (opcional)
+              </span>
+              <input
+                type="number"
+                min={1}
+                max={500}
+                value={partySize}
+                onChange={(e) => setPartySize(e.target.value)}
+                className="input mt-2"
+              />
+            </label>
+            <label className="block">
+              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                Mensagem (opcional)
+              </span>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                maxLength={1000}
+                rows={3}
+                className="input mt-2 resize-y"
+                placeholder="Conte quando pretende chegar, ocasião, etc."
+              />
+            </label>
+            {mutation.data && "error" in mutation.data && (
+              <p className="text-sm text-destructive">{mutation.data.error}</p>
+            )}
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button
+                type="submit"
+                disabled={mutation.isPending}
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-60"
+              >
+                {mutation.isPending && (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                )}
+                Enviar solicitação
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-md border border-border-strong px-4 py-2 text-sm hover:bg-accent"
+              >
+                Cancelar
+              </button>
+            </div>
+            <p className="text-[11px] leading-relaxed text-muted-foreground">
+              Ao enviar, você concorda que a Prudente em Foco entre em contato
+              pelo canal informado. Nenhum pagamento é feito aqui.
+            </p>
+          </form>
+        )}
+      </div>
+    </div>
   );
 }
