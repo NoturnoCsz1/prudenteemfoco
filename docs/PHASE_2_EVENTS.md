@@ -135,3 +135,9 @@ de status.
 - Fase 3+: convites de membros, tela de gestão de organização.
 - Fases dedicadas: reservas, VIP, QR, scanner, promoters, credenciais,
   pagamentos, CRM, analytics, IA, agentes, Access Engine, relatórios.
+
+## Superseded parcialmente pela Fase 2.1
+
+A leitura pública direta de `public.events` foi removida; ver
+`docs/PHASE_2_1_PUBLIC_PROJECTION_STORAGE.md` para a nova projeção
+pública via RPC e o storage seguro de capas.
