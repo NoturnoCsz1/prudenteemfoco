@@ -61,6 +61,144 @@ export type Database = {
           },
         ]
       }
+      event_access_rules: {
+        Row: {
+          conditions: Json
+          created_at: string
+          event_id: string
+          id: string
+          organization_id: string
+          rule_type: Database["public"]["Enums"]["access_rule_type"]
+          target: Database["public"]["Enums"]["access_rule_target"]
+          updated_at: string
+        }
+        Insert: {
+          conditions?: Json
+          created_at?: string
+          event_id: string
+          id?: string
+          organization_id: string
+          rule_type: Database["public"]["Enums"]["access_rule_type"]
+          target: Database["public"]["Enums"]["access_rule_target"]
+          updated_at?: string
+        }
+        Update: {
+          conditions?: Json
+          created_at?: string
+          event_id?: string
+          id?: string
+          organization_id?: string
+          rule_type?: Database["public"]["Enums"]["access_rule_type"]
+          target?: Database["public"]["Enums"]["access_rule_target"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_access_rules_event_org_fk"
+            columns: ["event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
+      event_credentials: {
+        Row: {
+          access_scope: Json
+          created_at: string
+          document_id: string | null
+          event_id: string
+          holder_name: string
+          id: string
+          organization_id: string
+          role_type: Database["public"]["Enums"]["credential_role_type"]
+          status: Database["public"]["Enums"]["credential_status"]
+          updated_at: string
+        }
+        Insert: {
+          access_scope?: Json
+          created_at?: string
+          document_id?: string | null
+          event_id: string
+          holder_name: string
+          id?: string
+          organization_id: string
+          role_type?: Database["public"]["Enums"]["credential_role_type"]
+          status?: Database["public"]["Enums"]["credential_status"]
+          updated_at?: string
+        }
+        Update: {
+          access_scope?: Json
+          created_at?: string
+          document_id?: string | null
+          event_id?: string
+          holder_name?: string
+          id?: string
+          organization_id?: string
+          role_type?: Database["public"]["Enums"]["credential_role_type"]
+          status?: Database["public"]["Enums"]["credential_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_credentials_event_org_fk"
+            columns: ["event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
+      event_invites: {
+        Row: {
+          created_at: string
+          email: string | null
+          event_id: string
+          id: string
+          metadata: Json
+          name: string
+          organization_id: string
+          phone: string | null
+          status: Database["public"]["Enums"]["invite_status"]
+          type: Database["public"]["Enums"]["invite_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          event_id: string
+          id?: string
+          metadata?: Json
+          name: string
+          organization_id: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["invite_status"]
+          type?: Database["public"]["Enums"]["invite_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          event_id?: string
+          id?: string
+          metadata?: Json
+          name?: string
+          organization_id?: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["invite_status"]
+          type?: Database["public"]["Enums"]["invite_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_invites_event_org_fk"
+            columns: ["event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
       event_sectors: {
         Row: {
           capacity: number | null
@@ -476,12 +614,31 @@ export type Database = {
       }
     }
     Enums: {
+      access_rule_target: "invite" | "credential" | "sector" | "space"
+      access_rule_type: "allow" | "deny"
+      credential_role_type:
+        | "staff"
+        | "security"
+        | "production"
+        | "artist"
+        | "supplier"
+        | "press"
+      credential_status: "active" | "inactive"
       event_status:
         | "draft"
         | "scheduled"
         | "published"
         | "cancelled"
         | "archived"
+      invite_status: "active" | "revoked" | "used" | "expired"
+      invite_type:
+        | "guest"
+        | "influencer"
+        | "sponsor"
+        | "press"
+        | "partner"
+        | "artist"
+        | "production"
       member_role: "owner" | "admin" | "manager" | "operator" | "viewer"
       member_status: "active" | "invited" | "suspended" | "removed"
       org_status: "active" | "inactive" | "archived"
@@ -620,12 +777,33 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      access_rule_target: ["invite", "credential", "sector", "space"],
+      access_rule_type: ["allow", "deny"],
+      credential_role_type: [
+        "staff",
+        "security",
+        "production",
+        "artist",
+        "supplier",
+        "press",
+      ],
+      credential_status: ["active", "inactive"],
       event_status: [
         "draft",
         "scheduled",
         "published",
         "cancelled",
         "archived",
+      ],
+      invite_status: ["active", "revoked", "used", "expired"],
+      invite_type: [
+        "guest",
+        "influencer",
+        "sponsor",
+        "press",
+        "partner",
+        "artist",
+        "production",
       ],
       member_role: ["owner", "admin", "manager", "operator", "viewer"],
       member_status: ["active", "invited", "suspended", "removed"],

@@ -28,6 +28,7 @@ import { Route as AuthenticatedAdminEventosNovoRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminEventosIdRouteImport } from './routes/_authenticated/admin.eventos.$id'
 import { Route as AuthenticatedAdminEventosIdSetoresRouteImport } from './routes/_authenticated/admin.eventos.$id.setores'
 import { Route as AuthenticatedAdminEventosIdEspacosRouteImport } from './routes/_authenticated/admin.eventos.$id.espacos'
+import { Route as AuthenticatedAdminEventosIdAcessoRouteImport } from './routes/_authenticated/admin.eventos.$id.acesso'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -130,6 +131,12 @@ const AuthenticatedAdminEventosIdEspacosRoute =
     path: '/espacos',
     getParentRoute: () => AuthenticatedAdminEventosIdRoute,
   } as any)
+const AuthenticatedAdminEventosIdAcessoRoute =
+  AuthenticatedAdminEventosIdAcessoRouteImport.update({
+    id: '/acesso',
+    path: '/acesso',
+    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
+  '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
   '/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
 }
@@ -165,6 +173,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
+  '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
   '/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
 }
@@ -187,6 +196,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/_authenticated/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
+  '/_authenticated/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
   '/_authenticated/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/_authenticated/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
 }
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/eventos/$id'
     | '/admin/eventos/novo'
+    | '/admin/eventos/$id/acesso'
     | '/admin/eventos/$id/espacos'
     | '/admin/eventos/$id/setores'
   fileRoutesByTo: FileRoutesByTo
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/eventos/$id'
     | '/admin/eventos/novo'
+    | '/admin/eventos/$id/acesso'
     | '/admin/eventos/$id/espacos'
     | '/admin/eventos/$id/setores'
   id:
@@ -247,6 +259,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/admin/eventos/$id'
     | '/_authenticated/admin/eventos/novo'
+    | '/_authenticated/admin/eventos/$id/acesso'
     | '/_authenticated/admin/eventos/$id/espacos'
     | '/_authenticated/admin/eventos/$id/setores'
   fileRoutesById: FileRoutesById
@@ -392,16 +405,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminEventosIdEspacosRouteImport
       parentRoute: typeof AuthenticatedAdminEventosIdRoute
     }
+    '/_authenticated/admin/eventos/$id/acesso': {
+      id: '/_authenticated/admin/eventos/$id/acesso'
+      path: '/acesso'
+      fullPath: '/admin/eventos/$id/acesso'
+      preLoaderRoute: typeof AuthenticatedAdminEventosIdAcessoRouteImport
+      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+    }
   }
 }
 
 interface AuthenticatedAdminEventosIdRouteChildren {
+  AuthenticatedAdminEventosIdAcessoRoute: typeof AuthenticatedAdminEventosIdAcessoRoute
   AuthenticatedAdminEventosIdEspacosRoute: typeof AuthenticatedAdminEventosIdEspacosRoute
   AuthenticatedAdminEventosIdSetoresRoute: typeof AuthenticatedAdminEventosIdSetoresRoute
 }
 
 const AuthenticatedAdminEventosIdRouteChildren: AuthenticatedAdminEventosIdRouteChildren =
   {
+    AuthenticatedAdminEventosIdAcessoRoute:
+      AuthenticatedAdminEventosIdAcessoRoute,
     AuthenticatedAdminEventosIdEspacosRoute:
       AuthenticatedAdminEventosIdEspacosRoute,
     AuthenticatedAdminEventosIdSetoresRoute:
