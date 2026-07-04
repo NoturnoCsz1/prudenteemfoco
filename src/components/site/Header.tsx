@@ -92,12 +92,14 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link
-            to="/eventos"
-            className="eyebrow-label text-primary transition-opacity hover:opacity-80"
-          >
-            Ver agenda →
-          </Link>
+          {showVerAgenda && (
+            <Link
+              to="/eventos"
+              className="eyebrow-label text-primary transition-opacity hover:opacity-80"
+            >
+              Ver agenda →
+            </Link>
+          )}
           {!loading && user ? (
             <Link
               to="/admin"
