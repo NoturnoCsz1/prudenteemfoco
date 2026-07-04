@@ -1076,7 +1076,13 @@ export type Database = {
         | "production"
       lead_source: "roxou" | "direct" | "instagram" | "promoter" | "other"
       lead_status: "new" | "interested" | "converted" | "lost"
-      member_role: "owner" | "admin" | "manager" | "operator" | "viewer"
+      member_role:
+        | "owner"
+        | "admin"
+        | "promoter"
+        | "manager"
+        | "operator"
+        | "viewer"
       member_status: "active" | "invited" | "suspended" | "removed"
       org_status: "active" | "inactive" | "archived"
       org_type: "institutional" | "partner" | "other"
@@ -1249,7 +1255,14 @@ export const Constants = {
       ],
       lead_source: ["roxou", "direct", "instagram", "promoter", "other"],
       lead_status: ["new", "interested", "converted", "lost"],
-      member_role: ["owner", "admin", "manager", "operator", "viewer"],
+      member_role: [
+        "owner",
+        "admin",
+        "promoter",
+        "manager",
+        "operator",
+        "viewer",
+      ],
       member_status: ["active", "invited", "suspended", "removed"],
       org_status: ["active", "inactive", "archived"],
       org_type: ["institutional", "partner", "other"],
