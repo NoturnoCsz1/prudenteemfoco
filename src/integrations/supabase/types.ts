@@ -829,11 +829,13 @@ export type Database = {
         Row: {
           base_price: number | null
           capacity_per_unit: number | null
+          category: Database["public"]["Enums"]["space_type_category"]
           created_at: string
           currency: string
           description: string | null
           event_id: string
           id: string
+          image_url: string | null
           name: string
           organization_id: string
           sector_id: string | null
@@ -844,11 +846,13 @@ export type Database = {
         Insert: {
           base_price?: number | null
           capacity_per_unit?: number | null
+          category?: Database["public"]["Enums"]["space_type_category"]
           created_at?: string
           currency?: string
           description?: string | null
           event_id: string
           id?: string
+          image_url?: string | null
           name: string
           organization_id: string
           sector_id?: string | null
@@ -859,11 +863,13 @@ export type Database = {
         Update: {
           base_price?: number | null
           capacity_per_unit?: number | null
+          category?: Database["public"]["Enums"]["space_type_category"]
           created_at?: string
           currency?: string
           description?: string | null
           event_id?: string
           id?: string
+          image_url?: string | null
           name?: string
           organization_id?: string
           sector_id?: string | null
@@ -892,6 +898,7 @@ export type Database = {
         Row: {
           capacity: number | null
           code: string
+          commercial_status: Database["public"]["Enums"]["space_commercial_status"]
           created_at: string
           display_name: string | null
           event_id: string
@@ -907,6 +914,7 @@ export type Database = {
         Insert: {
           capacity?: number | null
           code: string
+          commercial_status?: Database["public"]["Enums"]["space_commercial_status"]
           created_at?: string
           display_name?: string | null
           event_id: string
@@ -922,6 +930,7 @@ export type Database = {
         Update: {
           capacity?: number | null
           code?: string
+          commercial_status?: Database["public"]["Enums"]["space_commercial_status"]
           created_at?: string
           display_name?: string | null
           event_id?: string
@@ -1092,6 +1101,34 @@ export type Database = {
         Args: { _role: Database["public"]["Enums"]["member_role"] }
         Returns: number
       }
+      set_space_commercial_status: {
+        Args: {
+          _new_status: Database["public"]["Enums"]["space_commercial_status"]
+          _space_id: string
+        }
+        Returns: {
+          capacity: number | null
+          code: string
+          commercial_status: Database["public"]["Enums"]["space_commercial_status"]
+          created_at: string
+          display_name: string | null
+          event_id: string
+          id: string
+          notes: string | null
+          operational_status: Database["public"]["Enums"]["space_operational_status"]
+          organization_id: string
+          sector_id: string | null
+          sort_order: number
+          space_type_id: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "reservable_spaces"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       track_public_lead: {
         Args: {
           _contact?: string
@@ -1156,11 +1193,18 @@ export type Database = {
       org_type: "institutional" | "partner" | "other"
       promotion_type: "discount" | "vip_access" | "early_access"
       sector_status: "active" | "inactive" | "archived"
+      space_commercial_status:
+        | "available"
+        | "negotiating"
+        | "reserved"
+        | "confirmed"
+        | "unavailable"
       space_operational_status:
         | "available"
         | "blocked"
         | "maintenance"
         | "inactive"
+      space_type_category: "camarote" | "bistro" | "mesa" | "outro"
       space_type_status: "active" | "inactive" | "archived"
     }
     CompositeTypes: {
@@ -1337,12 +1381,20 @@ export const Constants = {
       org_type: ["institutional", "partner", "other"],
       promotion_type: ["discount", "vip_access", "early_access"],
       sector_status: ["active", "inactive", "archived"],
+      space_commercial_status: [
+        "available",
+        "negotiating",
+        "reserved",
+        "confirmed",
+        "unavailable",
+      ],
       space_operational_status: [
         "available",
         "blocked",
         "maintenance",
         "inactive",
       ],
+      space_type_category: ["camarote", "bistro", "mesa", "outro"],
       space_type_status: ["active", "inactive", "archived"],
     },
   },
