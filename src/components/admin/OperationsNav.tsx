@@ -1,5 +1,27 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, DoorOpen, Gauge, KeyRound, LayoutGrid, MapPin, PencilLine } from "lucide-react";
+import {
+  ArrowLeft,
+  DoorOpen,
+  Gauge,
+  LayoutDashboard,
+  MapPin,
+  PencilLine,
+  ShieldCheck,
+  Ticket,
+} from "lucide-react";
+
+export type OperationsTab =
+  | "overview"
+  | "entrance"
+  | "invites"
+  | "credentials"
+  | "engine"
+  | "spaces"
+  | "edit"
+  // legacy tab keys — routes still exist but not shown in nav
+  | "details"
+  | "sectors"
+  | "access";
 
 export function OperationsNav({
   eventId,
@@ -7,51 +29,22 @@ export function OperationsNav({
   eventTitle,
 }: {
   eventId: string;
-  active: "details" | "sectors" | "spaces" | "access" | "engine" | "entrance";
+  active: OperationsTab;
   eventTitle?: string | null;
 }) {
   const items: {
-    key: typeof active;
+    key: OperationsTab;
     label: string;
     to: string;
     icon: React.ReactNode;
   }[] = [
-    {
-      key: "details",
-      label: "Detalhes",
-      to: `/admin/eventos/${eventId}`,
-      icon: <PencilLine className="h-3.5 w-3.5" />,
-    },
-    {
-      key: "sectors",
-      label: "Setores",
-      to: `/admin/eventos/${eventId}/setores`,
-      icon: <LayoutGrid className="h-3.5 w-3.5" />,
-    },
-    {
-      key: "spaces",
-      label: "Espaços",
-      to: `/admin/eventos/${eventId}/espacos`,
-      icon: <MapPin className="h-3.5 w-3.5" />,
-    },
-    {
-      key: "access",
-      label: "Acesso",
-      to: `/admin/eventos/${eventId}/acesso`,
-      icon: <KeyRound className="h-3.5 w-3.5" />,
-    },
-    {
-      key: "engine",
-      label: "Engine",
-      to: `/admin/eventos/${eventId}/access-engine`,
-      icon: <Gauge className="h-3.5 w-3.5" />,
-    },
-    {
-      key: "entrance",
-      label: "Entrada",
-      to: `/admin/eventos/${eventId}/entrada`,
-      icon: <DoorOpen className="h-3.5 w-3.5" />,
-    },
+    { key: "overview", label: "Visão Geral", to: `/admin/eventos/${eventId}`, icon: <LayoutDashboard className="h-3.5 w-3.5" /> },
+    { key: "entrance", label: "Entrada", to: `/admin/eventos/${eventId}/entrada`, icon: <DoorOpen className="h-3.5 w-3.5" /> },
+    { key: "invites", label: "Convites", to: `/admin/eventos/${eventId}/convites`, icon: <Ticket className="h-3.5 w-3.5" /> },
+    { key: "credentials", label: "Credenciais", to: `/admin/eventos/${eventId}/credenciais`, icon: <ShieldCheck className="h-3.5 w-3.5" /> },
+    { key: "engine", label: "Engine", to: `/admin/eventos/${eventId}/engine`, icon: <Gauge className="h-3.5 w-3.5" /> },
+    { key: "spaces", label: "Espaços", to: `/admin/eventos/${eventId}/espacos`, icon: <MapPin className="h-3.5 w-3.5" /> },
+    { key: "edit", label: "Editar", to: `/admin/eventos/${eventId}/editar`, icon: <PencilLine className="h-3.5 w-3.5" /> },
   ];
   return (
     <div className="border-b border-border">

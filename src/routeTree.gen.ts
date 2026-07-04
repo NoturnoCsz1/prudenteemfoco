@@ -29,8 +29,11 @@ import { Route as AuthenticatedAdminEventosIdRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminEventosIdSetoresRouteImport } from './routes/_authenticated/admin.eventos.$id.setores'
 import { Route as AuthenticatedAdminEventosIdEspacosRouteImport } from './routes/_authenticated/admin.eventos.$id.espacos'
 import { Route as AuthenticatedAdminEventosIdEntradaRouteImport } from './routes/_authenticated/admin.eventos.$id.entrada'
+import { Route as AuthenticatedAdminEventosIdEngineRouteImport } from './routes/_authenticated/admin.eventos.$id.engine'
+import { Route as AuthenticatedAdminEventosIdEditarRouteImport } from './routes/_authenticated/admin.eventos.$id.editar'
+import { Route as AuthenticatedAdminEventosIdCredenciaisRouteImport } from './routes/_authenticated/admin.eventos.$id.credenciais'
+import { Route as AuthenticatedAdminEventosIdConvitesRouteImport } from './routes/_authenticated/admin.eventos.$id.convites'
 import { Route as AuthenticatedAdminEventosIdAcessoRouteImport } from './routes/_authenticated/admin.eventos.$id.acesso'
-import { Route as AuthenticatedAdminEventosIdAccessEngineRouteImport } from './routes/_authenticated/admin.eventos.$id.access-engine'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -139,16 +142,34 @@ const AuthenticatedAdminEventosIdEntradaRoute =
     path: '/entrada',
     getParentRoute: () => AuthenticatedAdminEventosIdRoute,
   } as any)
+const AuthenticatedAdminEventosIdEngineRoute =
+  AuthenticatedAdminEventosIdEngineRouteImport.update({
+    id: '/engine',
+    path: '/engine',
+    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+  } as any)
+const AuthenticatedAdminEventosIdEditarRoute =
+  AuthenticatedAdminEventosIdEditarRouteImport.update({
+    id: '/editar',
+    path: '/editar',
+    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+  } as any)
+const AuthenticatedAdminEventosIdCredenciaisRoute =
+  AuthenticatedAdminEventosIdCredenciaisRouteImport.update({
+    id: '/credenciais',
+    path: '/credenciais',
+    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+  } as any)
+const AuthenticatedAdminEventosIdConvitesRoute =
+  AuthenticatedAdminEventosIdConvitesRouteImport.update({
+    id: '/convites',
+    path: '/convites',
+    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+  } as any)
 const AuthenticatedAdminEventosIdAcessoRoute =
   AuthenticatedAdminEventosIdAcessoRouteImport.update({
     id: '/acesso',
     path: '/acesso',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
-  } as any)
-const AuthenticatedAdminEventosIdAccessEngineRoute =
-  AuthenticatedAdminEventosIdAccessEngineRouteImport.update({
-    id: '/access-engine',
-    path: '/access-engine',
     getParentRoute: () => AuthenticatedAdminEventosIdRoute,
   } as any)
 
@@ -168,8 +189,11 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
-  '/admin/eventos/$id/access-engine': typeof AuthenticatedAdminEventosIdAccessEngineRoute
   '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
+  '/admin/eventos/$id/convites': typeof AuthenticatedAdminEventosIdConvitesRoute
+  '/admin/eventos/$id/credenciais': typeof AuthenticatedAdminEventosIdCredenciaisRoute
+  '/admin/eventos/$id/editar': typeof AuthenticatedAdminEventosIdEditarRoute
+  '/admin/eventos/$id/engine': typeof AuthenticatedAdminEventosIdEngineRoute
   '/admin/eventos/$id/entrada': typeof AuthenticatedAdminEventosIdEntradaRoute
   '/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
@@ -189,8 +213,11 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
-  '/admin/eventos/$id/access-engine': typeof AuthenticatedAdminEventosIdAccessEngineRoute
   '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
+  '/admin/eventos/$id/convites': typeof AuthenticatedAdminEventosIdConvitesRoute
+  '/admin/eventos/$id/credenciais': typeof AuthenticatedAdminEventosIdCredenciaisRoute
+  '/admin/eventos/$id/editar': typeof AuthenticatedAdminEventosIdEditarRoute
+  '/admin/eventos/$id/engine': typeof AuthenticatedAdminEventosIdEngineRoute
   '/admin/eventos/$id/entrada': typeof AuthenticatedAdminEventosIdEntradaRoute
   '/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
@@ -214,8 +241,11 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/_authenticated/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
-  '/_authenticated/admin/eventos/$id/access-engine': typeof AuthenticatedAdminEventosIdAccessEngineRoute
   '/_authenticated/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
+  '/_authenticated/admin/eventos/$id/convites': typeof AuthenticatedAdminEventosIdConvitesRoute
+  '/_authenticated/admin/eventos/$id/credenciais': typeof AuthenticatedAdminEventosIdCredenciaisRoute
+  '/_authenticated/admin/eventos/$id/editar': typeof AuthenticatedAdminEventosIdEditarRoute
+  '/_authenticated/admin/eventos/$id/engine': typeof AuthenticatedAdminEventosIdEngineRoute
   '/_authenticated/admin/eventos/$id/entrada': typeof AuthenticatedAdminEventosIdEntradaRoute
   '/_authenticated/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/_authenticated/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
@@ -238,8 +268,11 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/eventos/$id'
     | '/admin/eventos/novo'
-    | '/admin/eventos/$id/access-engine'
     | '/admin/eventos/$id/acesso'
+    | '/admin/eventos/$id/convites'
+    | '/admin/eventos/$id/credenciais'
+    | '/admin/eventos/$id/editar'
+    | '/admin/eventos/$id/engine'
     | '/admin/eventos/$id/entrada'
     | '/admin/eventos/$id/espacos'
     | '/admin/eventos/$id/setores'
@@ -259,8 +292,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/eventos/$id'
     | '/admin/eventos/novo'
-    | '/admin/eventos/$id/access-engine'
     | '/admin/eventos/$id/acesso'
+    | '/admin/eventos/$id/convites'
+    | '/admin/eventos/$id/credenciais'
+    | '/admin/eventos/$id/editar'
+    | '/admin/eventos/$id/engine'
     | '/admin/eventos/$id/entrada'
     | '/admin/eventos/$id/espacos'
     | '/admin/eventos/$id/setores'
@@ -283,8 +319,11 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/admin/eventos/$id'
     | '/_authenticated/admin/eventos/novo'
-    | '/_authenticated/admin/eventos/$id/access-engine'
     | '/_authenticated/admin/eventos/$id/acesso'
+    | '/_authenticated/admin/eventos/$id/convites'
+    | '/_authenticated/admin/eventos/$id/credenciais'
+    | '/_authenticated/admin/eventos/$id/editar'
+    | '/_authenticated/admin/eventos/$id/engine'
     | '/_authenticated/admin/eventos/$id/entrada'
     | '/_authenticated/admin/eventos/$id/espacos'
     | '/_authenticated/admin/eventos/$id/setores'
@@ -438,6 +477,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminEventosIdEntradaRouteImport
       parentRoute: typeof AuthenticatedAdminEventosIdRoute
     }
+    '/_authenticated/admin/eventos/$id/engine': {
+      id: '/_authenticated/admin/eventos/$id/engine'
+      path: '/engine'
+      fullPath: '/admin/eventos/$id/engine'
+      preLoaderRoute: typeof AuthenticatedAdminEventosIdEngineRouteImport
+      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+    }
+    '/_authenticated/admin/eventos/$id/editar': {
+      id: '/_authenticated/admin/eventos/$id/editar'
+      path: '/editar'
+      fullPath: '/admin/eventos/$id/editar'
+      preLoaderRoute: typeof AuthenticatedAdminEventosIdEditarRouteImport
+      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+    }
+    '/_authenticated/admin/eventos/$id/credenciais': {
+      id: '/_authenticated/admin/eventos/$id/credenciais'
+      path: '/credenciais'
+      fullPath: '/admin/eventos/$id/credenciais'
+      preLoaderRoute: typeof AuthenticatedAdminEventosIdCredenciaisRouteImport
+      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+    }
+    '/_authenticated/admin/eventos/$id/convites': {
+      id: '/_authenticated/admin/eventos/$id/convites'
+      path: '/convites'
+      fullPath: '/admin/eventos/$id/convites'
+      preLoaderRoute: typeof AuthenticatedAdminEventosIdConvitesRouteImport
+      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+    }
     '/_authenticated/admin/eventos/$id/acesso': {
       id: '/_authenticated/admin/eventos/$id/acesso'
       path: '/acesso'
@@ -445,19 +512,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminEventosIdAcessoRouteImport
       parentRoute: typeof AuthenticatedAdminEventosIdRoute
     }
-    '/_authenticated/admin/eventos/$id/access-engine': {
-      id: '/_authenticated/admin/eventos/$id/access-engine'
-      path: '/access-engine'
-      fullPath: '/admin/eventos/$id/access-engine'
-      preLoaderRoute: typeof AuthenticatedAdminEventosIdAccessEngineRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
-    }
   }
 }
 
 interface AuthenticatedAdminEventosIdRouteChildren {
-  AuthenticatedAdminEventosIdAccessEngineRoute: typeof AuthenticatedAdminEventosIdAccessEngineRoute
   AuthenticatedAdminEventosIdAcessoRoute: typeof AuthenticatedAdminEventosIdAcessoRoute
+  AuthenticatedAdminEventosIdConvitesRoute: typeof AuthenticatedAdminEventosIdConvitesRoute
+  AuthenticatedAdminEventosIdCredenciaisRoute: typeof AuthenticatedAdminEventosIdCredenciaisRoute
+  AuthenticatedAdminEventosIdEditarRoute: typeof AuthenticatedAdminEventosIdEditarRoute
+  AuthenticatedAdminEventosIdEngineRoute: typeof AuthenticatedAdminEventosIdEngineRoute
   AuthenticatedAdminEventosIdEntradaRoute: typeof AuthenticatedAdminEventosIdEntradaRoute
   AuthenticatedAdminEventosIdEspacosRoute: typeof AuthenticatedAdminEventosIdEspacosRoute
   AuthenticatedAdminEventosIdSetoresRoute: typeof AuthenticatedAdminEventosIdSetoresRoute
@@ -465,10 +528,16 @@ interface AuthenticatedAdminEventosIdRouteChildren {
 
 const AuthenticatedAdminEventosIdRouteChildren: AuthenticatedAdminEventosIdRouteChildren =
   {
-    AuthenticatedAdminEventosIdAccessEngineRoute:
-      AuthenticatedAdminEventosIdAccessEngineRoute,
     AuthenticatedAdminEventosIdAcessoRoute:
       AuthenticatedAdminEventosIdAcessoRoute,
+    AuthenticatedAdminEventosIdConvitesRoute:
+      AuthenticatedAdminEventosIdConvitesRoute,
+    AuthenticatedAdminEventosIdCredenciaisRoute:
+      AuthenticatedAdminEventosIdCredenciaisRoute,
+    AuthenticatedAdminEventosIdEditarRoute:
+      AuthenticatedAdminEventosIdEditarRoute,
+    AuthenticatedAdminEventosIdEngineRoute:
+      AuthenticatedAdminEventosIdEngineRoute,
     AuthenticatedAdminEventosIdEntradaRoute:
       AuthenticatedAdminEventosIdEntradaRoute,
     AuthenticatedAdminEventosIdEspacosRoute:
