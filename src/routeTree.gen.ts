@@ -23,6 +23,7 @@ import { Route as AuthenticatedAdminOperacaoRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminExperienciasRouteImport } from './routes/_authenticated/admin.experiencias'
 import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
+import { Route as AuthenticatedAdminEventosNovoRouteImport } from './routes/_authenticated/admin.eventos.novo'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -96,6 +97,12 @@ const AuthenticatedAdminConfiguracoesRoute =
     path: '/configuracoes',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminEventosNovoRoute =
+  AuthenticatedAdminEventosNovoRouteImport.update({
+    id: '/novo',
+    path: '/novo',
+    getParentRoute: () => AuthenticatedAdminEventosRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
@@ -106,10 +113,11 @@ export interface FileRoutesByFullPath {
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
-  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosRouteWithChildren
   '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
   '/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof SiteIndexRoute
@@ -119,10 +127,11 @@ export interface FileRoutesByTo {
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
-  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosRouteWithChildren
   '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
   '/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,10 +145,11 @@ export interface FileRoutesById {
   '/_site/sobre': typeof SiteSobreRoute
   '/_site/': typeof SiteIndexRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
-  '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRouteWithChildren
   '/_authenticated/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
   '/_authenticated/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/admin/experiencias'
     | '/admin/operacao'
     | '/admin/'
+    | '/admin/eventos/novo'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/admin/experiencias'
     | '/admin/operacao'
     | '/admin'
+    | '/admin/eventos/novo'
   id:
     | '__root__'
     | '/_authenticated'
@@ -185,6 +197,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/experiencias'
     | '/_authenticated/admin/operacao'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/eventos/novo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -293,12 +306,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/eventos/novo': {
+      id: '/_authenticated/admin/eventos/novo'
+      path: '/novo'
+      fullPath: '/admin/eventos/novo'
+      preLoaderRoute: typeof AuthenticatedAdminEventosNovoRouteImport
+      parentRoute: typeof AuthenticatedAdminEventosRoute
+    }
   }
 }
 
+interface AuthenticatedAdminEventosRouteChildren {
+  AuthenticatedAdminEventosNovoRoute: typeof AuthenticatedAdminEventosNovoRoute
+}
+
+const AuthenticatedAdminEventosRouteChildren: AuthenticatedAdminEventosRouteChildren =
+  {
+    AuthenticatedAdminEventosNovoRoute: AuthenticatedAdminEventosNovoRoute,
+  }
+
+const AuthenticatedAdminEventosRouteWithChildren =
+  AuthenticatedAdminEventosRoute._addFileChildren(
+    AuthenticatedAdminEventosRouteChildren,
+  )
+
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
-  AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
+  AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRouteWithChildren
   AuthenticatedAdminExperienciasRoute: typeof AuthenticatedAdminExperienciasRoute
   AuthenticatedAdminOperacaoRoute: typeof AuthenticatedAdminOperacaoRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -306,7 +340,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
-  AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
+  AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRouteWithChildren,
   AuthenticatedAdminExperienciasRoute: AuthenticatedAdminExperienciasRoute,
   AuthenticatedAdminOperacaoRoute: AuthenticatedAdminOperacaoRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
