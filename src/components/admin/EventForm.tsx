@@ -76,6 +76,8 @@ export function EventForm({
       long_description: initial?.long_description ?? "",
       instagram_url: initial?.instagram_url ?? "",
       external_ticket_url: initial?.external_ticket_url ?? "",
+      is_featured: initial?.is_featured ?? false,
+      featured_order: initial?.featured_order ?? null,
     },
 
   });
