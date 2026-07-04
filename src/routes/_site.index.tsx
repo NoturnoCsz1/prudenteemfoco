@@ -117,13 +117,15 @@ function HomePage() {
             </Link>
           </div>
 
-          {/* Métricas estruturais */}
-          <dl className="mt-16 grid max-w-3xl grid-cols-2 gap-6 border-t border-border pt-8 md:grid-cols-4">
-            <Metric label="Eventos publicados" value={events.length} />
-            <Metric label="Próximos" value={upcoming.length} />
-            <Metric label="Grandes eventos" value={festivals.length} />
-            <Metric label="Shows e avulsos" value={shows.length} />
-          </dl>
+          {/* Métricas estruturais — só exibidas quando há conteúdo real */}
+          {events.length > 0 && (
+            <dl className="mt-16 grid max-w-3xl grid-cols-2 gap-6 border-t border-border pt-8 md:grid-cols-4">
+              <Metric label="Eventos publicados" value={events.length} />
+              <Metric label="Próximos" value={upcoming.length} />
+              <Metric label="Grandes eventos" value={festivals.length} />
+              <Metric label="Shows e avulsos" value={shows.length} />
+            </dl>
+          )}
         </div>
       </section>
 

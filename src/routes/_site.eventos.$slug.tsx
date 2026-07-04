@@ -205,7 +205,7 @@ function EventDetailPage() {
           <p className="mt-8 font-display text-[11px] uppercase tracking-[0.35em] text-primary">
             Evento oficial · Prudente em Foco
           </p>
-          <h1 className="mt-4 max-w-4xl font-display text-5xl font-black leading-[0.98] tracking-tight md:text-7xl">
+          <h1 className="mt-4 max-w-4xl break-words font-display text-4xl font-black leading-[1] tracking-tight sm:text-5xl md:text-7xl">
             {event.title}
           </h1>
 
