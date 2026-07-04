@@ -99,7 +99,7 @@ function HomePage() {
       )}
 
       {/* EXPERIÊNCIAS */}
-      <Section eyebrow="Experiências" title="Viva o evento de outro jeito.">
+      <Section eyebrow="Experiências" title="Viva o evento de outro jeito." compact>
         <p className="mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
           Camarotes, bistrôs, mesas e áreas especiais nos eventos da Prudente em Foco.
           Solicitação direta na página de cada evento.
