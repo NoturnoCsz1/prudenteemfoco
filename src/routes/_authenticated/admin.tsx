@@ -9,9 +9,6 @@ import { useState } from "react";
 import {
   LayoutDashboard,
   CalendarDays,
-  Sparkles,
-  Activity,
-  Settings,
   Menu,
   X,
   ArrowLeft,
@@ -30,10 +27,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const NAV = [
   { to: "/admin", label: "Visão Geral", icon: LayoutDashboard, exact: true },
   { to: "/admin/eventos", label: "Eventos", icon: CalendarDays },
-  { to: "/admin/experiencias", label: "Experiências", icon: Sparkles },
-  { to: "/admin/operacao", label: "Operação", icon: Activity },
   { to: "/admin/equipe", label: "Equipe", icon: Users },
-  { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ] as const;
 
 function AdminLayout() {
