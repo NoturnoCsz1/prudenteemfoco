@@ -166,13 +166,15 @@ export function SiteHeader() {
         </nav>
 
         <div className="container-page mt-8 flex flex-col gap-4">
-          <Link
-            to="/eventos"
-            onClick={() => setOpen(false)}
-            className="poster text-2xl leading-none text-primary"
-          >
-            VER AGENDA →
-          </Link>
+          {showVerAgenda && (
+            <Link
+              to="/eventos"
+              onClick={() => setOpen(false)}
+              className="poster text-2xl leading-none text-primary"
+            >
+              VER AGENDA →
+            </Link>
+          )}
           {!loading && user ? (
             <Link
               to="/admin"
