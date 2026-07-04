@@ -403,6 +403,123 @@ export type Database = {
           },
         ]
       }
+      event_banners: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          image_url: string
+          is_active: boolean
+          link_url: string | null
+          organization_id: string
+          placement: Database["public"]["Enums"]["event_banner_placement"]
+          sort_order: number
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          image_url: string
+          is_active?: boolean
+          link_url?: string | null
+          organization_id: string
+          placement?: Database["public"]["Enums"]["event_banner_placement"]
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          link_url?: string | null
+          organization_id?: string
+          placement?: Database["public"]["Enums"]["event_banner_placement"]
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_banners_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_banners_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_commercial_links: {
+        Row: {
+          created_at: string
+          destination_url: string
+          event_date: string | null
+          event_id: string
+          id: string
+          is_active: boolean
+          label: string
+          link_type: Database["public"]["Enums"]["event_commercial_link_type"]
+          organization_id: string
+          sort_order: number
+          tracking_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          destination_url: string
+          event_date?: string | null
+          event_id: string
+          id?: string
+          is_active?: boolean
+          label: string
+          link_type?: Database["public"]["Enums"]["event_commercial_link_type"]
+          organization_id: string
+          sort_order?: number
+          tracking_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          destination_url?: string
+          event_date?: string | null
+          event_id?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          link_type?: Database["public"]["Enums"]["event_commercial_link_type"]
+          organization_id?: string
+          sort_order?: number
+          tracking_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_commercial_links_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_commercial_links_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_credentials: {
         Row: {
           access_scope: Json
@@ -447,6 +564,108 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "events"
             referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
+      event_hotsite_settings: {
+        Row: {
+          created_at: string
+          cta_primary_label: string | null
+          cta_primary_url: string | null
+          cta_secondary_label: string | null
+          cta_secondary_url: string | null
+          event_id: string
+          hero_subtitle: string | null
+          hero_title: string | null
+          id: string
+          info_address: string | null
+          info_age_rating: string | null
+          info_faq: Json
+          info_gates_open_at: string | null
+          info_map_url: string | null
+          info_parking: string | null
+          info_rules: string | null
+          organization_id: string
+          show_banners: boolean
+          show_countdown: boolean
+          show_experiences: boolean
+          show_info: boolean
+          show_lineup: boolean
+          show_news: boolean
+          show_sponsors: boolean
+          show_tickets: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_primary_label?: string | null
+          cta_primary_url?: string | null
+          cta_secondary_label?: string | null
+          cta_secondary_url?: string | null
+          event_id: string
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          info_address?: string | null
+          info_age_rating?: string | null
+          info_faq?: Json
+          info_gates_open_at?: string | null
+          info_map_url?: string | null
+          info_parking?: string | null
+          info_rules?: string | null
+          organization_id: string
+          show_banners?: boolean
+          show_countdown?: boolean
+          show_experiences?: boolean
+          show_info?: boolean
+          show_lineup?: boolean
+          show_news?: boolean
+          show_sponsors?: boolean
+          show_tickets?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_primary_label?: string | null
+          cta_primary_url?: string | null
+          cta_secondary_label?: string | null
+          cta_secondary_url?: string | null
+          event_id?: string
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          info_address?: string | null
+          info_age_rating?: string | null
+          info_faq?: Json
+          info_gates_open_at?: string | null
+          info_map_url?: string | null
+          info_parking?: string | null
+          info_rules?: string | null
+          organization_id?: string
+          show_banners?: boolean
+          show_countdown?: boolean
+          show_experiences?: boolean
+          show_info?: boolean
+          show_lineup?: boolean
+          show_news?: boolean
+          show_sponsors?: boolean
+          show_tickets?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_hotsite_settings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_hotsite_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -500,6 +719,72 @@ export type Database = {
           },
         ]
       }
+      event_news: {
+        Row: {
+          content: string | null
+          created_at: string
+          event_id: string
+          excerpt: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean
+          organization_id: string
+          published_at: string | null
+          slug: string
+          sort_order: number
+          status: Database["public"]["Enums"]["event_news_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          event_id: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          organization_id: string
+          published_at?: string | null
+          slug: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["event_news_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          event_id?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          organization_id?: string
+          published_at?: string | null
+          slug?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["event_news_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_news_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_news_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_sectors: {
         Row: {
           capacity: number | null
@@ -547,6 +832,63 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "events"
             referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
+      event_sponsors: {
+        Row: {
+          category: Database["public"]["Enums"]["event_sponsor_category"]
+          created_at: string
+          event_id: string
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          organization_id: string
+          sort_order: number
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["event_sponsor_category"]
+          created_at?: string
+          event_id: string
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          organization_id: string
+          sort_order?: number
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["event_sponsor_category"]
+          created_at?: string
+          event_id?: string
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          organization_id?: string
+          sort_order?: number
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_sponsors_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_sponsors_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -617,6 +959,83 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hotsite_click_events: {
+        Row: {
+          commercial_link_id: string | null
+          created_at: string
+          event_id: string
+          id: string
+          kind: Database["public"]["Enums"]["hotsite_click_kind"]
+          organization_id: string
+          promoter_id: string | null
+          referrer: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          commercial_link_id?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          kind: Database["public"]["Enums"]["hotsite_click_kind"]
+          organization_id: string
+          promoter_id?: string | null
+          referrer?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          commercial_link_id?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["hotsite_click_kind"]
+          organization_id?: string
+          promoter_id?: string | null
+          referrer?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hotsite_click_events_commercial_link_id_fkey"
+            columns: ["commercial_link_id"]
+            isOneToOne: false
+            referencedRelation: "event_commercial_links"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hotsite_click_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hotsite_click_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hotsite_click_events_promoter_id_fkey"
+            columns: ["promoter_id"]
+            isOneToOne: false
+            referencedRelation: "promoters"
             referencedColumns: ["id"]
           },
         ]
@@ -1204,6 +1623,45 @@ export type Database = {
           skipped_count: number
         }[]
       }
+      get_event_hotsite_by_slug: {
+        Args: { _slug: string }
+        Returns: {
+          cta_primary_label: string
+          cta_primary_url: string
+          cta_secondary_label: string
+          cta_secondary_url: string
+          event_id: string
+          hero_subtitle: string
+          hero_title: string
+          info_address: string
+          info_age_rating: string
+          info_faq: Json
+          info_gates_open_at: string
+          info_map_url: string
+          info_parking: string
+          info_rules: string
+          show_banners: boolean
+          show_countdown: boolean
+          show_experiences: boolean
+          show_info: boolean
+          show_lineup: boolean
+          show_news: boolean
+          show_sponsors: boolean
+          show_tickets: boolean
+        }[]
+      }
+      get_event_news_by_slugs: {
+        Args: { _event_slug: string; _news_slug: string }
+        Returns: {
+          content: string
+          excerpt: string
+          id: string
+          image_url: string
+          published_at: string
+          slug: string
+          title: string
+        }[]
+      }
       get_published_event_by_slug: {
         Args: { _slug: string }
         Returns: {
@@ -1266,6 +1724,52 @@ export type Database = {
           notes: string
           performs_on: string
           sort_order: number
+        }[]
+      }
+      list_event_banners_by_slug: {
+        Args: { _slug: string }
+        Returns: {
+          id: string
+          image_url: string
+          link_url: string
+          placement: Database["public"]["Enums"]["event_banner_placement"]
+          sort_order: number
+          title: string
+        }[]
+      }
+      list_event_commercial_links_by_slug: {
+        Args: { _slug: string }
+        Returns: {
+          destination_url: string
+          event_date: string
+          id: string
+          label: string
+          link_type: Database["public"]["Enums"]["event_commercial_link_type"]
+          sort_order: number
+          tracking_enabled: boolean
+        }[]
+      }
+      list_event_news_by_slug: {
+        Args: { _limit?: number; _slug: string }
+        Returns: {
+          excerpt: string
+          id: string
+          image_url: string
+          is_featured: boolean
+          published_at: string
+          slug: string
+          title: string
+        }[]
+      }
+      list_event_sponsors_by_slug: {
+        Args: { _slug: string }
+        Returns: {
+          category: Database["public"]["Enums"]["event_sponsor_category"]
+          id: string
+          logo_url: string
+          name: string
+          sort_order: number
+          website_url: string
         }[]
       }
       list_published_events: {
@@ -1398,6 +1902,21 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      track_hotsite_event: {
+        Args: {
+          _commercial_link_id?: string
+          _event_slug: string
+          _kind: Database["public"]["Enums"]["hotsite_click_kind"]
+          _promoter_code?: string
+          _referrer?: string
+          _utm_campaign?: string
+          _utm_content?: string
+          _utm_medium?: string
+          _utm_source?: string
+          _utm_term?: string
+        }
+        Returns: string
+      }
       track_public_lead: {
         Args: {
           _contact?: string
@@ -1433,14 +1952,41 @@ export type Database = {
         | "supplier"
         | "press"
       credential_status: "active" | "inactive"
+      event_banner_placement:
+        | "below_hero"
+        | "between_lineup_tickets"
+        | "before_experiences"
+        | "before_footer"
+      event_commercial_link_type:
+        | "ticket"
+        | "passport"
+        | "sector"
+        | "external_space"
+        | "other"
       event_format: "recurring" | "one_off"
       event_kind: "festival" | "show" | "special_event" | "other"
+      event_news_status: "draft" | "published"
+      event_sponsor_category:
+        | "master"
+        | "sponsor"
+        | "supporter"
+        | "partner"
+        | "realization"
+        | "production"
+        | "media"
       event_status:
         | "draft"
         | "scheduled"
         | "published"
         | "cancelled"
         | "archived"
+      hotsite_click_kind:
+        | "page_view"
+        | "cta_primary"
+        | "cta_secondary"
+        | "commercial_link"
+        | "reservation_intent"
+        | "other"
       invite_status: "active" | "revoked" | "used" | "expired"
       invite_type:
         | "guest"
@@ -1627,14 +2173,45 @@ export const Constants = {
         "press",
       ],
       credential_status: ["active", "inactive"],
+      event_banner_placement: [
+        "below_hero",
+        "between_lineup_tickets",
+        "before_experiences",
+        "before_footer",
+      ],
+      event_commercial_link_type: [
+        "ticket",
+        "passport",
+        "sector",
+        "external_space",
+        "other",
+      ],
       event_format: ["recurring", "one_off"],
       event_kind: ["festival", "show", "special_event", "other"],
+      event_news_status: ["draft", "published"],
+      event_sponsor_category: [
+        "master",
+        "sponsor",
+        "supporter",
+        "partner",
+        "realization",
+        "production",
+        "media",
+      ],
       event_status: [
         "draft",
         "scheduled",
         "published",
         "cancelled",
         "archived",
+      ],
+      hotsite_click_kind: [
+        "page_view",
+        "cta_primary",
+        "cta_secondary",
+        "commercial_link",
+        "reservation_intent",
+        "other",
       ],
       invite_status: ["active", "revoked", "used", "expired"],
       invite_type: [
