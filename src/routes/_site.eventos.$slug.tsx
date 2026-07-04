@@ -385,6 +385,8 @@ function EventDetailPage() {
         </div>
       </section>
 
+      {showBanners && <BannersSlot slug={slug} placement="below_hero" />}
+
       {event.long_description && (
         <section className="border-y border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
           <div className="container-page py-16 md:py-24">
@@ -395,14 +397,35 @@ function EventDetailPage() {
         </section>
       )}
 
-      {/* LINE-UP */}
-      <LineupSection slug={slug} />
+      {showCountdown && event.starts_at && (
+        <CountdownBlock startsAt={event.starts_at} />
+      )}
 
-      <div id="reservas" />
-      <SpacesSection slug={slug} promoterCode={promoter ?? null} />
+      {showLineup && <LineupSection slug={slug} />}
+
+      {showBanners && <BannersSlot slug={slug} placement="between_lineup_tickets" />}
+
+      {showTickets && (
+        <CommercialLinksSection slug={slug} promoter={promoter ?? null} utms={utms} />
+      )}
+
+      {showBanners && <BannersSlot slug={slug} placement="before_experiences" />}
+
+      {showExperiences && (
+        <>
+          <div id="reservas" />
+          <SpacesSection slug={slug} promoterCode={promoter ?? null} />
+        </>
+      )}
+
+      {showSponsors && <SponsorsSection slug={slug} />}
+      {showNews && <NewsSection slug={slug} />}
+      {showInfo && <InfoSection hotsite={hotsite ?? null} event={event} />}
+      {showBanners && <BannersSlot slug={slug} placement="before_footer" />}
     </article>
   );
 }
+
 
 
 function SectionEyebrow({
