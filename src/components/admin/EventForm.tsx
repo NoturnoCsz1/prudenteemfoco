@@ -61,7 +61,11 @@ export function EventForm({
       city: initial?.city ?? "",
       short_description: initial?.short_description ?? "",
       cover_image_url: initial?.cover_image_url ?? "",
+      long_description: initial?.long_description ?? "",
+      instagram_url: initial?.instagram_url ?? "",
+      external_ticket_url: initial?.external_ticket_url ?? "",
     },
+
   });
 
   const titleValue = form.watch("title");
