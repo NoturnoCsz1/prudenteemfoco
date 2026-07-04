@@ -250,12 +250,6 @@ function InstitutionalHero({ cms }: { cms: SiteHome | null }) {
     </section>
   );
 }
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* =============================== PRÓXIMOS ============================== */
 
