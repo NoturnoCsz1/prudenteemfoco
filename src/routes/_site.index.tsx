@@ -215,7 +215,7 @@ function InstitutionalHero() {
             "radial-gradient(70% 60% at 15% 100%, color-mix(in oklab, var(--primary) 18%, transparent) 0%, transparent 60%)",
         }}
       />
-      <div className="container-page flex min-h-[80vh] flex-col justify-end pb-20 pt-32 md:pb-32 md:pt-40">
+      <div className="container-page flex min-h-[68vh] flex-col justify-end pb-16 pt-24 md:min-h-[80vh] md:pb-32 md:pt-40">
         <p className="eyebrow-label text-primary">Prudente em Foco</p>
         <h1 className="mt-6 display-xl text-foreground">
           Onde a cidade
