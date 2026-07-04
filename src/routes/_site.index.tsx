@@ -278,15 +278,17 @@ function Section({
   title,
   children,
   dark = false,
+  compact = false,
 }: {
   eyebrow: string;
   title: string;
   children: React.ReactNode;
   dark?: boolean;
+  compact?: boolean;
 }) {
   return (
     <section className={dark ? "bg-surface/30" : ""}>
-      <div className="container-page py-20 md:py-32">
+      <div className={compact ? "container-page py-14 md:py-22" : "container-page py-20 md:py-32"}>
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">{eyebrow}</p>
           <h2 className="mt-4 section-title text-foreground">{title}</h2>
