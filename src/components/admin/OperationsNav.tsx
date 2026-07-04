@@ -71,7 +71,7 @@ export function OperationsNav({
         </Link>
         <LogoPF size={26} showWordmark />
       </div>
-      <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+      <h1 className="mt-3 break-words font-display text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-3xl md:text-4xl">
         {eventTitle ?? "Operação do evento"}
       </h1>
       <p className="eyebrow mt-1.5 text-primary">Centro de Controle</p>
