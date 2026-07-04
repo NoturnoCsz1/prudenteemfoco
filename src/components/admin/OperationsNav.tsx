@@ -13,6 +13,7 @@ import {
   Ticket,
   UserPlus,
 } from "lucide-react";
+import { LogoPF } from "@/components/brand/LogoPF";
 
 export type OperationsTab =
   | "overview"
