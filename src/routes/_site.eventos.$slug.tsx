@@ -406,6 +406,15 @@ function formatDayLabel(iso: string): { day: string; month: string; weekday: str
 function LineupSection({ slug }: { slug: string }) {
   const q = useQuery(attractionsQueryOptions(slug));
   const items = q.data ?? [];
+  const groups = groupByDay(items);
+  const [activeDay, setActiveDay] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (groups.length && activeDay === null) {
+      setActiveDay(groups[0].day);
+    }
+  }, [groups, activeDay]);
+
   if (q.isLoading) {
     return (
       <section className="border-b border-border">
@@ -416,7 +425,11 @@ function LineupSection({ slug }: { slug: string }) {
     );
   }
   if (items.length === 0) return null;
-  const groups = groupByDay(items);
+
+  const hasMultipleDays = groups.length > 1;
+  const focusedGroup =
+    groups.find((g) => g.day === activeDay) ?? groups[0];
+
   return (
     <section className="border-b border-border">
       <div className="container-page py-14 md:py-20">
@@ -426,49 +439,57 @@ function LineupSection({ slug }: { slug: string }) {
         <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
           Programação por dia
         </h2>
-        <div className="mt-8 space-y-8 md:space-y-10">
-          {groups.map(({ day, items: dayItems }) => (
-            <div
-              key={day ?? "sem-data"}
-              className="grid gap-5 md:grid-cols-[auto,1fr] md:gap-8"
-            >
-              <div className="md:min-w-[7rem]">
-                {day ? (
-                  (() => {
-                    const l = formatDayLabel(day);
-                    return (
-                      <div className="inline-flex items-baseline gap-2 rounded-xl border border-border-strong bg-surface/60 px-4 py-3 md:flex-col md:items-center md:gap-0 md:px-5 md:py-4">
-                        <span className="font-display text-4xl font-black leading-none tracking-tight md:text-5xl">
-                          {l.day}
-                        </span>
-                        <span className="font-display text-xs uppercase tracking-[0.25em] text-primary md:mt-1">
-                          {l.month}
-                        </span>
-                        <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground md:mt-0.5">
-                          {l.weekday}
-                        </span>
-                      </div>
-                    );
-                  })()
-                ) : (
-                  <div className="inline-flex rounded-xl border border-dashed border-border-strong bg-surface/40 px-4 py-3 text-xs uppercase tracking-[0.25em] text-muted-foreground">
-                    Data a definir
-                  </div>
-                )}
-              </div>
-              <ul className="grid gap-2 self-center sm:grid-cols-2">
-                {dayItems.map((a) => (
-                  <li
-                    key={a.id}
-                    className="rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium"
-                  >
-                    {a.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
+
+        {/* Mobile: chips de dia + um dia em foco */}
+        {hasMultipleDays && (
+          <div className="mt-6 -mx-5 flex gap-2 overflow-x-auto px-5 pb-2 md:hidden">
+            {groups.map(({ day }) => {
+              const label = day ? formatDayLabel(day) : null;
+              const active = day === focusedGroup.day;
+              return (
+                <button
+                  key={day ?? "sem-data"}
+                  type="button"
+                  onClick={() => setActiveDay(day)}
+                  className={`inline-flex shrink-0 items-baseline gap-2 rounded-full border px-4 py-2 text-xs uppercase tracking-[0.2em] transition-colors ${
+                    active
+                      ? "border-primary/60 bg-primary/15 text-foreground"
+                      : "border-border-strong bg-surface/60 text-muted-foreground"
+                  }`}
+                >
+                  {label ? (
+                    <>
+                      <span className="font-display text-base font-black tabular-nums text-foreground">
+                        {label.day}
+                      </span>
+                      <span className="font-display text-[10px] font-semibold text-primary">
+                        {label.month}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {label.weekday}
+                      </span>
+                    </>
+                  ) : (
+                    <span>A definir</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Mobile: dia em foco */}
+        <div className="mt-6 md:hidden">
+          <DayBlock group={focusedGroup} />
+        </div>
+
+        {/* Desktop: composição editorial completa */}
+        <div className="mt-8 hidden space-y-10 md:block">
+          {groups.map((g) => (
+            <DayBlock key={g.day ?? "sem-data"} group={g} />
           ))}
         </div>
+
         <p className="mt-8 text-xs text-muted-foreground">
           Horários e ordem de apresentação serão divulgados pela produção próximo ao evento.
         </p>
@@ -476,6 +497,52 @@ function LineupSection({ slug }: { slug: string }) {
     </section>
   );
 }
+
+function DayBlock({
+  group,
+}: {
+  group: { day: string | null; items: PublicAttraction[] };
+}) {
+  return (
+    <div className="grid gap-5 md:grid-cols-[auto,1fr] md:gap-8">
+      <div className="md:min-w-[7rem]">
+        {group.day ? (
+          (() => {
+            const l = formatDayLabel(group.day);
+            return (
+              <div className="inline-flex items-baseline gap-2 rounded-xl border border-border-strong bg-surface/60 px-4 py-3 md:flex-col md:items-center md:gap-0 md:px-5 md:py-4">
+                <span className="font-display text-4xl font-black leading-none tracking-tight md:text-5xl">
+                  {l.day}
+                </span>
+                <span className="font-display text-xs uppercase tracking-[0.25em] text-primary md:mt-1">
+                  {l.month}
+                </span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground md:mt-0.5">
+                  {l.weekday}
+                </span>
+              </div>
+            );
+          })()
+        ) : (
+          <div className="inline-flex rounded-xl border border-dashed border-border-strong bg-surface/40 px-4 py-3 text-xs uppercase tracking-[0.25em] text-muted-foreground">
+            Data a definir
+          </div>
+        )}
+      </div>
+      <ul className="grid gap-2 self-center sm:grid-cols-2">
+        {group.items.map((a) => (
+          <li
+            key={a.id}
+            className="rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium transition-colors hover:border-primary/40"
+          >
+            {a.name}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 
 
 function SpacesSection({
