@@ -16,6 +16,7 @@ import {
   type EventStatus,
 } from "@/lib/events";
 import { useOrgMembership } from "@/hooks/use-org-membership";
+import { CoverUpload } from "./CoverUpload";
 
 export type EventFormRecord = {
   id?: string;
@@ -231,18 +232,41 @@ export function EventForm({
         />
       </Field>
 
-      <Field
-        label="URL da capa (https://)"
-        error={errors.cover_image_url?.message}
-        hint="Storage próprio será adicionado em subfase 2.1."
-      >
-        <input
-          type="url"
-          {...form.register("cover_image_url")}
-          className="input"
-          placeholder="https://..."
+      {mode === "edit" && initial?.id && membership ? (
+        <CoverUpload
+          organizationId={membership.organization_id}
+          eventId={initial.id}
+          value={form.watch("cover_image_url") ?? null}
+          onChange={(url) =>
+            form.setValue("cover_image_url", url ?? "", { shouldValidate: true, shouldDirty: true })
+          }
+          onAudit={async (action, metadata) => {
+            const { data: userRes } = await supabase.auth.getUser();
+            if (!userRes.user) return;
+            await supabase.rpc("record_audit_event", {
+              _organization_id: membership.organization_id,
+              _actor_user_id: userRes.user.id,
+              _action: action,
+              _entity_type: "event",
+              _entity_id: initial.id!,
+              _metadata: metadata as unknown as import("@/integrations/supabase/types").Json,
+            });
+          }}
         />
-      </Field>
+      ) : (
+        <Field
+          label="URL da capa (https://)"
+          error={errors.cover_image_url?.message}
+          hint="Salve o evento primeiro para enviar uma capa pelo storage seguro."
+        >
+          <input
+            type="url"
+            {...form.register("cover_image_url")}
+            className="input"
+            placeholder="https://..."
+          />
+        </Field>
+      )}
 
       <Field label="Status" error={errors.status?.message}>
         <select {...form.register("status")} className="input">

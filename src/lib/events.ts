@@ -77,7 +77,7 @@ export const eventFormSchema = z
     cover_image_url: z
       .string()
       .trim()
-      .max(600, "URL muito longa.")
+      .max(2000, "URL muito longa.")
       .optional()
       .transform((v) => (v && v.length ? v : null))
       .refine(

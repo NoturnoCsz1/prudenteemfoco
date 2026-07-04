@@ -182,3 +182,32 @@ Ações logadas: `event.create`, `event.update`, `event.status_change`, `event.a
 - Storage de capas (fica para 2.1) — hoje é apenas URL https validada por Zod.
 - Nenhum endpoint público expõe rascunhos.
 - Service role e secrets permanecem exclusivamente server-side.
+
+---
+
+## Fase 2.1 (delta)
+
+### Projeção pública separada da tabela administrativa
+- `REVOKE SELECT ON public.events FROM anon` — `anon` não consulta mais a tabela administrativa.
+- Policy `events_select_public_published` removida.
+- Duas RPCs `SECURITY DEFINER` `search_path=public` fornecem projeção pública, retornando apenas colunas seguras e `status='published'`:
+  - `public.list_published_events()`
+  - `public.get_published_event_by_slug(_slug text)`
+- `EXECUTE` revogado de `PUBLIC` e concedido a `anon, authenticated`.
+
+### Storage — bucket `event-covers`
+- Bucket **privado** (workspace bloqueia buckets públicos). Consumo público via URL assinada de longa duração.
+- Path: `{organization_id}/{event_id}/{uuid}.{jpg|png|webp}`.
+- Policies em `storage.objects`, todas escopadas a `bucket_id='event-covers'`:
+  - SELECT: `authenticated` + `can_manage_event_cover(name)`.
+  - INSERT: `authenticated` + `owner = auth.uid()` + `can_manage_event_cover(name)`.
+  - UPDATE/DELETE: `authenticated` + `can_manage_event_cover(name)`.
+- Helper `public.can_manage_event_cover(_path text)` (`SECURITY DEFINER`, `search_path=public`, `EXECUTE` restrito a `authenticated`) delega para `has_org_role_at_least(..., 'manager')`. Portanto `owner`/`admin`/`manager` podem gravar; `operator`/`viewer`/`anon` não.
+
+### Novos eventos de auditoria
+`event.cover_uploaded`, `event.cover_replaced`, `event.cover_removed`. Metadata mínima `{ storage_path }`.
+
+### Riscos residuais aceitos
+- URLs assinadas TTL 100 anos: quebram se a chave de assinatura do Supabase for rotacionada. Migrar para `getPublicUrl` quando buckets públicos forem liberados no workspace.
+- Restrições de MIME/tamanho no bucket não puderam ser aplicadas (`UPDATE storage.buckets` bloqueado); validação vive no cliente.
+- Possíveis arquivos órfãos ao trocar capa sem salvar o form. Sem garbage collection nesta fase.

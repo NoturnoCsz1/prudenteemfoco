@@ -65,7 +65,7 @@ function EventosPage() {
         ) : (
           <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {events.map((ev) => (
-              <EventCard key={ev.id} event={ev} />
+              <EventCard key={ev.slug} event={ev} />
             ))}
           </ul>
         )}

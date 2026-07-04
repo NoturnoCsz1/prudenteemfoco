@@ -5,8 +5,8 @@ import type { Database } from "@/integrations/supabase/types";
 
 /**
  * Cliente Supabase server-only com chave publishable (anon).
- * Usado exclusivamente para leituras públicas — RLS aplica como anon,
- * portanto só retorna linhas permitidas por policies TO anon.
+ * Usado exclusivamente para chamadas de RPC públicas — nenhum SELECT
+ * direto na tabela administrativa `public.events`.
  */
 function serverPublicClient() {
   return createClient<Database>(
@@ -22,14 +22,9 @@ function serverPublicClient() {
   );
 }
 
-const PUBLIC_COLUMNS =
-  "id, title, slug, status, starts_at, ends_at, venue_name, city, short_description, cover_image_url" as const;
-
 export type PublicEvent = {
-  id: string;
   title: string;
   slug: string;
-  status: "published";
   starts_at: string | null;
   ends_at: string | null;
   venue_name: string | null;
@@ -38,16 +33,11 @@ export type PublicEvent = {
   cover_image_url: string | null;
 };
 
-/** Lista eventos publicados. Chamada por loaders/páginas públicas. */
+/** Lista eventos publicados via RPC pública (`public.list_published_events`). */
 export const listPublishedEvents = createServerFn({ method: "GET" }).handler(
   async (): Promise<PublicEvent[]> => {
     const supabase = serverPublicClient();
-    const { data, error } = await supabase
-      .from("events")
-      .select(PUBLIC_COLUMNS)
-      .eq("status", "published")
-      .order("starts_at", { ascending: true, nullsFirst: false });
-
+    const { data, error } = await supabase.rpc("list_published_events");
     if (error) {
       console.error("[listPublishedEvents]", error);
       return [];
@@ -56,23 +46,21 @@ export const listPublishedEvents = createServerFn({ method: "GET" }).handler(
   },
 );
 
-/** Busca um evento publicado por slug. Retorna null se não existir/não publicado. */
+/** Busca evento publicado por slug via RPC pública. */
 export const getPublishedEventBySlug = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) =>
     z.object({ slug: z.string().min(1).max(200) }).parse(data),
   )
   .handler(async ({ data }): Promise<PublicEvent | null> => {
     const supabase = serverPublicClient();
-    const { data: row, error } = await supabase
-      .from("events")
-      .select(PUBLIC_COLUMNS)
-      .eq("status", "published")
-      .eq("slug", data.slug)
-      .maybeSingle();
-
+    const { data: rows, error } = await supabase.rpc(
+      "get_published_event_by_slug",
+      { _slug: data.slug },
+    );
     if (error) {
       console.error("[getPublishedEventBySlug]", error);
       return null;
     }
-    return (row as PublicEvent | null) ?? null;
+    const row = (rows ?? [])[0];
+    return (row as PublicEvent | undefined) ?? null;
   });

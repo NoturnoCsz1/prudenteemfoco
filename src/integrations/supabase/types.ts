@@ -220,6 +220,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_event_cover: { Args: { _path: string }; Returns: boolean }
       claim_first_owner: { Args: { _org_slug: string }; Returns: string }
       current_user_org: {
         Args: never
@@ -227,6 +228,19 @@ export type Database = {
           organization_id: string
           role: Database["public"]["Enums"]["member_role"]
           status: Database["public"]["Enums"]["member_status"]
+        }[]
+      }
+      get_published_event_by_slug: {
+        Args: { _slug: string }
+        Returns: {
+          city: string
+          cover_image_url: string
+          ends_at: string
+          short_description: string
+          slug: string
+          starts_at: string
+          title: string
+          venue_name: string
         }[]
       }
       has_org_role_at_least: {
@@ -240,6 +254,19 @@ export type Database = {
       is_active_org_member: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
+      }
+      list_published_events: {
+        Args: never
+        Returns: {
+          city: string
+          cover_image_url: string
+          ends_at: string
+          short_description: string
+          slug: string
+          starts_at: string
+          title: string
+          venue_name: string
+        }[]
       }
       record_audit_event: {
         Args: {

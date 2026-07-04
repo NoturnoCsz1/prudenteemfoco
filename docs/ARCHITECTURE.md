@@ -125,3 +125,11 @@ Apenas o stack já presente no template:
 - `OrgGate` (`src/components/admin/OrgGate.tsx`) adiciona segunda camada no admin: sessão + membership ativa. Sem membership → "Acesso em análise" com ação de reivindicação de owner.
 - Formulário de evento com React Hook Form + Zod. Auditoria em todas as mutações via `record_audit_event`.
 - Detalhe: ver `docs/PHASE_2_EVENTS.md`.
+
+## Fase 2.1 (delta)
+
+- Leitura pública de eventos deixa de vir de `SELECT` direto na tabela administrativa e passa a vir de duas RPCs `SECURITY DEFINER` (`list_published_events`, `get_published_event_by_slug`).
+- `anon` não tem mais `SELECT` em `public.events`.
+- Novo bucket privado `event-covers` para capas, com paths `{org_id}/{event_id}/{uuid}.{ext}`, RLS por role via helper `can_manage_event_cover`.
+- Capas consumidas via URL assinada (bucket privado por política do workspace).
+- Ver `docs/PHASE_2_1_PUBLIC_PROJECTION_STORAGE.md`.
