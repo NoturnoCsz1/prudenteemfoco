@@ -45,13 +45,22 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="hidden md:block">
-          <Link
-            to="/contato"
-            className="inline-flex items-center rounded-md border border-border-strong px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Fale conosco
-          </Link>
+        <div className="hidden items-center gap-2 md:flex">
+          {!loading && user ? (
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border-strong px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              <ShieldCheck className="h-4 w-4" /> Admin
+            </Link>
+          ) : (
+            <Link
+              to="/auth"
+              className="inline-flex items-center rounded-md border border-border-strong px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              Entrar
+            </Link>
+          )}
         </div>
 
         <button
