@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_site/contato")({
 function ContatoPage() {
   return (
     <>
-      <section className="container-page pt-16 pb-8 md:pt-28 md:pb-16">
+      <section className="container-page pt-24 pb-10 md:pt-32 md:pb-16">
         <p className="eyebrow-label text-primary">Contato</p>
         <h1 className="poster mt-6 text-[clamp(3.5rem,14vw,9rem)] leading-[0.86] text-foreground">
           FALE
@@ -31,9 +31,9 @@ function ContatoPage() {
           <br />
           <span className="text-primary">GENTE.</span>
         </h1>
-        <p className="mt-8 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-          Para público, imprensa, parcerias ou produção — escreva no canal
-          oficial abaixo. Respondemos por ordem de chegada.
+        <p className="mt-8 max-w-xl font-display text-lg leading-snug text-foreground/85 md:text-2xl">
+          Público, imprensa, parcerias ou produção — respondemos por ordem de
+          chegada no canal oficial abaixo.
         </p>
       </section>
 

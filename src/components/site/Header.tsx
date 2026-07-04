@@ -107,9 +107,18 @@ export function SiteHeader() {
           aria-label={open ? "Fechar menu" : "Abrir menu"}
           aria-expanded={open}
           onClick={() => setOpen(!open)}
-          className="inline-flex h-10 w-10 items-center justify-center text-foreground md:hidden"
+          className="relative inline-flex h-10 w-10 items-center justify-center text-foreground md:hidden"
         >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <Menu
+            className={`absolute h-6 w-6 transition-all duration-200 motion-reduce:transition-none ${
+              open ? "rotate-90 scale-75 opacity-0" : "rotate-0 scale-100 opacity-100"
+            }`}
+          />
+          <X
+            className={`absolute h-6 w-6 transition-all duration-200 motion-reduce:transition-none ${
+              open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-75 opacity-0"
+            }`}
+          />
         </button>
       </div>
 
@@ -130,7 +139,12 @@ export function SiteHeader() {
                 key={item.to}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className="group flex items-start gap-4 border-b border-foreground/10 py-5"
+                style={{
+                  transitionDelay: open ? `${80 + i * 55}ms` : "0ms",
+                }}
+                className={`group flex items-start gap-4 border-b border-foreground/10 py-5 transition-all duration-300 motion-reduce:transition-none ${
+                  open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+                }`}
               >
                 <span className="eyebrow-label mt-2 w-7 shrink-0 text-primary">
                   {String(i + 1).padStart(2, "0")}
