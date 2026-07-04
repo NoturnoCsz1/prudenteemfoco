@@ -22,6 +22,7 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/_site/eventos/$slug")({
+  validateSearch: (s) => searchSchema.parse(s),
   loader: async ({ context, params }) => {
     const event = await context.queryClient.ensureQueryData(
       eventQueryOptions(params.slug),
