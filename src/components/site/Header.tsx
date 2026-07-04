@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X, ShieldCheck } from "lucide-react";
 import { useSession } from "@/hooks/use-session";
 
@@ -7,28 +7,52 @@ const NAV = [
   { to: "/", label: "Início" },
   { to: "/eventos", label: "Eventos" },
   { to: "/experiencias", label: "Experiências" },
-  { to: "/sobre", label: "Sobre" },
+  { to: "/sobre", label: "Nossa História" },
   { to: "/contato", label: "Contato" },
 ] as const;
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { user, loading } = useSession();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Rotas com hero cinematográfico: header transparente sobre o hero
+  const hasHero =
+    pathname === "/" || /^\/eventos\/[^/]+$/.test(pathname);
+  const transparent = hasHero && !scrolled && !open;
+
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
-      <div className="container-page flex h-16 items-center justify-between">
-        <Link to="/" className="group flex items-center gap-2" onClick={() => setOpen(false)}>
+    <header
+      className={`sticky top-0 z-40 transition-colors duration-300 ${
+        transparent
+          ? "border-b border-transparent bg-transparent"
+          : "border-b border-border bg-background/85 backdrop-blur-md"
+      }`}
+    >
+      <div className="container-page flex h-14 items-center justify-between md:h-16">
+        <Link
+          to="/"
+          className="group flex items-center gap-2"
+          onClick={() => setOpen(false)}
+        >
           <span className="inline-block h-2 w-2 rounded-full bg-primary shadow-[0_0_16px_var(--primary)]" />
-          <span className="font-display text-base font-semibold tracking-tight text-foreground">
+          <span className="font-display text-sm font-semibold tracking-tight text-foreground md:text-base">
             Prudente em Foco
           </span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
           {NAV.map((item) => {
-            const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
+            const active =
+              item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
             return (
               <Link
                 key={item.to}
@@ -68,7 +92,7 @@ export function SiteHeader() {
           aria-label={open ? "Fechar menu" : "Abrir menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border-strong text-foreground md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border-strong bg-background/60 text-foreground backdrop-blur md:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -78,7 +102,8 @@ export function SiteHeader() {
         <div className="border-t border-border bg-background md:hidden">
           <nav className="container-page flex flex-col py-3">
             {NAV.map((item) => {
-              const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
+              const active =
+                item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
               return (
                 <Link
                   key={item.to}
