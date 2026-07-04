@@ -19,8 +19,18 @@ import {
 import {
   getPublishedEventBySlug,
   listEventAttractionsBySlug,
+  getHotsiteBySlug,
+  listSponsorsBySlug,
+  listBannersBySlug,
+  listNewsBySlug,
+  listCommercialLinksBySlug,
   type PublicEvent,
   type PublicAttraction,
+  type PublicHotsiteSettings,
+  type PublicSponsor,
+  type PublicBanner,
+  type PublicNewsItem,
+  type PublicCommercialLink,
 } from "@/lib/events.functions";
 import {
   listAvailableSpaceTypes,
@@ -28,6 +38,7 @@ import {
   type PublicSpaceType,
 } from "@/lib/reservations.functions";
 import { formatEventDateRange, formatEventDateEditorial, normalizeCoverUrl } from "@/lib/events";
+import { SPONSOR_CATEGORY_LABEL, SPONSOR_CATEGORIES } from "@/lib/hotsite";
 
 import { supabase } from "@/integrations/supabase/client";
 import {
