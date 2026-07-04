@@ -38,14 +38,14 @@ const PILLARS = [
 function ExperienciasPage() {
   return (
     <>
-      <section className="container-page pt-24 pb-10 md:pt-32 md:pb-16">
+      <section className="container-page pt-20 pb-8 md:pt-32 md:pb-16">
         <p className="eyebrow-label text-primary">Experiências</p>
-        <h1 className="poster mt-6 text-[clamp(3rem,12vw,8rem)] leading-[0.86] text-foreground">
+        <h1 className="poster mt-5 text-[clamp(2.8rem,12vw,8rem)] leading-[0.88] text-foreground md:mt-6">
           ALÉM
           <br />
           DO PALCO.
         </h1>
-        <p className="mt-8 max-w-xl font-display text-lg leading-snug text-foreground/85 md:text-2xl">
+        <p className="mt-6 max-w-xl font-display text-base leading-snug text-foreground/85 md:mt-8 md:text-2xl">
           Formas curadas de viver os eventos da Prudente em Foco — antes,
           durante e depois do palco.
         </p>
@@ -55,14 +55,14 @@ function ExperienciasPage() {
         <div className="rule-line" />
       </div>
 
-      <section className="container-page py-14 md:py-24">
-        <div className="grid gap-10 md:grid-cols-3 md:gap-14">
+      <section className="container-page py-12 md:py-24">
+        <div className="grid gap-8 md:grid-cols-3 md:gap-14">
           {PILLARS.map((p, i) => (
             <div key={p.label} className="flex flex-col gap-3">
               <span className="font-mono text-xs text-primary">
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <h2 className="font-display text-2xl font-semibold leading-tight text-foreground md:text-3xl">
+              <h2 className="font-display text-xl font-semibold leading-tight text-foreground md:text-3xl">
                 {p.label}
               </h2>
               <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
@@ -77,11 +77,11 @@ function ExperienciasPage() {
         <div className="rule-line" />
       </div>
 
-      <section className="container-page py-14 md:py-24">
-        <div className="grid gap-8 md:grid-cols-12 md:items-end md:gap-12">
+      <section className="container-page py-12 md:py-24">
+        <div className="grid gap-6 md:grid-cols-12 md:items-end md:gap-12">
           <div className="md:col-span-8">
             <p className="eyebrow-label text-muted-foreground">Como reservar</p>
-            <h2 className="mt-4 font-display text-2xl font-semibold leading-tight text-foreground md:text-4xl">
+            <h2 className="mt-4 font-display text-xl font-semibold leading-tight text-foreground md:text-4xl">
               Cada evento tem sua própria página com espaços disponíveis e
               solicitação direta.
             </h2>
@@ -96,6 +96,7 @@ function ExperienciasPage() {
           </div>
         </div>
       </section>
+
     </>
   );
 }
