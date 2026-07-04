@@ -166,19 +166,19 @@ function PosterHero({ event }: { event: PublicEvent }) {
           }}
         />
       </div>
-      <div className="container-page flex min-h-[92vh] flex-col justify-end pb-16 pt-32 md:min-h-[100vh] md:pb-24 md:pt-40">
+      <div className="container-page flex min-h-[78vh] flex-col justify-end pb-14 pt-24 md:min-h-[100vh] md:pb-24 md:pt-40">
         <p className="eyebrow-label text-primary">
           Em cartaz · Prudente em Foco
         </p>
         <h1 className="mt-6 display-xl text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)]">
           {event.title}
         </h1>
-        <div className="mt-8 flex flex-wrap items-baseline gap-x-8 gap-y-3">
-          <p className="date-block text-3xl text-foreground md:text-5xl">
+        <div className="mt-6 flex flex-col gap-3 md:mt-8 md:flex-row md:flex-wrap md:items-baseline md:gap-x-8 md:gap-y-3">
+          <p className="date-block text-[2rem] text-foreground md:text-5xl">
             {formatEventDateEditorial(event.starts_at, event.ends_at)}
           </p>
           {(event.venue_name || event.city) && (
-            <p className="flex items-center gap-1.5 font-display text-sm font-semibold uppercase tracking-[0.28em] text-foreground/85 md:text-base">
+            <p className="flex items-center gap-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/85 md:text-base">
               <MapPin className="h-4 w-4" />
               {[event.venue_name, event.city].filter(Boolean).join(" · ")}
             </p>
