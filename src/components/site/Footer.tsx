@@ -14,7 +14,7 @@ export function SiteFooter() {
       <div className="container-page py-16 md:py-24">
         <div className="grid gap-14 md:grid-cols-12 md:gap-10">
           <div className="md:col-span-7">
-            <h2 className="poster text-[clamp(3rem,10vw,7rem)] leading-[0.85] text-foreground">
+            <h2 className="poster text-[clamp(2.2rem,10vw,7rem)] leading-[0.85] text-foreground">
               PRUDENTE
               <br />
               <span className="text-primary">EM FOCO</span>

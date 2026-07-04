@@ -23,13 +23,18 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll when menu is open
+  // Lock body scroll + ESC-to-close while menu is open
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
     };
   }, [open]);
 
@@ -101,7 +106,7 @@ export function SiteHeader() {
           type="button"
           aria-label={open ? "Fechar menu" : "Abrir menu"}
           aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setOpen(!open)}
           className="inline-flex h-10 w-10 items-center justify-center text-foreground md:hidden"
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -110,7 +115,7 @@ export function SiteHeader() {
 
       {/* Full-viewport editorial mobile menu */}
       <div
-        className={`fixed inset-0 top-14 z-30 overflow-y-auto bg-background md:hidden ${
+        className={`fixed inset-x-0 bottom-0 top-14 z-50 overflow-y-auto overscroll-contain bg-background md:hidden ${
           open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         } transition-opacity duration-200 motion-reduce:transition-none`}
         aria-hidden={!open}

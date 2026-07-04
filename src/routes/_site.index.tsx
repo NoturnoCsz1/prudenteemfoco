@@ -99,7 +99,7 @@ function HomePage() {
       )}
 
       {/* EXPERIÊNCIAS */}
-      <Section eyebrow="Experiências" title="Viva o evento de outro jeito.">
+      <Section eyebrow="Experiências" title="Viva o evento de outro jeito." compact>
         <p className="mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
           Camarotes, bistrôs, mesas e áreas especiais nos eventos da Prudente em Foco.
           Solicitação direta na página de cada evento.
@@ -124,7 +124,7 @@ function HomePage() {
       )}
 
       {/* CTA FINAL */}
-      <section className="py-24 md:py-40">
+      <section className="py-16 md:py-28">
         <div className="container-page text-center">
           <p className="meta-label">Agenda oficial</p>
           <h2 className="mx-auto mt-6 max-w-4xl display-lg text-foreground">
@@ -166,19 +166,19 @@ function PosterHero({ event }: { event: PublicEvent }) {
           }}
         />
       </div>
-      <div className="container-page flex min-h-[92vh] flex-col justify-end pb-16 pt-32 md:min-h-[100vh] md:pb-24 md:pt-40">
+      <div className="container-page flex min-h-[78vh] flex-col justify-end pb-14 pt-24 md:min-h-[100vh] md:pb-24 md:pt-40">
         <p className="eyebrow-label text-primary">
           Em cartaz · Prudente em Foco
         </p>
         <h1 className="mt-6 display-xl text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)]">
           {event.title}
         </h1>
-        <div className="mt-8 flex flex-wrap items-baseline gap-x-8 gap-y-3">
-          <p className="date-block text-3xl text-foreground md:text-5xl">
+        <div className="mt-6 flex flex-col gap-3 md:mt-8 md:flex-row md:flex-wrap md:items-baseline md:gap-x-8 md:gap-y-3">
+          <p className="date-block text-[2rem] text-foreground md:text-5xl">
             {formatEventDateEditorial(event.starts_at, event.ends_at)}
           </p>
           {(event.venue_name || event.city) && (
-            <p className="flex items-center gap-1.5 font-display text-sm font-semibold uppercase tracking-[0.28em] text-foreground/85 md:text-base">
+            <p className="flex items-center gap-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/85 md:text-base">
               <MapPin className="h-4 w-4" />
               {[event.venue_name, event.city].filter(Boolean).join(" · ")}
             </p>
@@ -215,7 +215,7 @@ function InstitutionalHero() {
             "radial-gradient(70% 60% at 15% 100%, color-mix(in oklab, var(--primary) 18%, transparent) 0%, transparent 60%)",
         }}
       />
-      <div className="container-page flex min-h-[80vh] flex-col justify-end pb-20 pt-32 md:pb-32 md:pt-40">
+      <div className="container-page flex min-h-[68vh] flex-col justify-end pb-16 pt-24 md:min-h-[80vh] md:pb-32 md:pt-40">
         <p className="eyebrow-label text-primary">Prudente em Foco</p>
         <h1 className="mt-6 display-xl text-foreground">
           Onde a cidade
@@ -249,15 +249,16 @@ function InstitutionalHero() {
 function EditorialStrip({ event }: { event: PublicEvent }) {
   return (
     <section className="border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)] bg-background">
-      <div className="container-page grid gap-6 py-6 md:grid-cols-[auto,1fr,auto] md:items-center md:gap-10 md:py-8">
+      <div className="container-page grid gap-4 py-5 md:grid-cols-[auto,1fr,auto] md:items-center md:gap-10 md:py-8">
         <p className="eyebrow-label text-primary">Em cartaz</p>
-        <p className="font-display text-lg font-semibold leading-tight text-foreground md:text-2xl">
-          {event.title}
-          <span className="mx-3 text-muted-foreground/50">·</span>
-          <span className="font-display font-normal uppercase tracking-[0.15em] text-muted-foreground">
+        <div className="flex flex-col gap-1 md:flex-row md:items-baseline md:gap-3">
+          <p className="font-display text-lg font-semibold leading-tight text-foreground md:text-2xl">
+            {event.title}
+          </p>
+          <p className="font-display text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground md:text-sm">
             {formatEventDateEditorial(event.starts_at, event.ends_at)}
-          </span>
-        </p>
+          </p>
+        </div>
         <Link
           to="/eventos/$slug"
           params={{ slug: event.slug }}
@@ -277,15 +278,17 @@ function Section({
   title,
   children,
   dark = false,
+  compact = false,
 }: {
   eyebrow: string;
   title: string;
   children: React.ReactNode;
   dark?: boolean;
+  compact?: boolean;
 }) {
   return (
     <section className={dark ? "bg-surface/30" : ""}>
-      <div className="container-page py-20 md:py-32">
+      <div className={compact ? "container-page py-14 md:py-22" : "container-page py-20 md:py-32"}>
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">{eyebrow}</p>
           <h2 className="mt-4 section-title text-foreground">{title}</h2>
@@ -319,10 +322,22 @@ function FestivalPoster({ event, index }: { event: PublicEvent; index: number })
             className="image-zoom h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-[color-mix(in_oklab,var(--foreground)_6%,var(--background))] p-8">
-            <span className="poster text-center text-5xl text-foreground/70 md:text-7xl">
-              {event.title}
-            </span>
+          <div
+            className="flex h-full w-full flex-col justify-between p-6 md:p-10"
+            style={{
+              background:
+                "radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--primary) 22%, transparent) 0%, transparent 55%), linear-gradient(180deg, color-mix(in oklab, var(--foreground) 4%, var(--background)) 0%, var(--background) 100%)",
+            }}
+          >
+            <p className="eyebrow-label text-primary">Prudente em Foco</p>
+            <div>
+              <span className="poster block text-[clamp(2.4rem,8vw,5.5rem)] leading-[0.9] text-foreground">
+                {event.title}
+              </span>
+              <p className="mt-4 font-display text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                Imagem oficial em breve
+              </p>
+            </div>
           </div>
         )}
         <div
