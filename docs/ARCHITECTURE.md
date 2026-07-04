@@ -12,28 +12,42 @@ detalhamento de segurança e [`ROADMAP_RULES.md`](./ROADMAP_RULES.md).
 ```
 src/
   routes/
-    __root.tsx              # shell HTML, metadata, providers
-    _site.tsx               # layout público (Header + Footer)
-    _site.index.tsx         # /
-    _site.eventos.tsx       # /eventos
-    _site.experiencias.tsx  # /experiencias
-    _site.sobre.tsx         # /sobre
-    _site.contato.tsx       # /contato
-    admin.tsx               # layout administrativo (sidebar/mobile nav)
-    admin.index.tsx         # /admin
-    admin.eventos.tsx       # /admin/eventos
-    admin.experiencias.tsx  # /admin/experiencias
-    admin.operacao.tsx      # /admin/operacao
-    admin.configuracoes.tsx # /admin/configuracoes
+    __root.tsx                          # shell HTML, metadata, providers, Toaster
+    auth.tsx                            # /auth — login/signup público
+    _site.tsx                           # layout público (Header + Footer)
+    _site.index.tsx                     # /
+    _site.eventos.tsx                   # /eventos
+    _site.experiencias.tsx              # /experiencias
+    _site.sobre.tsx                     # /sobre
+    _site.contato.tsx                   # /contato
+    _authenticated/
+      route.tsx                         # gate de autenticação (ssr:false)
+      admin.tsx                         # layout administrativo
+      admin.index.tsx                   # /admin
+      admin.eventos.tsx                 # /admin/eventos
+      admin.experiencias.tsx            # /admin/experiencias
+      admin.operacao.tsx                # /admin/operacao
+      admin.configuracoes.tsx           # /admin/configuracoes
   components/
-    site/                   # componentes da experiência pública
-    admin/                  # componentes do shell administrativo
-  styles.css                # design system (tokens oklch)
+    site/                               # experiência pública
+    admin/                              # shell administrativo
+  hooks/
+    use-session.ts                      # observa sessão Supabase para a UI
+  integrations/supabase/                # clientes gerados (não editar)
+  styles.css                            # design system (tokens oklch)
+
+docs/
+  ARCHITECTURE.md
+  ROADMAP_RULES.md
+  SECURITY.md                           # modelo de segurança (Fase 1)
+
+supabase/
+  migrations/                           # migrations versionadas
 ```
 
-Área pública e administrativa vivem em layouts distintos. Em fases
-seguintes, a área administrativa passará por um portão de autenticação
-(`_authenticated`) sem alterar as URLs `/admin/*`.
+Toda rota administrativa vive sob `_authenticated/`. Usuário sem sessão é
+redirecionado a `/auth` preservando o destino. A área pública nunca
+depende de sessão.
 
 ## Decisões arquiteturais
 
