@@ -54,10 +54,12 @@ function HomePage() {
     const bx = b.starts_at ? Date.parse(b.starts_at) : Infinity;
     return ax - bx;
   });
-  const festivals = upcoming.filter(isBigEvent);
-  const shows = upcoming.filter((ev) => !isBigEvent(ev));
   const featured = upcoming[0] ?? null;
   const featuredCover = featured ? normalizeCoverUrl(featured.cover_image_url) : null;
+  // Não repetir o evento em destaque nas seções seguintes.
+  const rest = featured ? upcoming.filter((ev) => ev.slug !== featured.slug) : upcoming;
+  const festivals = rest.filter(isBigEvent);
+  const shows = rest.filter((ev) => !isBigEvent(ev));
   const past = events.filter((ev) => !isUpcoming(ev));
 
   return (
@@ -68,15 +70,10 @@ function HomePage() {
         <InstitutionalHero />
       )}
 
-      {/* EM CARTAZ — faixa editorial que abre o corpo do site */}
-      {featured && (
-        <EditorialStrip event={featured} />
-      )}
-
       {/* GRANDES EVENTOS — poster row */}
       {festivals.length > 0 && (
         <Section eyebrow="Grandes eventos" title="Marcas próprias.">
-          <div className="mt-14 grid gap-14 md:mt-20 md:gap-16">
+          <div className="mt-10 grid gap-12 md:mt-20 md:gap-16">
             {festivals.map((ev, i) => (
               <FestivalPoster key={ev.slug} event={ev} index={i} />
             ))}
@@ -87,13 +84,14 @@ function HomePage() {
       {/* AGENDA CULTURAL — shows como lista editorial */}
       {shows.length > 0 && (
         <Section eyebrow="Próximos shows" title="Agenda cultural." dark>
-          <ul className="mt-10 divide-y divide-[color-mix(in_oklab,var(--foreground)_12%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)]">
+          <ul className="mt-8 divide-y divide-[color-mix(in_oklab,var(--foreground)_12%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)]">
             {shows.map((ev) => (
               <AgendaRow key={ev.slug} event={ev} />
             ))}
           </ul>
         </Section>
       )}
+
 
       {/* EXPERIÊNCIAS */}
       <Section eyebrow="Experiências" title="Viva o evento de outro jeito." compact>
