@@ -7,6 +7,7 @@ import {
   MapPin,
   Megaphone,
   PencilLine,
+  Sparkles,
   ShieldCheck,
   Ticket,
   UserPlus,
