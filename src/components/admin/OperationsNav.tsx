@@ -55,6 +55,7 @@ export function OperationsNav({
     { key: "leads", label: "Leads", to: `/admin/eventos/${eventId}/leads`, icon: <UserPlus className="h-3.5 w-3.5" /> },
     { key: "promoters", label: "Promoters", to: `/admin/eventos/${eventId}/promoters`, icon: <Megaphone className="h-3.5 w-3.5" /> },
     { key: "promotions", label: "Promoções", to: `/admin/eventos/${eventId}/promotions`, icon: <Sparkles className="h-3.5 w-3.5" /> },
+    { key: "intelligence", label: "Inteligência", to: `/admin/eventos/${eventId}/intelligence`, icon: <BarChart3 className="h-3.5 w-3.5" /> },
     { key: "edit", label: "Editar", to: `/admin/eventos/${eventId}/editar`, icon: <PencilLine className="h-3.5 w-3.5" /> },
   ];
   return (
