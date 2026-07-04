@@ -115,6 +115,14 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
                   "@type": "Organization",
                   name: "Prudente em Foco",
                 },
+                offers: ev.external_ticket_url
+                  ? {
+                      "@type": "Offer",
+                      url: ev.external_ticket_url,
+                      availability: "https://schema.org/InStock",
+                    }
+                  : undefined,
+
               }),
             },
           ]
