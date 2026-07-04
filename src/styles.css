@@ -235,21 +235,41 @@
 }
 
 @utility hero-number {
-  font-family: var(--font-command);
-  font-size: clamp(2.75rem, 6vw, 4.25rem);
-  line-height: 0.9;
-  letter-spacing: 0.005em;
-  font-weight: 400;
-  tab-size: 4;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
 @utility eyebrow {
-  font-family: var(--font-ops);
+  font-family: var(--font-sans);
   font-size: 0.6875rem;
   font-weight: 600;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
+
+@utility mono {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+}
+
+@utility card-premium {
+  position: relative;
+  border-radius: 0.875rem;
+  border: 1px solid color-mix(in oklab, white 6%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--surface-elevated) 100%, transparent) 0%,
+    color-mix(in oklab, var(--surface) 100%, transparent) 100%
+  );
+  box-shadow:
+    0 1px 0 0 color-mix(in oklab, white 6%, transparent) inset,
+    0 1px 2px 0 rgb(0 0 0 / 0.4),
+    0 8px 24px -12px rgb(0 0 0 / 0.5);
+}
+
 
