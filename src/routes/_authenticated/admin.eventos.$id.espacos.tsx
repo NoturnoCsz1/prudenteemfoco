@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ChevronDown,
   ChevronRight,
+  ImageIcon,
   Loader2,
   Plus,
   Save,
@@ -20,8 +21,16 @@ import {
   SPACE_OPERATIONAL_STATUS_TONE,
   SPACE_TYPE_STATUSES,
   SPACE_TYPE_STATUS_LABEL,
+  SPACE_TYPE_CATEGORIES,
+  SPACE_TYPE_CATEGORY_LABEL,
+  SPACE_TYPE_CATEGORY_PLURAL,
+  SPACE_COMMERCIAL_STATUSES,
+  SPACE_COMMERCIAL_STATUS_LABEL,
+  SPACE_COMMERCIAL_STATUS_TONE,
   type SpaceOperationalStatus,
   type SpaceTypeStatus,
+  type SpaceTypeCategory,
+  type SpaceCommercialStatus,
   formatCurrencyBRL,
 } from "@/lib/operations";
 import type { Database } from "@/integrations/supabase/types";
@@ -33,7 +42,7 @@ type Space = Database["public"]["Tables"]["reservable_spaces"]["Row"];
 export const Route = createFileRoute("/_authenticated/admin/eventos/$id/espacos")({
   head: () => ({
     meta: [
-      { title: "Espaços — Operação · Prudente em Foco" },
+      { title: "Espaços comerciais — Operação · Prudente em Foco" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -87,6 +96,17 @@ function SpacesPage() {
     },
   });
 
+  const grouped = useMemo(() => {
+    const g: Record<SpaceTypeCategory, SpaceType[]> = {
+      camarote: [],
+      bistro: [],
+      mesa: [],
+      outro: [],
+    };
+    for (const t of typesQuery.data ?? []) g[t.category].push(t);
+    return g;
+  }, [typesQuery.data]);
+
   return (
     <div className="p-5 md:p-8">
       <OperationsNav
@@ -95,16 +115,19 @@ function SpacesPage() {
         eventTitle={eventQuery.data?.title}
       />
 
-      <div className="mt-6 flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          Cadastre os tipos de espaço (Bistrô, Mesa, Camarote) e gere as
-          unidades físicas em lote.
-        </p>
+      <div className="mt-6 flex items-center justify-between gap-3">
+        <div>
+          <h1 className="text-lg font-semibold">Espaços comerciais</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Configure Camarotes, Bistrôs e Mesas do evento. Gere unidades em
+            lote e controle disponibilidade comercial.
+          </p>
+        </div>
         {editingType === null && (
           <button
             type="button"
             onClick={() => setEditingType("new")}
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+            className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
           >
             <Plus className="h-4 w-4" /> Novo tipo
           </button>
@@ -129,35 +152,96 @@ function SpacesPage() {
         </div>
       )}
 
-      <div className="mt-6 grid gap-3">
-        {typesQuery.isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-          </div>
-        ) : typesQuery.data && typesQuery.data.length > 0 ? (
-          typesQuery.data.map((t) => (
-            <SpaceTypeCard
-              key={t.id}
-              type={t}
-              expanded={expandedType === t.id}
-              onToggle={() =>
-                setExpandedType((prev) => (prev === t.id ? null : t.id))
-              }
-              onEdit={() => setEditingType(t)}
+      {typesQuery.isLoading ? (
+        <div className="mt-8 flex items-center justify-center py-16">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      ) : (typesQuery.data?.length ?? 0) === 0 ? (
+        <div className="mt-8 rounded-lg border border-dashed border-border-strong bg-surface/40 p-10 text-center">
+          <p className="text-sm text-muted-foreground">
+            Nenhum tipo de espaço cadastrado ainda.
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Comece criando um tipo (ex.: Camarote 10 pessoas) e depois gere as
+            unidades em lote.
+          </p>
+          <button
+            type="button"
+            onClick={() => setEditingType("new")}
+            className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+          >
+            <Plus className="h-4 w-4" /> Criar primeiro tipo
+          </button>
+        </div>
+      ) : (
+        <div className="mt-8 space-y-8">
+          {SPACE_TYPE_CATEGORIES.map((cat) => (
+            <CategorySection
+              key={cat}
+              category={cat}
+              types={grouped[cat]}
+              expandedType={expandedType}
+              setExpandedType={setExpandedType}
+              onEdit={(t) => setEditingType(t)}
               onChanged={() =>
                 qc.invalidateQueries({
                   queryKey: ["admin", "event", eventId, "space-types"],
                 })
               }
             />
-          ))
-        ) : (
-          <p className="rounded-md border border-dashed border-border-strong bg-surface/40 p-8 text-center text-sm text-muted-foreground">
-            Nenhum tipo de espaço cadastrado.
-          </p>
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
+  );
+}
+
+function CategorySection({
+  category,
+  types,
+  expandedType,
+  setExpandedType,
+  onEdit,
+  onChanged,
+}: {
+  category: SpaceTypeCategory;
+  types: SpaceType[];
+  expandedType: string | null;
+  setExpandedType: (id: string | null) => void;
+  onEdit: (t: SpaceType) => void;
+  onChanged: () => void;
+}) {
+  return (
+    <section>
+      <div className="mb-3 flex items-baseline justify-between">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          {SPACE_TYPE_CATEGORY_PLURAL[category]}
+        </h2>
+        <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
+          {types.length} tipo(s)
+        </span>
+      </div>
+      {types.length === 0 ? (
+        <p className="rounded-md border border-dashed border-border-strong bg-surface/30 p-5 text-center text-xs text-muted-foreground">
+          Nenhum tipo em {SPACE_TYPE_CATEGORY_PLURAL[category].toLowerCase()}.
+        </p>
+      ) : (
+        <div className="grid gap-3">
+          {types.map((t) => (
+            <SpaceTypeCard
+              key={t.id}
+              type={t}
+              expanded={expandedType === t.id}
+              onToggle={() =>
+                setExpandedType(expandedType === t.id ? null : t.id)
+              }
+              onEdit={() => onEdit(t)}
+              onChanged={onChanged}
+            />
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -174,34 +258,84 @@ function SpaceTypeCard({
   onEdit: () => void;
   onChanged: () => void;
 }) {
+  const availabilityQuery = useQuery({
+    queryKey: ["admin", "event", type.event_id, "spaces-summary", type.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("reservable_spaces")
+        .select("commercial_status")
+        .eq("space_type_id", type.id);
+      if (error) throw error;
+      const counts: Record<SpaceCommercialStatus, number> = {
+        available: 0,
+        negotiating: 0,
+        reserved: 0,
+        confirmed: 0,
+        unavailable: 0,
+      };
+      for (const r of data ?? []) counts[r.commercial_status]++;
+      return { total: data?.length ?? 0, counts };
+    },
+  });
+
+  const summary = availabilityQuery.data;
+
   return (
     <div className="rounded-lg border border-border bg-surface">
       <div className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
         <button
           type="button"
           onClick={onToggle}
-          className="flex min-w-0 items-center gap-2 text-left"
+          className="flex min-w-0 items-start gap-3 text-left"
         >
-          {expanded ? (
-            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+          {type.image_url ? (
+            <img
+              src={type.image_url}
+              alt=""
+              className="h-14 w-14 shrink-0 rounded-md object-cover"
+            />
           ) : (
-            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+              <ImageIcon className="h-5 w-5" />
+            </div>
           )}
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
+              {expanded ? (
+                <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+              ) : (
+                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+              )}
               <span className="font-medium">{type.name}</span>
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] text-primary">
+                {SPACE_TYPE_CATEGORY_LABEL[type.category]}
+              </span>
               <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
                 {SPACE_TYPE_STATUS_LABEL[type.status]}
               </span>
             </div>
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            <p className="mt-1 text-xs text-muted-foreground">
               {type.capacity_per_unit != null &&
-                `cap. ${type.capacity_per_unit} · `}
+                `cap. ${type.capacity_per_unit} pessoas · `}
               {formatCurrencyBRL(
                 type.base_price != null ? Number(type.base_price) : null,
                 type.currency,
               )}
             </p>
+            {summary && summary.total > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {SPACE_COMMERCIAL_STATUSES.map((s) =>
+                  summary.counts[s] > 0 ? (
+                    <span
+                      key={s}
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${SPACE_COMMERCIAL_STATUS_TONE[s]}`}
+                    >
+                      {summary.counts[s]} {SPACE_COMMERCIAL_STATUS_LABEL[s]}
+                    </span>
+                  ) : null,
+                )}
+              </div>
+            )}
           </div>
         </button>
         <div className="flex flex-wrap gap-1.5">
@@ -240,6 +374,9 @@ function SpaceTypeForm({
 }) {
   const isEdit = !!initial;
   const [name, setName] = useState(initial?.name ?? "");
+  const [category, setCategory] = useState<SpaceTypeCategory>(
+    initial?.category ?? "camarote",
+  );
   const [description, setDescription] = useState(initial?.description ?? "");
   const [sectorId, setSectorId] = useState<string>(initial?.sector_id ?? "");
   const [capacityPerUnit, setCapacityPerUnit] = useState<string>(
@@ -252,6 +389,7 @@ function SpaceTypeForm({
   const [status, setStatus] = useState<SpaceTypeStatus>(
     initial?.status ?? "active",
   );
+  const [imageUrl, setImageUrl] = useState<string>(initial?.image_url ?? "");
   const [submitting, setSubmitting] = useState(false);
 
   async function submit() {
@@ -275,6 +413,11 @@ function SpaceTypeForm({
       toast.error("Moeda inválida (use ISO 3 letras).");
       return;
     }
+    const img = imageUrl.trim();
+    if (img && (img.length > 600 || !/^https?:\/\//i.test(img))) {
+      toast.error("URL de imagem inválida.");
+      return;
+    }
     setSubmitting(true);
     try {
       const { data: userRes } = await supabase.auth.getUser();
@@ -284,11 +427,13 @@ function SpaceTypeForm({
         organization_id: organizationId,
         sector_id: sectorId || null,
         name: nm,
+        category,
         description: description.trim() || null,
         capacity_per_unit: cap,
         base_price: price,
         currency: cur,
         status,
+        image_url: img || null,
       };
       if (isEdit) {
         const statusChanged = initial!.status !== status;
@@ -307,6 +452,7 @@ function SpaceTypeForm({
           _entity_id: initial!.id,
           _metadata: {
             name: nm,
+            category,
             ...(statusChanged ? { from: initial!.status, to: status } : {}),
           },
         });
@@ -324,7 +470,7 @@ function SpaceTypeForm({
           _action: "space_type.created",
           _entity_type: "reservable_space_type",
           _entity_id: data.id,
-          _metadata: { name: nm, status },
+          _metadata: { name: nm, category, status },
         });
         toast.success("Tipo criado.");
       }
@@ -350,18 +496,36 @@ function SpaceTypeForm({
           <X className="h-4 w-4" />
         </button>
       </div>
-      <label className="block">
-        <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          Nome
-        </span>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="input mt-2"
-          placeholder="Ex.: Camarote 10 pessoas"
-          maxLength={120}
-        />
-      </label>
+      <div className="grid gap-4 md:grid-cols-2">
+        <label className="block">
+          <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            Nome
+          </span>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="input mt-2"
+            placeholder="Ex.: Camarote 10 pessoas"
+            maxLength={120}
+          />
+        </label>
+        <label className="block">
+          <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            Categoria
+          </span>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value as SpaceTypeCategory)}
+            className="input mt-2"
+          >
+            {SPACE_TYPE_CATEGORIES.map((c) => (
+              <option key={c} value={c}>
+                {SPACE_TYPE_CATEGORY_LABEL[c]}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       <div className="grid gap-4 md:grid-cols-2">
         <label className="block">
           <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
@@ -382,7 +546,7 @@ function SpaceTypeForm({
         </label>
         <label className="block">
           <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Capacidade por unidade
+            Capacidade padrão (pessoas)
           </span>
           <input
             type="number"
@@ -396,7 +560,7 @@ function SpaceTypeForm({
       <div className="grid gap-4 md:grid-cols-2">
         <label className="block">
           <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Preço base (administrativo)
+            Preço base
           </span>
           <input
             type="number"
@@ -422,7 +586,7 @@ function SpaceTypeForm({
       </div>
       <label className="block">
         <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          Descrição (opcional)
+          Descrição comercial (opcional)
         </span>
         <textarea
           value={description}
@@ -430,7 +594,27 @@ function SpaceTypeForm({
           rows={2}
           className="input mt-2 resize-y"
           maxLength={600}
+          placeholder="O que este espaço oferece ao cliente"
         />
+      </label>
+      <label className="block">
+        <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Imagem (URL — opcional)
+        </span>
+        <input
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+          className="input mt-2"
+          placeholder="https://..."
+          maxLength={600}
+        />
+        {imageUrl.trim() && /^https?:\/\//i.test(imageUrl) && (
+          <img
+            src={imageUrl}
+            alt=""
+            className="mt-2 h-24 w-24 rounded-md object-cover"
+          />
+        )}
       </label>
       <label className="block">
         <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
@@ -488,6 +672,13 @@ function UnitsPanel({
   const qc = useQueryClient();
   const [genOpen, setGenOpen] = useState(false);
   const key = ["admin", "event", type.event_id, "spaces", type.id];
+  const summaryKey = [
+    "admin",
+    "event",
+    type.event_id,
+    "spaces-summary",
+    type.id,
+  ];
 
   const spacesQuery = useQuery({
     queryKey: key,
@@ -502,7 +693,7 @@ function UnitsPanel({
     },
   });
 
-  async function changeStatus(sp: Space, next: SpaceOperationalStatus) {
+  async function changeOperational(sp: Space, next: SpaceOperationalStatus) {
     const { error } = await supabase
       .from("reservable_spaces")
       .update({ operational_status: next })
@@ -521,6 +712,21 @@ function UnitsPanel({
       _metadata: { from: sp.operational_status, to: next, code: sp.code },
     });
     qc.invalidateQueries({ queryKey: key });
+  }
+
+  async function changeCommercial(sp: Space, next: SpaceCommercialStatus) {
+    const { error } = await supabase.rpc("set_space_commercial_status", {
+      _space_id: sp.id,
+      _new_status: next,
+    });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success(`${sp.code}: ${SPACE_COMMERCIAL_STATUS_LABEL[next]}`);
+    qc.invalidateQueries({ queryKey: key });
+    qc.invalidateQueries({ queryKey: summaryKey });
+    onChanged();
   }
 
   return (
@@ -546,6 +752,7 @@ function UnitsPanel({
             onDone={() => {
               setGenOpen(false);
               qc.invalidateQueries({ queryKey: key });
+              qc.invalidateQueries({ queryKey: summaryKey });
               onChanged();
             }}
             onCancel={() => setGenOpen(false)}
@@ -563,32 +770,69 @@ function UnitsPanel({
             {spacesQuery.data.map((sp) => (
               <li
                 key={sp.id}
-                className="flex items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-2"
+                className="rounded-md border border-border bg-background p-3"
               >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{sp.code}</p>
-                  <span
-                    className={`mt-0.5 inline-block rounded-full px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] ${SPACE_OPERATIONAL_STATUS_TONE[sp.operational_status]}`}
-                  >
-                    {SPACE_OPERATIONAL_STATUS_LABEL[sp.operational_status]}
-                  </span>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">{sp.code}</p>
+                    <div className="mt-1 flex flex-wrap gap-1.5">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${SPACE_COMMERCIAL_STATUS_TONE[sp.commercial_status]}`}
+                      >
+                        {SPACE_COMMERCIAL_STATUS_LABEL[sp.commercial_status]}
+                      </span>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] ${SPACE_OPERATIONAL_STATUS_TONE[sp.operational_status]}`}
+                      >
+                        {SPACE_OPERATIONAL_STATUS_LABEL[sp.operational_status]}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <select
-                  value={sp.operational_status}
-                  onChange={(e) =>
-                    changeStatus(
-                      sp,
-                      e.target.value as SpaceOperationalStatus,
-                    )
-                  }
-                  className="input h-8 py-0 text-xs"
-                >
-                  {SPACE_OPERATIONAL_STATUSES.map((st) => (
-                    <option key={st} value={st}>
-                      {SPACE_OPERATIONAL_STATUS_LABEL[st]}
-                    </option>
-                  ))}
-                </select>
+                <div className="mt-2 grid grid-cols-2 gap-1.5">
+                  <label className="block">
+                    <span className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">
+                      Comercial
+                    </span>
+                    <select
+                      value={sp.commercial_status}
+                      onChange={(e) =>
+                        changeCommercial(
+                          sp,
+                          e.target.value as SpaceCommercialStatus,
+                        )
+                      }
+                      className="input mt-0.5 h-8 py-0 text-xs"
+                    >
+                      {SPACE_COMMERCIAL_STATUSES.map((st) => (
+                        <option key={st} value={st}>
+                          {SPACE_COMMERCIAL_STATUS_LABEL[st]}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">
+                      Operacional
+                    </span>
+                    <select
+                      value={sp.operational_status}
+                      onChange={(e) =>
+                        changeOperational(
+                          sp,
+                          e.target.value as SpaceOperationalStatus,
+                        )
+                      }
+                      className="input mt-0.5 h-8 py-0 text-xs"
+                    >
+                      {SPACE_OPERATIONAL_STATUSES.map((st) => (
+                        <option key={st} value={st}>
+                          {SPACE_OPERATIONAL_STATUS_LABEL[st]}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
               </li>
             ))}
           </ul>
