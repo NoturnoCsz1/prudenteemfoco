@@ -95,6 +95,8 @@ function HomePage() {
   const { data: featured } = useSuspenseQuery(featuredQO);
   const { data: news = [] } = useQuery(newsQO);
   const { data: experiences = [] } = useQuery(experiencesQO);
+  const { data: siteHome } = useQuery(siteHomeQO);
+  const { data: memoryItems = [] } = useQuery(siteMemoryQO);
 
   const upcoming = useMemo(
     () =>
@@ -109,7 +111,6 @@ function HomePage() {
 
   const heroSlugs = new Set(featured.map((f) => f.slug));
   const nextEvents = upcoming.filter((ev) => !heroSlugs.has(ev.slug));
-  // Dedup editorial: se sobrarem < 3 próximos após tirar o hero, completa com featured.
   const nextEventsBalanced =
     nextEvents.length >= 3
       ? nextEvents
@@ -122,7 +123,7 @@ function HomePage() {
       {featured.length > 0 ? (
         <HeroBlock featured={featured} eventsIndex={events} />
       ) : (
-        <InstitutionalHero />
+        <InstitutionalHero cms={siteHome ?? null} />
       )}
 
       {nextEventsBalanced.length > 0 && (
@@ -131,11 +132,17 @@ function HomePage() {
 
       {news.length > 0 && <NewsSection items={news} />}
 
-      {experiences.length > 0 && <ExperiencesSection items={experiences} />}
+      {experiences.length > 0 && (
+        <ExperiencesSection items={experiences} cms={siteHome ?? null} />
+      )}
 
-      {past.length > 0 && <MemorySection events={past.slice(0, 8)} />}
+      {memoryItems.length > 0 ? (
+        <CmsMemorySection items={memoryItems} />
+      ) : (
+        past.length > 0 && <MemorySection events={past.slice(0, 8)} />
+      )}
 
-      <FinalCTA />
+      <FinalCTA cms={siteHome ?? null} />
     </>
   );
 }
