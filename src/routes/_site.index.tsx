@@ -124,7 +124,7 @@ function HomePage() {
       )}
 
       {/* CTA FINAL */}
-      <section className="py-24 md:py-40">
+      <section className="py-16 md:py-28">
         <div className="container-page text-center">
           <p className="meta-label">Agenda oficial</p>
           <h2 className="mx-auto mt-6 max-w-4xl display-lg text-foreground">
