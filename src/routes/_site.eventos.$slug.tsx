@@ -27,7 +27,7 @@ import {
   createSpaceReservationRequest,
   type PublicSpaceType,
 } from "@/lib/reservations.functions";
-import { formatEventDateRange } from "@/lib/events";
+import { formatEventDateRange, formatEventDateEditorial } from "@/lib/events";
 
 import { supabase } from "@/integrations/supabase/client";
 import {
