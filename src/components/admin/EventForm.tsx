@@ -40,6 +40,8 @@ export type EventFormRecord = {
   long_description: string | null;
   instagram_url: string | null;
   external_ticket_url: string | null;
+  is_featured?: boolean;
+  featured_order?: number | null;
 };
 
 
