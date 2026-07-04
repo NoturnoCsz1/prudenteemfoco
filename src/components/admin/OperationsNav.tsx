@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import {
   ArrowLeft,
+  BarChart3,
   DoorOpen,
   Gauge,
   LayoutDashboard,
