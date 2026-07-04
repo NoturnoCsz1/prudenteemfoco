@@ -192,7 +192,13 @@ export const getHotsiteBySlug = createServerFn({ method: "GET" })
       console.error("[getHotsiteBySlug]", error);
       return null;
     }
-    return ((rows ?? [])[0] as PublicHotsiteSettings | undefined) ?? null;
+    const row = (rows ?? [])[0] as Record<string, unknown> | undefined;
+    if (!row) return null;
+    const faq = row.info_faq;
+    return {
+      ...row,
+      info_faq: faq == null ? null : JSON.stringify(faq),
+    } as unknown as PublicHotsiteSettings;
   });
 
 export const listSponsorsBySlug = createServerFn({ method: "GET" })
