@@ -13,7 +13,6 @@ import {
   Music2,
   Layers,
   History,
-  Sparkles,
 } from "lucide-react";
 import {
   getPublishedEventBySlug,
