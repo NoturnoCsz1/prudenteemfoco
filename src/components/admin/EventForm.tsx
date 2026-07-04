@@ -8,12 +8,18 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   EVENT_STATUSES,
   EVENT_STATUS_LABEL,
+  EVENT_KINDS,
+  EVENT_KIND_LABEL,
+  EVENT_FORMATS,
+  EVENT_FORMAT_LABEL,
   eventFormSchema,
   isoToLocalInput,
   localInputToIso,
   slugify,
   type EventFormValues,
   type EventStatus,
+  type EventKind,
+  type EventFormat,
 } from "@/lib/events";
 import { useOrgMembership } from "@/hooks/use-org-membership";
 import { CoverUpload } from "./CoverUpload";
