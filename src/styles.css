@@ -110,6 +110,10 @@
   html {
     color-scheme: dark;
   }
+  html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
