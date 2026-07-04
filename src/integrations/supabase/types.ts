@@ -14,16 +14,253 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          ip_address: unknown
+          metadata: Json
+          organization_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: unknown
+          metadata?: Json
+          organization_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: unknown
+          metadata?: Json
+          organization_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          city: string | null
+          cover_image_url: string | null
+          created_at: string
+          ends_at: string | null
+          id: string
+          organization_id: string
+          short_description: string | null
+          slug: string
+          starts_at: string | null
+          status: Database["public"]["Enums"]["event_status"]
+          title: string
+          updated_at: string
+          venue_name: string | null
+        }
+        Insert: {
+          city?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          organization_id: string
+          short_description?: string | null
+          slug: string
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["event_status"]
+          title: string
+          updated_at?: string
+          venue_name?: string | null
+        }
+        Update: {
+          city?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          ends_at?: string | null
+          id?: string
+          organization_id?: string
+          short_description?: string | null
+          slug?: string
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["event_status"]
+          title?: string
+          updated_at?: string
+          venue_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          role: Database["public"]["Enums"]["member_role"]
+          status: Database["public"]["Enums"]["member_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          role?: Database["public"]["Enums"]["member_role"]
+          status?: Database["public"]["Enums"]["member_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          role?: Database["public"]["Enums"]["member_role"]
+          status?: Database["public"]["Enums"]["member_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          status: Database["public"]["Enums"]["org_status"]
+          type: Database["public"]["Enums"]["org_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          status?: Database["public"]["Enums"]["org_status"]
+          type?: Database["public"]["Enums"]["org_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          status?: Database["public"]["Enums"]["org_status"]
+          type?: Database["public"]["Enums"]["org_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_org_role_at_least: {
+        Args: {
+          _min_role: Database["public"]["Enums"]["member_role"]
+          _org_id: string
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_active_org_member: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
+      record_audit_event: {
+        Args: {
+          _action: string
+          _actor_user_id: string
+          _entity_id: string
+          _entity_type: string
+          _ip?: unknown
+          _metadata?: Json
+          _organization_id: string
+          _user_agent?: string
+        }
+        Returns: string
+      }
+      role_rank: {
+        Args: { _role: Database["public"]["Enums"]["member_role"] }
+        Returns: number
+      }
     }
     Enums: {
-      [_ in never]: never
+      event_status:
+        | "draft"
+        | "scheduled"
+        | "published"
+        | "cancelled"
+        | "archived"
+      member_role: "owner" | "admin" | "manager" | "operator" | "viewer"
+      member_status: "active" | "invited" | "suspended" | "removed"
+      org_status: "active" | "inactive" | "archived"
+      org_type: "institutional" | "partner" | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +387,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      event_status: [
+        "draft",
+        "scheduled",
+        "published",
+        "cancelled",
+        "archived",
+      ],
+      member_role: ["owner", "admin", "manager", "operator", "viewer"],
+      member_status: ["active", "invited", "suspended", "removed"],
+      org_status: ["active", "inactive", "archived"],
+      org_type: ["institutional", "partner", "other"],
+    },
   },
 } as const
