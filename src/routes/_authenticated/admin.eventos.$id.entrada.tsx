@@ -231,14 +231,14 @@ function EntrancePage() {
   }
 
   return (
-    <div className="p-5 md:p-8">
+    <div className="w-full min-w-0 p-4 sm:p-5 md:p-8">
       <OperationsNav
         eventId={eventId}
         active="entrance"
         eventTitle={eventQuery.data?.title}
       />
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <div className="mt-6 grid min-w-0 gap-6 lg:grid-cols-2">
         {/* Emissão de tokens */}
         <section className="rounded-lg border border-border p-4">
           <div className="flex items-center gap-2">
@@ -253,7 +253,8 @@ function EntrancePage() {
           </p>
 
           <div className="mt-4 space-y-3">
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
+
               <select
                 value={tokenTarget}
                 onChange={(e) => {
@@ -261,7 +262,7 @@ function EntrancePage() {
                   setTokenTarget(t);
                   setTokenTargetId(t === "event" ? eventId : "");
                 }}
-                className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+                className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm sm:w-auto"
               >
                 <option value="event">Evento</option>
                 <option value="sector">Setor</option>
@@ -270,7 +271,8 @@ function EntrancePage() {
               <select
                 value={tokenTargetId}
                 onChange={(e) => setTokenTargetId(e.target.value)}
-                className="h-9 flex-1 rounded-md border border-input bg-background px-2 text-sm"
+                className="h-9 w-full min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-sm"
+
               >
                 <option value="">Selecione…</option>
                 {tokenTargetOptions.map((o) => (
@@ -280,21 +282,21 @@ function EntrancePage() {
                 ))}
               </select>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <input
                 type="number"
                 min={1}
                 value={tokenCap}
                 onChange={(e) => setTokenCap(e.target.value)}
                 placeholder="Limite (opcional)"
-                className="h-9 w-40 rounded-md border border-input bg-background px-2 text-sm"
+                className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm sm:w-40"
               />
               <input
                 value={tokenLabel}
                 onChange={(e) => setTokenLabel(e.target.value)}
                 placeholder="Rótulo (opcional)"
                 maxLength={120}
-                className="h-9 flex-1 rounded-md border border-input bg-background px-2 text-sm"
+                className="h-9 w-full min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-sm"
               />
             </div>
             <Button onClick={issueToken} disabled={issuing || !tokenTargetId} className="w-full">
