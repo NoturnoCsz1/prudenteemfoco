@@ -22,11 +22,11 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as SiteEventosSlugRouteImport } from './routes/_site.eventos.$slug'
 import { Route as AuthenticatedAdminOperacaoRouteImport } from './routes/_authenticated/admin.operacao'
 import { Route as AuthenticatedAdminExperienciasRouteImport } from './routes/_authenticated/admin.experiencias'
-import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
 import { Route as AuthenticatedAdminEquipeRouteImport } from './routes/_authenticated/admin.equipe'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
+import { Route as AuthenticatedAdminEventosIndexRouteImport } from './routes/_authenticated/admin.eventos.index'
 import { Route as AuthenticatedAdminEventosNovoRouteImport } from './routes/_authenticated/admin.eventos.novo'
-import { Route as AuthenticatedAdminEventosIdRouteImport } from './routes/_authenticated/admin.eventos.$id'
+import { Route as AuthenticatedAdminEventosIdIndexRouteImport } from './routes/_authenticated/admin.eventos.$id.index'
 import { Route as AuthenticatedAdminEventosIdSetoresRouteImport } from './routes/_authenticated/admin.eventos.$id.setores'
 import { Route as AuthenticatedAdminEventosIdPromotionsRouteImport } from './routes/_authenticated/admin.eventos.$id.promotions'
 import { Route as AuthenticatedAdminEventosIdPromotersRouteImport } from './routes/_authenticated/admin.eventos.$id.promoters'
@@ -105,12 +105,6 @@ const AuthenticatedAdminExperienciasRoute =
     path: '/experiencias',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminEventosRoute =
-  AuthenticatedAdminEventosRouteImport.update({
-    id: '/eventos',
-    path: '/eventos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminEquipeRoute =
   AuthenticatedAdminEquipeRouteImport.update({
     id: '/equipe',
@@ -123,89 +117,95 @@ const AuthenticatedAdminConfiguracoesRoute =
     path: '/configuracoes',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminEventosIndexRoute =
+  AuthenticatedAdminEventosIndexRouteImport.update({
+    id: '/eventos/',
+    path: '/eventos/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminEventosNovoRoute =
   AuthenticatedAdminEventosNovoRouteImport.update({
-    id: '/novo',
-    path: '/novo',
-    getParentRoute: () => AuthenticatedAdminEventosRoute,
+    id: '/eventos/novo',
+    path: '/eventos/novo',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminEventosIdRoute =
-  AuthenticatedAdminEventosIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedAdminEventosRoute,
+const AuthenticatedAdminEventosIdIndexRoute =
+  AuthenticatedAdminEventosIdIndexRouteImport.update({
+    id: '/eventos/$id/',
+    path: '/eventos/$id/',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdSetoresRoute =
   AuthenticatedAdminEventosIdSetoresRouteImport.update({
-    id: '/setores',
-    path: '/setores',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/setores',
+    path: '/eventos/$id/setores',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdPromotionsRoute =
   AuthenticatedAdminEventosIdPromotionsRouteImport.update({
-    id: '/promotions',
-    path: '/promotions',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/promotions',
+    path: '/eventos/$id/promotions',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdPromotersRoute =
   AuthenticatedAdminEventosIdPromotersRouteImport.update({
-    id: '/promoters',
-    path: '/promoters',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/promoters',
+    path: '/eventos/$id/promoters',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdLeadsRoute =
   AuthenticatedAdminEventosIdLeadsRouteImport.update({
-    id: '/leads',
-    path: '/leads',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/leads',
+    path: '/eventos/$id/leads',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdIntelligenceRoute =
   AuthenticatedAdminEventosIdIntelligenceRouteImport.update({
-    id: '/intelligence',
-    path: '/intelligence',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/intelligence',
+    path: '/eventos/$id/intelligence',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdEspacosRoute =
   AuthenticatedAdminEventosIdEspacosRouteImport.update({
-    id: '/espacos',
-    path: '/espacos',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/espacos',
+    path: '/eventos/$id/espacos',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdEntradaRoute =
   AuthenticatedAdminEventosIdEntradaRouteImport.update({
-    id: '/entrada',
-    path: '/entrada',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/entrada',
+    path: '/eventos/$id/entrada',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdEngineRoute =
   AuthenticatedAdminEventosIdEngineRouteImport.update({
-    id: '/engine',
-    path: '/engine',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/engine',
+    path: '/eventos/$id/engine',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdEditarRoute =
   AuthenticatedAdminEventosIdEditarRouteImport.update({
-    id: '/editar',
-    path: '/editar',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/editar',
+    path: '/eventos/$id/editar',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdCredenciaisRoute =
   AuthenticatedAdminEventosIdCredenciaisRouteImport.update({
-    id: '/credenciais',
-    path: '/credenciais',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/credenciais',
+    path: '/eventos/$id/credenciais',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdConvitesRoute =
   AuthenticatedAdminEventosIdConvitesRouteImport.update({
-    id: '/convites',
-    path: '/convites',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/convites',
+    path: '/eventos/$id/convites',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIdAcessoRoute =
   AuthenticatedAdminEventosIdAcessoRouteImport.update({
-    id: '/acesso',
-    path: '/acesso',
-    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+    id: '/eventos/$id/acesso',
+    path: '/eventos/$id/acesso',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -218,13 +218,12 @@ export interface FileRoutesByFullPath {
   '/sobre': typeof SiteSobreRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
-  '/admin/eventos': typeof AuthenticatedAdminEventosRouteWithChildren
   '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
   '/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
   '/eventos/$slug': typeof SiteEventosSlugRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
-  '/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
+  '/admin/eventos/': typeof AuthenticatedAdminEventosIndexRoute
   '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
   '/admin/eventos/$id/convites': typeof AuthenticatedAdminEventosIdConvitesRoute
   '/admin/eventos/$id/credenciais': typeof AuthenticatedAdminEventosIdCredenciaisRoute
@@ -237,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/admin/eventos/$id/promoters': typeof AuthenticatedAdminEventosIdPromotersRoute
   '/admin/eventos/$id/promotions': typeof AuthenticatedAdminEventosIdPromotionsRoute
   '/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
+  '/admin/eventos/$id/': typeof AuthenticatedAdminEventosIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof SiteIndexRoute
@@ -247,13 +247,12 @@ export interface FileRoutesByTo {
   '/sobre': typeof SiteSobreRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
-  '/admin/eventos': typeof AuthenticatedAdminEventosRouteWithChildren
   '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
   '/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
   '/eventos/$slug': typeof SiteEventosSlugRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
-  '/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosIndexRoute
   '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
   '/admin/eventos/$id/convites': typeof AuthenticatedAdminEventosIdConvitesRoute
   '/admin/eventos/$id/credenciais': typeof AuthenticatedAdminEventosIdCredenciaisRoute
@@ -266,6 +265,7 @@ export interface FileRoutesByTo {
   '/admin/eventos/$id/promoters': typeof AuthenticatedAdminEventosIdPromotersRoute
   '/admin/eventos/$id/promotions': typeof AuthenticatedAdminEventosIdPromotionsRoute
   '/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
+  '/admin/eventos/$id': typeof AuthenticatedAdminEventosIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -280,13 +280,12 @@ export interface FileRoutesById {
   '/_site/': typeof SiteIndexRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/equipe': typeof AuthenticatedAdminEquipeRoute
-  '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRouteWithChildren
   '/_authenticated/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
   '/_authenticated/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
   '/_site/eventos/$slug': typeof SiteEventosSlugRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
-  '/_authenticated/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/_authenticated/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
+  '/_authenticated/admin/eventos/': typeof AuthenticatedAdminEventosIndexRoute
   '/_authenticated/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
   '/_authenticated/admin/eventos/$id/convites': typeof AuthenticatedAdminEventosIdConvitesRoute
   '/_authenticated/admin/eventos/$id/credenciais': typeof AuthenticatedAdminEventosIdCredenciaisRoute
@@ -299,6 +298,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/eventos/$id/promoters': typeof AuthenticatedAdminEventosIdPromotersRoute
   '/_authenticated/admin/eventos/$id/promotions': typeof AuthenticatedAdminEventosIdPromotionsRoute
   '/_authenticated/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
+  '/_authenticated/admin/eventos/$id/': typeof AuthenticatedAdminEventosIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -312,13 +312,12 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/admin/configuracoes'
     | '/admin/equipe'
-    | '/admin/eventos'
     | '/admin/experiencias'
     | '/admin/operacao'
     | '/eventos/$slug'
     | '/admin/'
-    | '/admin/eventos/$id'
     | '/admin/eventos/novo'
+    | '/admin/eventos/'
     | '/admin/eventos/$id/acesso'
     | '/admin/eventos/$id/convites'
     | '/admin/eventos/$id/credenciais'
@@ -331,6 +330,7 @@ export interface FileRouteTypes {
     | '/admin/eventos/$id/promoters'
     | '/admin/eventos/$id/promotions'
     | '/admin/eventos/$id/setores'
+    | '/admin/eventos/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -341,13 +341,12 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/admin/configuracoes'
     | '/admin/equipe'
-    | '/admin/eventos'
     | '/admin/experiencias'
     | '/admin/operacao'
     | '/eventos/$slug'
     | '/admin'
-    | '/admin/eventos/$id'
     | '/admin/eventos/novo'
+    | '/admin/eventos'
     | '/admin/eventos/$id/acesso'
     | '/admin/eventos/$id/convites'
     | '/admin/eventos/$id/credenciais'
@@ -360,6 +359,7 @@ export interface FileRouteTypes {
     | '/admin/eventos/$id/promoters'
     | '/admin/eventos/$id/promotions'
     | '/admin/eventos/$id/setores'
+    | '/admin/eventos/$id'
   id:
     | '__root__'
     | '/_authenticated'
@@ -373,13 +373,12 @@ export interface FileRouteTypes {
     | '/_site/'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/equipe'
-    | '/_authenticated/admin/eventos'
     | '/_authenticated/admin/experiencias'
     | '/_authenticated/admin/operacao'
     | '/_site/eventos/$slug'
     | '/_authenticated/admin/'
-    | '/_authenticated/admin/eventos/$id'
     | '/_authenticated/admin/eventos/novo'
+    | '/_authenticated/admin/eventos/'
     | '/_authenticated/admin/eventos/$id/acesso'
     | '/_authenticated/admin/eventos/$id/convites'
     | '/_authenticated/admin/eventos/$id/credenciais'
@@ -392,6 +391,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/eventos/$id/promoters'
     | '/_authenticated/admin/eventos/$id/promotions'
     | '/_authenticated/admin/eventos/$id/setores'
+    | '/_authenticated/admin/eventos/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -493,13 +493,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminExperienciasRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/eventos': {
-      id: '/_authenticated/admin/eventos'
-      path: '/eventos'
-      fullPath: '/admin/eventos'
-      preLoaderRoute: typeof AuthenticatedAdminEventosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/equipe': {
       id: '/_authenticated/admin/equipe'
       path: '/equipe'
@@ -514,108 +507,122 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/eventos/': {
+      id: '/_authenticated/admin/eventos/'
+      path: '/eventos'
+      fullPath: '/admin/eventos/'
+      preLoaderRoute: typeof AuthenticatedAdminEventosIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/eventos/novo': {
       id: '/_authenticated/admin/eventos/novo'
-      path: '/novo'
+      path: '/eventos/novo'
       fullPath: '/admin/eventos/novo'
       preLoaderRoute: typeof AuthenticatedAdminEventosNovoRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/eventos/$id': {
-      id: '/_authenticated/admin/eventos/$id'
-      path: '/$id'
-      fullPath: '/admin/eventos/$id'
-      preLoaderRoute: typeof AuthenticatedAdminEventosIdRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosRoute
+    '/_authenticated/admin/eventos/$id/': {
+      id: '/_authenticated/admin/eventos/$id/'
+      path: '/eventos/$id'
+      fullPath: '/admin/eventos/$id/'
+      preLoaderRoute: typeof AuthenticatedAdminEventosIdIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/setores': {
       id: '/_authenticated/admin/eventos/$id/setores'
-      path: '/setores'
+      path: '/eventos/$id/setores'
       fullPath: '/admin/eventos/$id/setores'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdSetoresRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/promotions': {
       id: '/_authenticated/admin/eventos/$id/promotions'
-      path: '/promotions'
+      path: '/eventos/$id/promotions'
       fullPath: '/admin/eventos/$id/promotions'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdPromotionsRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/promoters': {
       id: '/_authenticated/admin/eventos/$id/promoters'
-      path: '/promoters'
+      path: '/eventos/$id/promoters'
       fullPath: '/admin/eventos/$id/promoters'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdPromotersRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/leads': {
       id: '/_authenticated/admin/eventos/$id/leads'
-      path: '/leads'
+      path: '/eventos/$id/leads'
       fullPath: '/admin/eventos/$id/leads'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdLeadsRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/intelligence': {
       id: '/_authenticated/admin/eventos/$id/intelligence'
-      path: '/intelligence'
+      path: '/eventos/$id/intelligence'
       fullPath: '/admin/eventos/$id/intelligence'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdIntelligenceRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/espacos': {
       id: '/_authenticated/admin/eventos/$id/espacos'
-      path: '/espacos'
+      path: '/eventos/$id/espacos'
       fullPath: '/admin/eventos/$id/espacos'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdEspacosRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/entrada': {
       id: '/_authenticated/admin/eventos/$id/entrada'
-      path: '/entrada'
+      path: '/eventos/$id/entrada'
       fullPath: '/admin/eventos/$id/entrada'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdEntradaRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/engine': {
       id: '/_authenticated/admin/eventos/$id/engine'
-      path: '/engine'
+      path: '/eventos/$id/engine'
       fullPath: '/admin/eventos/$id/engine'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdEngineRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/editar': {
       id: '/_authenticated/admin/eventos/$id/editar'
-      path: '/editar'
+      path: '/eventos/$id/editar'
       fullPath: '/admin/eventos/$id/editar'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdEditarRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/credenciais': {
       id: '/_authenticated/admin/eventos/$id/credenciais'
-      path: '/credenciais'
+      path: '/eventos/$id/credenciais'
       fullPath: '/admin/eventos/$id/credenciais'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdCredenciaisRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/convites': {
       id: '/_authenticated/admin/eventos/$id/convites'
-      path: '/convites'
+      path: '/eventos/$id/convites'
       fullPath: '/admin/eventos/$id/convites'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdConvitesRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/$id/acesso': {
       id: '/_authenticated/admin/eventos/$id/acesso'
-      path: '/acesso'
+      path: '/eventos/$id/acesso'
       fullPath: '/admin/eventos/$id/acesso'
       preLoaderRoute: typeof AuthenticatedAdminEventosIdAcessoRouteImport
-      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
   }
 }
 
-interface AuthenticatedAdminEventosIdRouteChildren {
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
+  AuthenticatedAdminEquipeRoute: typeof AuthenticatedAdminEquipeRoute
+  AuthenticatedAdminExperienciasRoute: typeof AuthenticatedAdminExperienciasRoute
+  AuthenticatedAdminOperacaoRoute: typeof AuthenticatedAdminOperacaoRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminEventosNovoRoute: typeof AuthenticatedAdminEventosNovoRoute
+  AuthenticatedAdminEventosIndexRoute: typeof AuthenticatedAdminEventosIndexRoute
   AuthenticatedAdminEventosIdAcessoRoute: typeof AuthenticatedAdminEventosIdAcessoRoute
   AuthenticatedAdminEventosIdConvitesRoute: typeof AuthenticatedAdminEventosIdConvitesRoute
   AuthenticatedAdminEventosIdCredenciaisRoute: typeof AuthenticatedAdminEventosIdCredenciaisRoute
@@ -628,74 +635,41 @@ interface AuthenticatedAdminEventosIdRouteChildren {
   AuthenticatedAdminEventosIdPromotersRoute: typeof AuthenticatedAdminEventosIdPromotersRoute
   AuthenticatedAdminEventosIdPromotionsRoute: typeof AuthenticatedAdminEventosIdPromotionsRoute
   AuthenticatedAdminEventosIdSetoresRoute: typeof AuthenticatedAdminEventosIdSetoresRoute
-}
-
-const AuthenticatedAdminEventosIdRouteChildren: AuthenticatedAdminEventosIdRouteChildren =
-  {
-    AuthenticatedAdminEventosIdAcessoRoute:
-      AuthenticatedAdminEventosIdAcessoRoute,
-    AuthenticatedAdminEventosIdConvitesRoute:
-      AuthenticatedAdminEventosIdConvitesRoute,
-    AuthenticatedAdminEventosIdCredenciaisRoute:
-      AuthenticatedAdminEventosIdCredenciaisRoute,
-    AuthenticatedAdminEventosIdEditarRoute:
-      AuthenticatedAdminEventosIdEditarRoute,
-    AuthenticatedAdminEventosIdEngineRoute:
-      AuthenticatedAdminEventosIdEngineRoute,
-    AuthenticatedAdminEventosIdEntradaRoute:
-      AuthenticatedAdminEventosIdEntradaRoute,
-    AuthenticatedAdminEventosIdEspacosRoute:
-      AuthenticatedAdminEventosIdEspacosRoute,
-    AuthenticatedAdminEventosIdIntelligenceRoute:
-      AuthenticatedAdminEventosIdIntelligenceRoute,
-    AuthenticatedAdminEventosIdLeadsRoute:
-      AuthenticatedAdminEventosIdLeadsRoute,
-    AuthenticatedAdminEventosIdPromotersRoute:
-      AuthenticatedAdminEventosIdPromotersRoute,
-    AuthenticatedAdminEventosIdPromotionsRoute:
-      AuthenticatedAdminEventosIdPromotionsRoute,
-    AuthenticatedAdminEventosIdSetoresRoute:
-      AuthenticatedAdminEventosIdSetoresRoute,
-  }
-
-const AuthenticatedAdminEventosIdRouteWithChildren =
-  AuthenticatedAdminEventosIdRoute._addFileChildren(
-    AuthenticatedAdminEventosIdRouteChildren,
-  )
-
-interface AuthenticatedAdminEventosRouteChildren {
-  AuthenticatedAdminEventosIdRoute: typeof AuthenticatedAdminEventosIdRouteWithChildren
-  AuthenticatedAdminEventosNovoRoute: typeof AuthenticatedAdminEventosNovoRoute
-}
-
-const AuthenticatedAdminEventosRouteChildren: AuthenticatedAdminEventosRouteChildren =
-  {
-    AuthenticatedAdminEventosIdRoute:
-      AuthenticatedAdminEventosIdRouteWithChildren,
-    AuthenticatedAdminEventosNovoRoute: AuthenticatedAdminEventosNovoRoute,
-  }
-
-const AuthenticatedAdminEventosRouteWithChildren =
-  AuthenticatedAdminEventosRoute._addFileChildren(
-    AuthenticatedAdminEventosRouteChildren,
-  )
-
-interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
-  AuthenticatedAdminEquipeRoute: typeof AuthenticatedAdminEquipeRoute
-  AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRouteWithChildren
-  AuthenticatedAdminExperienciasRoute: typeof AuthenticatedAdminExperienciasRoute
-  AuthenticatedAdminOperacaoRoute: typeof AuthenticatedAdminOperacaoRoute
-  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminEventosIdIndexRoute: typeof AuthenticatedAdminEventosIdIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
   AuthenticatedAdminEquipeRoute: AuthenticatedAdminEquipeRoute,
-  AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRouteWithChildren,
   AuthenticatedAdminExperienciasRoute: AuthenticatedAdminExperienciasRoute,
   AuthenticatedAdminOperacaoRoute: AuthenticatedAdminOperacaoRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminEventosNovoRoute: AuthenticatedAdminEventosNovoRoute,
+  AuthenticatedAdminEventosIndexRoute: AuthenticatedAdminEventosIndexRoute,
+  AuthenticatedAdminEventosIdAcessoRoute:
+    AuthenticatedAdminEventosIdAcessoRoute,
+  AuthenticatedAdminEventosIdConvitesRoute:
+    AuthenticatedAdminEventosIdConvitesRoute,
+  AuthenticatedAdminEventosIdCredenciaisRoute:
+    AuthenticatedAdminEventosIdCredenciaisRoute,
+  AuthenticatedAdminEventosIdEditarRoute:
+    AuthenticatedAdminEventosIdEditarRoute,
+  AuthenticatedAdminEventosIdEngineRoute:
+    AuthenticatedAdminEventosIdEngineRoute,
+  AuthenticatedAdminEventosIdEntradaRoute:
+    AuthenticatedAdminEventosIdEntradaRoute,
+  AuthenticatedAdminEventosIdEspacosRoute:
+    AuthenticatedAdminEventosIdEspacosRoute,
+  AuthenticatedAdminEventosIdIntelligenceRoute:
+    AuthenticatedAdminEventosIdIntelligenceRoute,
+  AuthenticatedAdminEventosIdLeadsRoute: AuthenticatedAdminEventosIdLeadsRoute,
+  AuthenticatedAdminEventosIdPromotersRoute:
+    AuthenticatedAdminEventosIdPromotersRoute,
+  AuthenticatedAdminEventosIdPromotionsRoute:
+    AuthenticatedAdminEventosIdPromotionsRoute,
+  AuthenticatedAdminEventosIdSetoresRoute:
+    AuthenticatedAdminEventosIdSetoresRoute,
+  AuthenticatedAdminEventosIdIndexRoute: AuthenticatedAdminEventosIdIndexRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
@@ -750,13 +724,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
