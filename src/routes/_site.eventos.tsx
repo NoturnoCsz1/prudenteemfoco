@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarDays, ArrowRight, MapPin } from "lucide-react";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { listPublishedEvents, type PublicEvent } from "@/lib/events.functions";
-import { formatEventDateEditorial } from "@/lib/events";
+import { formatEventDateEditorial, normalizeCoverUrl } from "@/lib/events";
 
 const eventsQueryOptions = queryOptions({
   queryKey: ["public", "events", "list"],
