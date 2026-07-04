@@ -150,7 +150,15 @@ export const eventFormSchema = z
         (v) => v === null || /^https:\/\/[^\s"<>]+$/.test(v),
         "Use uma URL https:// válida.",
       ),
-
+    is_featured: z.boolean().default(false),
+    featured_order: z
+      .union([z.string(), z.number(), z.null(), z.undefined()])
+      .transform((v) => {
+        if (v === null || v === undefined || v === "") return null;
+        const n = typeof v === "number" ? v : parseInt(String(v), 10);
+        return Number.isFinite(n) ? n : null;
+      })
+      .refine((v) => v === null || (v >= 0 && v <= 9999), "Use 0–9999."),
   })
   .refine(
     (v) =>

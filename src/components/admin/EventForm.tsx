@@ -40,6 +40,8 @@ export type EventFormRecord = {
   long_description: string | null;
   instagram_url: string | null;
   external_ticket_url: string | null;
+  is_featured?: boolean;
+  featured_order?: number | null;
 };
 
 
@@ -74,6 +76,8 @@ export function EventForm({
       long_description: initial?.long_description ?? "",
       instagram_url: initial?.instagram_url ?? "",
       external_ticket_url: initial?.external_ticket_url ?? "",
+      is_featured: initial?.is_featured ?? false,
+      featured_order: initial?.featured_order ?? null,
     },
 
   });
@@ -120,7 +124,10 @@ export function EventForm({
         long_description: values.long_description,
         instagram_url: values.instagram_url,
         external_ticket_url: values.external_ticket_url,
+        is_featured: values.is_featured,
+        featured_order: values.featured_order,
       };
+
 
 
       if (mode === "create") {
@@ -363,6 +370,38 @@ export function EventForm({
           ))}
         </select>
       </Field>
+
+      <div className="grid gap-5 md:grid-cols-[auto,1fr] md:items-end">
+        <Field label="Destaque na Home">
+          <label className="mt-1 inline-flex cursor-pointer items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              {...form.register("is_featured")}
+              className="h-4 w-4 accent-primary"
+            />
+            <span className="text-muted-foreground">
+              Exibir no carrossel Hero da Home.
+            </span>
+          </label>
+        </Field>
+        {form.watch("is_featured") && (
+          <Field
+            label="Ordem do destaque"
+            hint="Menor valor aparece primeiro. Vazio = fim da lista."
+            error={errors.featured_order?.message}
+          >
+            <input
+              type="number"
+              min={0}
+              max={9999}
+              {...form.register("featured_order")}
+              className="input md:max-w-[10rem]"
+              placeholder="0"
+            />
+          </Field>
+        )}
+      </div>
+
 
       <div className="flex flex-wrap items-center gap-3 pt-2">
         <button
