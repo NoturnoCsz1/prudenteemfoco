@@ -58,25 +58,26 @@ function EventosPage() {
   return (
     <>
       <section>
-        <div className="container-page pb-8 pt-24 md:pb-12 md:pt-32">
+        <div className="container-page pb-6 pt-20 md:pb-12 md:pt-32">
           <p className="eyebrow-label text-primary">Agenda oficial</p>
-          <h1 className="mt-6 display-xl text-foreground">Programação.</h1>
-          <p className="mt-8 max-w-xl font-display text-lg leading-snug text-foreground/85 md:text-2xl">
+          <h1 className="mt-5 poster text-[clamp(3rem,13vw,9.5rem)] leading-[0.88] text-foreground md:mt-6">
+            Programação.
+          </h1>
+          <p className="mt-6 max-w-xl font-display text-base leading-snug text-foreground/85 md:mt-8 md:text-2xl">
             Cada evento aparece aqui quando confirmado. Sem especulação.
           </p>
         </div>
       </section>
 
       <section>
-        <div className="container-page pb-32">
+        <div className="container-page pb-20 md:pb-32">
           {upcoming.length === 0 ? (
-            <div className="border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)] py-24 text-center">
-              <CalendarDays className="mx-auto h-8 w-8 text-muted-foreground" />
-              <p className="mt-6 font-display text-sm font-bold uppercase tracking-[0.28em] text-foreground">
-                Nenhum evento publicado no momento
+            <div className="border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)] py-16 text-center md:py-24">
+              <p className="poster text-[clamp(2.4rem,10vw,4.5rem)] leading-[0.9] text-foreground">
+                EM BREVE.
               </p>
-              <p className="mt-3 text-sm text-muted-foreground">
-                Novas datas aparecem aqui assim que forem confirmadas.
+              <p className="mt-5 text-sm text-muted-foreground md:text-base">
+                Novos eventos serão publicados aqui.
               </p>
             </div>
           ) : (
@@ -88,6 +89,7 @@ function EventosPage() {
           )}
         </div>
       </section>
+
     </>
   );
 }
