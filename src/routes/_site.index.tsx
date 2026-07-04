@@ -249,15 +249,16 @@ function InstitutionalHero() {
 function EditorialStrip({ event }: { event: PublicEvent }) {
   return (
     <section className="border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)] bg-background">
-      <div className="container-page grid gap-6 py-6 md:grid-cols-[auto,1fr,auto] md:items-center md:gap-10 md:py-8">
+      <div className="container-page grid gap-4 py-5 md:grid-cols-[auto,1fr,auto] md:items-center md:gap-10 md:py-8">
         <p className="eyebrow-label text-primary">Em cartaz</p>
-        <p className="font-display text-lg font-semibold leading-tight text-foreground md:text-2xl">
-          {event.title}
-          <span className="mx-3 text-muted-foreground/50">·</span>
-          <span className="font-display font-normal uppercase tracking-[0.15em] text-muted-foreground">
+        <div className="flex flex-col gap-1 md:flex-row md:items-baseline md:gap-3">
+          <p className="font-display text-lg font-semibold leading-tight text-foreground md:text-2xl">
+            {event.title}
+          </p>
+          <p className="font-display text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground md:text-sm">
             {formatEventDateEditorial(event.starts_at, event.ends_at)}
-          </span>
-        </p>
+          </p>
+        </div>
         <Link
           to="/eventos/$slug"
           params={{ slug: event.slug }}
