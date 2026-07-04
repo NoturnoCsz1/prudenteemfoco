@@ -122,7 +122,8 @@ function EventRow({ event }: { event: PublicEvent }) {
         </div>
         <div className="order-1 md:order-2">
           {cover ? (
-            <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted md:aspect-[16/10]">
+
               <img
                 src={cover}
                 alt=""
