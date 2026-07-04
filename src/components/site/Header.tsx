@@ -13,6 +13,7 @@ const NAV = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { user, loading } = useSession();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
