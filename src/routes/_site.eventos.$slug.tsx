@@ -519,44 +519,49 @@ function SpacesSection({
   const hasAny = (typesQuery.data?.length ?? 0) > 0;
 
   return (
-    <section className="border-t border-border bg-surface/40">
-      <div className="container-page py-12 md:py-16">
-        <p className="font-display text-xs uppercase tracking-[0.3em] text-primary">
-          Espaços comerciais
-        </p>
-        <h2 className="mt-3 text-3xl font-semibold md:text-4xl">
-          Reserve seu espaço
-        </h2>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-          Solicite reserva de camarote, bistrô ou mesa. Nossa equipe entra em
-          contato para confirmar disponibilidade e condições.
-        </p>
+    <section className="bg-surface/30">
+      <div className="container-page py-20 md:py-32">
+        <div className="max-w-3xl">
+          <p className="eyebrow-label text-primary">Experiências</p>
+          <h2 className="mt-4 section-title text-foreground">
+            Viva o evento de outro jeito.
+          </h2>
+          <p className="mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
+            Camarote, bistrô ou mesa exclusiva. Solicite sua reserva — a produção confirma disponibilidade e condições.
+          </p>
+        </div>
 
         {typesQuery.isLoading ? (
-          <div className="mt-10 flex items-center justify-center py-16">
+          <div className="mt-12 flex items-center justify-center py-16">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
         ) : !hasAny ? (
-          <div className="mt-10 rounded-lg border border-dashed border-border-strong bg-background p-10 text-center text-sm text-muted-foreground">
-            Ainda não há espaços comerciais disponíveis para este evento.
-          </div>
+          <p className="mt-12 max-w-xl font-display text-sm uppercase tracking-[0.28em] text-muted-foreground">
+            Espaços comerciais deste evento ainda não foram publicados.
+          </p>
         ) : (
-          <div className="mt-10 space-y-10">
+          <div className="mt-14 space-y-16 md:mt-20 md:space-y-20">
             {SPACE_TYPE_CATEGORIES.map((cat) =>
               grouped[cat].length === 0 ? null : (
                 <div key={cat}>
-                  <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {SPACE_TYPE_CATEGORY_PLURAL[cat]}
-                  </h3>
-                  <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="mb-6 flex items-baseline justify-between gap-4">
+                    <h3 className="font-display text-xs font-bold uppercase tracking-[0.3em] text-primary">
+                      {SPACE_TYPE_CATEGORY_PLURAL[cat]}
+                    </h3>
+                    <span className="font-display text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+                      {grouped[cat].length}{" "}
+                      {grouped[cat].length === 1 ? "opção" : "opções"}
+                    </span>
+                  </div>
+                  <ul className="divide-y divide-[color-mix(in_oklab,var(--foreground)_10%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
                     {grouped[cat].map((t) => (
-                      <SpaceCard
+                      <SpaceRow
                         key={t.space_type_id}
                         type={t}
                         onSelect={() => setSelected(t)}
                       />
                     ))}
-                  </div>
+                  </ul>
                 </div>
               ),
             )}
@@ -576,7 +581,7 @@ function SpacesSection({
   );
 }
 
-function SpaceCard({
+function SpaceRow({
   type,
   onSelect,
 }: {
@@ -585,65 +590,65 @@ function SpaceCard({
 }) {
   const available = type.available_units > 0;
   return (
-    <article className="flex flex-col overflow-hidden rounded-lg border border-border bg-background">
-      {type.image_url ? (
-        <div className="aspect-video w-full overflow-hidden bg-muted">
-          <img src={type.image_url} alt="" className="h-full w-full object-cover" />
-        </div>
-      ) : (
-        <div className="flex aspect-video items-center justify-center bg-muted text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          {SPACE_TYPE_CATEGORY_LABEL[type.category]}
-        </div>
-      )}
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-primary">
-              {SPACE_TYPE_CATEGORY_LABEL[type.category]}
+    <li>
+      <button
+        type="button"
+        onClick={onSelect}
+        className="group grid w-full grid-cols-[1fr,auto] items-baseline gap-x-6 gap-y-3 py-6 text-left md:grid-cols-[1fr,auto,auto,auto] md:gap-x-10 md:py-10"
+      >
+        <div className="min-w-0 md:col-start-1">
+          <p className="font-display text-[11px] font-bold uppercase tracking-[0.28em] text-primary">
+            {SPACE_TYPE_CATEGORY_LABEL[type.category]}
+          </p>
+          <h4 className="mt-2 poster text-2xl text-foreground transition-colors group-hover:text-primary md:text-4xl">
+            {type.name}
+          </h4>
+          {type.description && (
+            <p className="mt-2 max-w-xl line-clamp-2 text-sm text-muted-foreground">
+              {type.description}
             </p>
-            <h4 className="mt-1 truncate font-semibold">{type.name}</h4>
-          </div>
-          {type.base_price != null && (
-            <p className="whitespace-nowrap text-sm font-semibold">
+          )}
+        </div>
+        <div className="col-span-2 flex items-baseline gap-6 text-muted-foreground md:col-span-1 md:col-start-2 md:flex-col md:items-end md:gap-1 md:text-right">
+          {type.capacity_per_unit != null && (
+            <>
+              <span className="date-block text-2xl text-foreground md:text-3xl">
+                {type.capacity_per_unit}
+              </span>
+              <span className="font-display text-[10px] font-bold uppercase tracking-[0.28em]">
+                pessoas
+              </span>
+            </>
+          )}
+        </div>
+        <div className="text-right md:col-start-3">
+          {type.base_price != null ? (
+            <p className="date-block text-2xl text-foreground md:text-3xl">
               {formatCurrencyBRL(type.base_price, type.currency)}
             </p>
+          ) : (
+            <p className="font-display text-[11px] uppercase tracking-[0.28em] text-muted-foreground">
+              Sob consulta
+            </p>
           )}
-        </div>
-        {type.description && (
-          <p className="line-clamp-3 text-sm text-muted-foreground">
-            {type.description}
-          </p>
-        )}
-        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-          {type.capacity_per_unit != null && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5">
-              <Users className="h-3 w-3" />
-              {type.capacity_per_unit} pessoas
-            </span>
-          )}
-          <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 ${
-              available
-                ? "bg-emerald-500/15 text-emerald-400"
-                : "bg-muted text-muted-foreground"
+          <p
+            className={`mt-1 font-display text-[10px] font-bold uppercase tracking-[0.28em] ${
+              available ? "text-primary" : "text-muted-foreground"
             }`}
           >
             {available
-              ? `${type.available_units} disponível(is)`
+              ? `${type.available_units} disponível${type.available_units > 1 ? "eis" : ""}`
               : "Sob consulta"}
-          </span>
+          </p>
         </div>
-        <button
-          type="button"
-          onClick={onSelect}
-          className="mt-auto inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
-        >
-          Solicitar reserva
-        </button>
-      </div>
-    </article>
+        <span className="hidden items-center gap-2 border-b border-foreground/40 pb-1 font-display text-xs font-bold uppercase tracking-[0.28em] text-foreground group-hover:border-primary group-hover:text-primary md:inline-flex md:col-start-4">
+          Reservar <ArrowRight className="h-3.5 w-3.5" />
+        </span>
+      </button>
+    </li>
   );
 }
+
 
 function ReservationDialog({
   slug,
