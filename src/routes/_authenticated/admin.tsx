@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
+import { OrgGate } from "@/components/admin/OrgGate";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
@@ -130,7 +131,9 @@ function AdminLayout() {
         </aside>
 
         <main className="min-w-0 flex-1">
-          <Outlet />
+          <OrgGate>
+            <Outlet />
+          </OrgGate>
         </main>
       </div>
     </div>
