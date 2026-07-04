@@ -1,4 +1,10 @@
-import { Outlet, createFileRoute, Link, useRouterState } from "@tanstack/react-router";
+import {
+  Outlet,
+  createFileRoute,
+  Link,
+  useRouterState,
+  useNavigate,
+} from "@tanstack/react-router";
 import { useState } from "react";
 import {
   LayoutDashboard,
@@ -9,7 +15,11 @@ import {
   Menu,
   X,
   ArrowLeft,
+  LogOut,
 } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/hooks/use-session";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
