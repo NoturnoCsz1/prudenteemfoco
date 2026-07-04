@@ -1,49 +1,61 @@
 import { Link } from "@tanstack/react-router";
 
+const NAV = [
+  { to: "/eventos", label: "Eventos" },
+  { to: "/experiencias", label: "Experiências" },
+  { to: "/sobre", label: "Nossa História" },
+  { to: "/contato", label: "Contato" },
+] as const;
+
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-border bg-background">
-      <div className="container-page py-12">
-        <div className="grid gap-10 md:grid-cols-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="inline-block h-2 w-2 rounded-full bg-primary" />
-              <span className="font-display text-base font-semibold text-foreground">
-                Prudente em Foco
-              </span>
-            </div>
-            <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-              Plataforma institucional de eventos, experiências e operação
-              profissional. Uma nova fase.
+    <footer className="mt-24 bg-background text-foreground">
+      <div className="rule-line" />
+      <div className="container-page py-16 md:py-24">
+        <div className="grid gap-14 md:grid-cols-12 md:gap-10">
+          <div className="md:col-span-7">
+            <h2 className="poster text-[clamp(3rem,10vw,7rem)] leading-[0.85] text-foreground">
+              PRUDENTE
+              <br />
+              <span className="text-primary">EM FOCO</span>
+            </h2>
+            <p className="poster mt-6 text-[clamp(1.1rem,2.4vw,1.6rem)] leading-tight text-foreground/85">
+              EVENTOS QUE MARCAM.
+              <br />
+              HISTÓRIAS QUE FICAM.
             </p>
           </div>
 
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Navegação
-            </p>
-            <ul className="mt-4 space-y-2 text-sm">
-              <li><Link to="/eventos" className="text-foreground/80 hover:text-foreground">Eventos</Link></li>
-              <li><Link to="/experiencias" className="text-foreground/80 hover:text-foreground">Experiências</Link></li>
-              <li><Link to="/sobre" className="text-foreground/80 hover:text-foreground">Sobre</Link></li>
-              <li><Link to="/contato" className="text-foreground/80 hover:text-foreground">Contato</Link></li>
+          <nav
+            aria-label="Rodapé"
+            className="md:col-span-5 md:pl-8"
+          >
+            <p className="eyebrow-label text-muted-foreground">Navegação</p>
+            <ul className="mt-6 space-y-4">
+              {NAV.map((item) => (
+                <li key={item.to}>
+                  <Link
+                    to={item.to}
+                    className="poster inline-block text-[clamp(1.6rem,4.5vw,2.4rem)] leading-none text-foreground transition-colors hover:text-primary"
+                  >
+                    {item.label.toUpperCase()}
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </div>
-
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Plataforma em evolução
-            </p>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Estamos construindo a nova plataforma da Prudente em Foco por
-              fases. Novas seções serão publicadas progressivamente.
-            </p>
-          </div>
+          </nav>
         </div>
 
-        <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground md:flex-row md:items-center">
-          <p>© {new Date().getFullYear()} Prudente em Foco. Todos os direitos reservados.</p>
-          <p className="opacity-70">Nova plataforma — Fase 0.</p>
+        <div className="mt-16 rule-line" />
+
+        <div className="mt-8 flex flex-col gap-4 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
+          <div className="eyebrow-label">
+            Presidente Prudente · SP <span className="mx-2 opacity-40">·</span>
+            Eventos · Cultura · Experiências
+          </div>
+          <p className="text-[0.75rem] tracking-wide">
+            © {new Date().getFullYear()} Prudente em Foco. Todos os direitos reservados.
+          </p>
         </div>
       </div>
     </footer>
