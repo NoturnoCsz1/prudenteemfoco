@@ -45,6 +45,14 @@ function eventQueryOptions(slug: string) {
   });
 }
 
+function attractionsQueryOptions(slug: string) {
+  return queryOptions({
+    queryKey: ["public", "event", slug, "attractions"],
+    queryFn: () => listEventAttractionsBySlug({ data: { slug } }),
+  });
+}
+
+
 const searchSchema = z.object({
   promoter: z.string().trim().min(1).max(64).optional(),
 });
