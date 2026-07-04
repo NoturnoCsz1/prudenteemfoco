@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { OperationsNav } from "@/components/admin/OperationsNav";
 import { EventForm, type EventFormRecord } from "@/components/admin/EventForm";
-import type { EventStatus } from "@/lib/events";
+import type { EventStatus, EventKind, EventFormat } from "@/lib/events";
 
 export const Route = createFileRoute("/_authenticated/admin/eventos/$id/editar")({
   head: () => ({
@@ -25,7 +25,7 @@ function EditEventPage() {
       const { data, error } = await supabase
         .from("events")
         .select(
-          "id, title, slug, status, starts_at, ends_at, venue_name, city, short_description, cover_image_url, long_description, instagram_url, external_ticket_url",
+          "id, title, slug, status, kind, format, starts_at, ends_at, venue_name, city, short_description, cover_image_url, long_description, instagram_url, external_ticket_url",
         )
         .eq("id", id)
         .maybeSingle();
@@ -36,6 +36,8 @@ function EditEventPage() {
         title: data.title,
         slug: data.slug,
         status: data.status as EventStatus,
+        kind: (data.kind ?? "other") as EventKind,
+        format: (data.format ?? "one_off") as EventFormat,
         starts_at: data.starts_at,
         ends_at: data.ends_at,
         venue_name: data.venue_name,

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, MapPin } from "lucide-react";
 import { listPublishedEvents, type PublicEvent } from "@/lib/events.functions";
-import { formatEventDateEditorial } from "@/lib/events";
+import { formatEventDateEditorial, normalizeCoverUrl } from "@/lib/events";
 
 const eventsQueryOptions = queryOptions({
   queryKey: ["public", "events", "list"],
@@ -35,12 +35,8 @@ export const Route = createFileRoute("/_site/")({
   component: HomePage,
 });
 
-function isFestival(ev: PublicEvent): boolean {
-  if (!ev.starts_at || !ev.ends_at) return false;
-  const start = Date.parse(ev.starts_at);
-  const end = Date.parse(ev.ends_at);
-  if (Number.isNaN(start) || Number.isNaN(end)) return false;
-  return end - start >= 24 * 60 * 60 * 1000;
+function isBigEvent(ev: PublicEvent): boolean {
+  return ev.kind === "festival" || ev.kind === "special_event";
 }
 
 function isUpcoming(ev: PublicEvent): boolean {
@@ -58,14 +54,15 @@ function HomePage() {
     const bx = b.starts_at ? Date.parse(b.starts_at) : Infinity;
     return ax - bx;
   });
-  const festivals = upcoming.filter(isFestival);
-  const shows = upcoming.filter((ev) => !isFestival(ev));
+  const festivals = upcoming.filter(isBigEvent);
+  const shows = upcoming.filter((ev) => !isBigEvent(ev));
   const featured = upcoming[0] ?? null;
+  const featuredCover = featured ? normalizeCoverUrl(featured.cover_image_url) : null;
   const past = events.filter((ev) => !isUpcoming(ev));
 
   return (
     <>
-      {featured && featured.cover_image_url ? (
+      {featured && featuredCover ? (
         <PosterHero event={featured} />
       ) : (
         <InstitutionalHero />
@@ -149,11 +146,13 @@ function HomePage() {
 /* ============ HERO CINEMATOGRÁFICO — poster full-bleed ============ */
 
 function PosterHero({ event }: { event: PublicEvent }) {
+  const cover = normalizeCoverUrl(event.cover_image_url);
+  if (!cover) return null;
   return (
     <section className="relative isolate -mt-14 md:-mt-16">
       <div className="absolute inset-0 -z-10">
         <img
-          src={event.cover_image_url!}
+          src={cover}
           alt=""
           className="h-full w-full object-cover"
         />
@@ -303,6 +302,7 @@ function Section({
 
 function FestivalPoster({ event, index }: { event: PublicEvent; index: number }) {
   const flipped = index % 2 === 1;
+  const cover = normalizeCoverUrl(event.cover_image_url);
   return (
     <Link
       to="/eventos/$slug"
@@ -314,9 +314,9 @@ function FestivalPoster({ event, index }: { event: PublicEvent; index: number })
           flipped ? "md:order-2 md:col-start-5" : ""
         }`}
       >
-        {event.cover_image_url ? (
+        {cover ? (
           <img
-            src={event.cover_image_url}
+            src={cover}
             alt=""
             loading="lazy"
             className="image-zoom h-full w-full object-cover"

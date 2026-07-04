@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarDays, ArrowRight, MapPin } from "lucide-react";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { listPublishedEvents, type PublicEvent } from "@/lib/events.functions";
-import { formatEventDateEditorial } from "@/lib/events";
+import { formatEventDateEditorial, normalizeCoverUrl } from "@/lib/events";
 
 const eventsQueryOptions = queryOptions({
   queryKey: ["public", "events", "list"],
@@ -93,6 +93,7 @@ function EventosPage() {
 }
 
 function EventRow({ event }: { event: PublicEvent }) {
+  const cover = normalizeCoverUrl(event.cover_image_url);
   return (
     <li>
       <Link
@@ -118,10 +119,10 @@ function EventRow({ event }: { event: PublicEvent }) {
           </span>
         </div>
         <div className="order-1 md:order-2">
-          {event.cover_image_url ? (
+          {cover ? (
             <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
               <img
-                src={event.cover_image_url}
+                src={cover}
                 alt=""
                 loading="lazy"
                 className="image-zoom h-full w-full object-cover"

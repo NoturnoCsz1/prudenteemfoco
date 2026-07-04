@@ -27,7 +27,7 @@ import {
   createSpaceReservationRequest,
   type PublicSpaceType,
 } from "@/lib/reservations.functions";
-import { formatEventDateRange, formatEventDateEditorial } from "@/lib/events";
+import { formatEventDateRange, formatEventDateEditorial, normalizeCoverUrl } from "@/lib/events";
 
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -86,10 +86,10 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
-        ...(ev?.cover_image_url
+        ...(normalizeCoverUrl(ev?.cover_image_url)
           ? [
-              { property: "og:image", content: ev.cover_image_url },
-              { name: "twitter:image", content: ev.cover_image_url },
+              { property: "og:image", content: normalizeCoverUrl(ev!.cover_image_url)! },
+              { name: "twitter:image", content: normalizeCoverUrl(ev!.cover_image_url)! },
             ]
           : []),
       ],
@@ -105,7 +105,7 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
                 description: ev.short_description ?? undefined,
                 startDate: ev.starts_at ?? undefined,
                 endDate: ev.ends_at ?? undefined,
-                image: ev.cover_image_url ?? undefined,
+                image: normalizeCoverUrl(ev.cover_image_url) ?? undefined,
                 location:
                   ev.venue_name || ev.city
                     ? {
@@ -184,15 +184,16 @@ function EventDetailPage() {
   }, [slug, promoter]);
 
   if (!event) return null;
+  const cover = normalizeCoverUrl(event.cover_image_url);
 
   return (
     <article>
       {/* HERO — CARTAZ DO EVENTO */}
       <section className="relative isolate -mt-14 md:-mt-16">
-        {event.cover_image_url ? (
+        {cover ? (
           <div className="absolute inset-0 -z-10">
             <img
-              src={event.cover_image_url}
+              src={cover}
               alt=""
               className="h-full w-full object-cover"
             />
@@ -217,9 +218,7 @@ function EventDetailPage() {
         )}
         <div
           className={`container-page flex flex-col justify-end pb-16 pt-32 md:pb-24 md:pt-40 ${
-            event.cover_image_url
-              ? "min-h-[92vh] md:min-h-[100vh]"
-              : "min-h-[70vh]"
+            cover ? "min-h-[92vh] md:min-h-[100vh]" : "min-h-[70vh]"
           }`}
         >
           <Link

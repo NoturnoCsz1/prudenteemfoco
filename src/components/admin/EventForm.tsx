@@ -8,12 +8,18 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   EVENT_STATUSES,
   EVENT_STATUS_LABEL,
+  EVENT_KINDS,
+  EVENT_KIND_LABEL,
+  EVENT_FORMATS,
+  EVENT_FORMAT_LABEL,
   eventFormSchema,
   isoToLocalInput,
   localInputToIso,
   slugify,
   type EventFormValues,
   type EventStatus,
+  type EventKind,
+  type EventFormat,
 } from "@/lib/events";
 import { useOrgMembership } from "@/hooks/use-org-membership";
 import { CoverUpload } from "./CoverUpload";
@@ -23,6 +29,8 @@ export type EventFormRecord = {
   title: string;
   slug: string;
   status: EventStatus;
+  kind: EventKind;
+  format: EventFormat;
   starts_at: string | null;
   ends_at: string | null;
   venue_name: string | null;
@@ -53,6 +61,8 @@ export function EventForm({
       title: initial?.title ?? "",
       slug: initial?.slug ?? "",
       status: initial?.status ?? "draft",
+      kind: initial?.kind ?? "other",
+      format: initial?.format ?? "one_off",
       starts_at: initial?.starts_at
         ? isoToLocalInput(initial.starts_at)
         : "",
@@ -95,6 +105,8 @@ export function EventForm({
         title: values.title,
         slug: values.slug,
         status: values.status,
+        kind: values.kind,
+        format: values.format,
         starts_at: values.starts_at
           ? localInputToIso(values.starts_at as unknown as string)
           : null,
@@ -320,6 +332,27 @@ export function EventForm({
           />
         </Field>
       )}
+
+      <div className="grid gap-5 md:grid-cols-2">
+        <Field label="Tipo do evento" error={errors.kind?.message}>
+          <select {...form.register("kind")} className="input">
+            {EVENT_KINDS.map((k) => (
+              <option key={k} value={k}>
+                {EVENT_KIND_LABEL[k]}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Formato" error={errors.format?.message}>
+          <select {...form.register("format")} className="input">
+            {EVENT_FORMATS.map((f) => (
+              <option key={f} value={f}>
+                {EVENT_FORMAT_LABEL[f]}
+              </option>
+            ))}
+          </select>
+        </Field>
+      </div>
 
       <Field label="Status" error={errors.status?.message}>
         <select {...form.register("status")} className="input">
