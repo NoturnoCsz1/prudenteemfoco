@@ -25,7 +25,7 @@ function EditEventPage() {
       const { data, error } = await supabase
         .from("events")
         .select(
-          "id, title, slug, status, starts_at, ends_at, venue_name, city, short_description, cover_image_url",
+          "id, title, slug, status, starts_at, ends_at, venue_name, city, short_description, cover_image_url, long_description, instagram_url, external_ticket_url",
         )
         .eq("id", id)
         .maybeSingle();
@@ -42,7 +42,11 @@ function EditEventPage() {
         city: data.city,
         short_description: data.short_description,
         cover_image_url: data.cover_image_url,
+        long_description: data.long_description,
+        instagram_url: data.instagram_url,
+        external_ticket_url: data.external_ticket_url,
       };
+
     },
   });
 
