@@ -64,8 +64,11 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
       eventQueryOptions(params.slug),
     );
     if (!event) throw notFound();
+    // pré-carrega line-up (opcional, sem falhar a rota)
+    void context.queryClient.prefetchQuery(attractionsQueryOptions(params.slug));
     return event;
   },
+
   head: ({ loaderData, params }) => {
     const ev = loaderData as PublicEvent | undefined;
     const title = ev
