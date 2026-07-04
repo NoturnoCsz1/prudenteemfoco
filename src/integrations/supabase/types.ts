@@ -14,6 +14,115 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_attempts: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          decision_reason: string | null
+          event_id: string
+          id: string
+          organization_id: string
+          requested_by: string | null
+          rule_applied: string | null
+          status: Database["public"]["Enums"]["access_attempt_status"]
+          subject_id: string
+          subject_type: Database["public"]["Enums"]["access_subject_type"]
+          target_id: string
+          target_type: Database["public"]["Enums"]["access_target_type"]
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          decision_reason?: string | null
+          event_id: string
+          id?: string
+          organization_id: string
+          requested_by?: string | null
+          rule_applied?: string | null
+          status?: Database["public"]["Enums"]["access_attempt_status"]
+          subject_id: string
+          subject_type: Database["public"]["Enums"]["access_subject_type"]
+          target_id: string
+          target_type: Database["public"]["Enums"]["access_target_type"]
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          decision_reason?: string | null
+          event_id?: string
+          id?: string
+          organization_id?: string
+          requested_by?: string | null
+          rule_applied?: string | null
+          status?: Database["public"]["Enums"]["access_attempt_status"]
+          subject_id?: string
+          subject_type?: Database["public"]["Enums"]["access_subject_type"]
+          target_id?: string
+          target_type?: Database["public"]["Enums"]["access_target_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_attempts_event_org_fk"
+            columns: ["event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
+      access_decision_cache: {
+        Row: {
+          created_at: string
+          decision: Database["public"]["Enums"]["access_attempt_status"]
+          decision_reason: string | null
+          event_id: string
+          expires_at: string
+          id: string
+          organization_id: string
+          rule_applied: string | null
+          subject_id: string
+          subject_type: Database["public"]["Enums"]["access_subject_type"]
+          target_id: string
+          target_type: Database["public"]["Enums"]["access_target_type"]
+        }
+        Insert: {
+          created_at?: string
+          decision: Database["public"]["Enums"]["access_attempt_status"]
+          decision_reason?: string | null
+          event_id: string
+          expires_at: string
+          id?: string
+          organization_id: string
+          rule_applied?: string | null
+          subject_id: string
+          subject_type: Database["public"]["Enums"]["access_subject_type"]
+          target_id: string
+          target_type: Database["public"]["Enums"]["access_target_type"]
+        }
+        Update: {
+          created_at?: string
+          decision?: Database["public"]["Enums"]["access_attempt_status"]
+          decision_reason?: string | null
+          event_id?: string
+          expires_at?: string
+          id?: string
+          organization_id?: string
+          rule_applied?: string | null
+          subject_id?: string
+          subject_type?: Database["public"]["Enums"]["access_subject_type"]
+          target_id?: string
+          target_type?: Database["public"]["Enums"]["access_target_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_cache_event_org_fk"
+            columns: ["event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -595,6 +704,21 @@ export type Database = {
           venue_name: string
         }[]
       }
+      process_access_attempt: {
+        Args: {
+          _event_id: string
+          _subject_id: string
+          _subject_type: Database["public"]["Enums"]["access_subject_type"]
+          _target_id: string
+          _target_type: Database["public"]["Enums"]["access_target_type"]
+        }
+        Returns: {
+          attempt_id: string
+          decision: Database["public"]["Enums"]["access_attempt_status"]
+          reason: string
+          rule_applied: string
+        }[]
+      }
       record_audit_event: {
         Args: {
           _action: string
@@ -614,8 +738,11 @@ export type Database = {
       }
     }
     Enums: {
+      access_attempt_status: "processing" | "allowed" | "denied"
       access_rule_target: "invite" | "credential" | "sector" | "space"
       access_rule_type: "allow" | "deny"
+      access_subject_type: "invite" | "credential" | "user"
+      access_target_type: "event" | "sector" | "space"
       credential_role_type:
         | "staff"
         | "security"
@@ -777,8 +904,11 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      access_attempt_status: ["processing", "allowed", "denied"],
       access_rule_target: ["invite", "credential", "sector", "space"],
       access_rule_type: ["allow", "deny"],
+      access_subject_type: ["invite", "credential", "user"],
+      access_target_type: ["event", "sector", "space"],
       credential_role_type: [
         "staff",
         "security",
