@@ -146,11 +146,13 @@ function HomePage() {
 /* ============ HERO CINEMATOGRÁFICO — poster full-bleed ============ */
 
 function PosterHero({ event }: { event: PublicEvent }) {
+  const cover = normalizeCoverUrl(event.cover_image_url);
+  if (!cover) return null;
   return (
     <section className="relative isolate -mt-14 md:-mt-16">
       <div className="absolute inset-0 -z-10">
         <img
-          src={event.cover_image_url!}
+          src={cover}
           alt=""
           className="h-full w-full object-cover"
         />
