@@ -1,20 +1,24 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Menu, X, ShieldCheck } from "lucide-react";
 import { useSession } from "@/hooks/use-session";
+import { useSiteMenu } from "@/hooks/use-site-menu";
 
-const NAV = [
-  { to: "/eventos", label: "Eventos" },
-  { to: "/experiencias", label: "Experiências" },
-  { to: "/sobre", label: "Nossa História" },
-  { to: "/contato", label: "Contato" },
+const ALL_NAV = [
+  { to: "/eventos", label: "Eventos", flag: "show_eventos" },
+  { to: "/experiencias", label: "Experiências", flag: "show_experiencias" },
+  { to: "/sobre", label: "Nossa História", flag: "show_sobre" },
+  { to: "/contato", label: "Contato", flag: "show_contato" },
 ] as const;
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, loading } = useSession();
+  const menu = useSiteMenu();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const NAV = useMemo(() => ALL_NAV.filter((n) => menu[n.flag]), [menu]);
+  const showVerAgenda = menu.show_ver_agenda;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -88,12 +92,14 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link
-            to="/eventos"
-            className="eyebrow-label text-primary transition-opacity hover:opacity-80"
-          >
-            Ver agenda →
-          </Link>
+          {showVerAgenda && (
+            <Link
+              to="/eventos"
+              className="eyebrow-label text-primary transition-opacity hover:opacity-80"
+            >
+              Ver agenda →
+            </Link>
+          )}
           {!loading && user ? (
             <Link
               to="/admin"
@@ -160,13 +166,15 @@ export function SiteHeader() {
         </nav>
 
         <div className="container-page mt-8 flex flex-col gap-4">
-          <Link
-            to="/eventos"
-            onClick={() => setOpen(false)}
-            className="poster text-2xl leading-none text-primary"
-          >
-            VER AGENDA →
-          </Link>
+          {showVerAgenda && (
+            <Link
+              to="/eventos"
+              onClick={() => setOpen(false)}
+              className="poster text-2xl leading-none text-primary"
+            >
+              VER AGENDA →
+            </Link>
+          )}
           {!loading && user ? (
             <Link
               to="/admin"

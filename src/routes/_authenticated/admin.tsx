@@ -14,6 +14,7 @@ import {
   ArrowLeft,
   LogOut,
   Users,
+  Globe,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const NAV = [
   { to: "/admin", label: "Visão Geral", icon: LayoutDashboard, exact: true },
   { to: "/admin/eventos", label: "Eventos", icon: CalendarDays },
+  { to: "/admin/site", label: "Site", icon: Globe },
   { to: "/admin/equipe", label: "Equipe", icon: Users },
 ] as const;
 

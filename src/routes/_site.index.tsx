@@ -28,6 +28,7 @@ import {
 } from "@/components/site/HeroCarousel";
 import { useAttribution, buildSearch } from "@/lib/attribution";
 import { trackHomeEvent } from "@/lib/home-tracking";
+import { getSiteHome, listSiteMemoryItems, type SiteHome, type SiteMemoryItem } from "@/lib/site.functions";
 
 const eventsQO = queryOptions({
   queryKey: ["public", "events", "list"],
@@ -44,6 +45,16 @@ const newsQO = queryOptions({
 const experiencesQO = queryOptions({
   queryKey: ["public", "home", "experiences"],
   queryFn: () => listHomeExperiences({ data: { limit: 4 } }),
+});
+const siteHomeQO = queryOptions({
+  queryKey: ["site", "home"],
+  queryFn: () => getSiteHome(),
+  staleTime: 60_000,
+});
+const siteMemoryQO = queryOptions({
+  queryKey: ["site", "memory"],
+  queryFn: () => listSiteMemoryItems(),
+  staleTime: 60_000,
 });
 
 export const Route = createFileRoute("/_site/")({
@@ -66,6 +77,8 @@ export const Route = createFileRoute("/_site/")({
     context.queryClient.ensureQueryData(featuredQO);
     context.queryClient.prefetchQuery(newsQO);
     context.queryClient.prefetchQuery(experiencesQO);
+    context.queryClient.prefetchQuery(siteHomeQO);
+    context.queryClient.prefetchQuery(siteMemoryQO);
   },
   component: HomePage,
 });
@@ -82,6 +95,8 @@ function HomePage() {
   const { data: featured } = useSuspenseQuery(featuredQO);
   const { data: news = [] } = useQuery(newsQO);
   const { data: experiences = [] } = useQuery(experiencesQO);
+  const { data: siteHome } = useQuery(siteHomeQO);
+  const { data: memoryItems = [] } = useQuery(siteMemoryQO);
 
   const upcoming = useMemo(
     () =>
@@ -96,7 +111,6 @@ function HomePage() {
 
   const heroSlugs = new Set(featured.map((f) => f.slug));
   const nextEvents = upcoming.filter((ev) => !heroSlugs.has(ev.slug));
-  // Dedup editorial: se sobrarem < 3 próximos após tirar o hero, completa com featured.
   const nextEventsBalanced =
     nextEvents.length >= 3
       ? nextEvents
@@ -109,7 +123,7 @@ function HomePage() {
       {featured.length > 0 ? (
         <HeroBlock featured={featured} eventsIndex={events} />
       ) : (
-        <InstitutionalHero />
+        <InstitutionalHero cms={siteHome ?? null} />
       )}
 
       {nextEventsBalanced.length > 0 && (
@@ -118,11 +132,17 @@ function HomePage() {
 
       {news.length > 0 && <NewsSection items={news} />}
 
-      {experiences.length > 0 && <ExperiencesSection items={experiences} />}
+      {experiences.length > 0 && (
+        <ExperiencesSection items={experiences} cms={siteHome ?? null} />
+      )}
 
-      {past.length > 0 && <MemorySection events={past.slice(0, 8)} />}
+      {memoryItems.length > 0 ? (
+        <CmsMemorySection items={memoryItems} />
+      ) : (
+        past.length > 0 && <MemorySection events={past.slice(0, 8)} />
+      )}
 
-      <FinalCTA />
+      <FinalCTA cms={siteHome ?? null} />
     </>
   );
 }
@@ -165,7 +185,17 @@ function HeroWithLinks({
   return <HeroCarousel slides={slides} />;
 }
 
-function InstitutionalHero() {
+function InstitutionalHero({ cms }: { cms: SiteHome | null }) {
+  const eyebrow = cms?.hero_eyebrow || "Prudente em Foco";
+  const title = cms?.hero_title || "Onde a cidade\nvira palco.";
+  const subtitle =
+    cms?.hero_subtitle ||
+    "Produtora de festivais, shows, rodeios e experiências em Presidente Prudente.";
+  const primaryLabel = cms?.cta_primary_label || "Ver agenda";
+  const primaryUrl = cms?.cta_primary_url || "";
+  const secondaryLabel = cms?.cta_secondary_label || "Fale com a produção";
+  const secondaryUrl = cms?.cta_secondary_url || "";
+
   return (
     <section className="relative isolate overflow-hidden -mt-14 md:-mt-16">
       <div
@@ -177,28 +207,44 @@ function InstitutionalHero() {
         }}
       />
       <div className="container-page flex min-h-[80svh] flex-col justify-end pb-14 pt-20 md:min-h-[80vh] md:pb-24 md:pt-40">
-        <p className="eyebrow-label text-primary">Prudente em Foco</p>
-        <h1 className="mt-5 display-xl text-foreground md:mt-6">
-          Onde a cidade
-          <br />
-          vira palco.
+        <p className="eyebrow-label text-primary">{eyebrow}</p>
+        <h1 className="mt-5 display-xl whitespace-pre-line text-foreground md:mt-6">
+          {title}
         </h1>
         <p className="mt-6 max-w-xl text-base text-muted-foreground md:mt-8 md:text-lg">
-          Produtora de festivais, shows, rodeios e experiências em Presidente Prudente.
+          {subtitle}
         </p>
         <div className="mt-8 flex flex-col items-stretch gap-3 md:mt-10 md:flex-row md:flex-wrap md:items-center md:gap-6">
-          <Link
-            to="/eventos"
-            className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3.5 font-display text-[11px] font-bold uppercase tracking-[0.28em] text-background hover:opacity-90 md:px-7 md:py-4 md:text-xs"
-          >
-            Ver agenda <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            to="/contato"
-            className="inline-flex items-center justify-center gap-2 border border-foreground/40 px-6 py-3.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary md:border-0 md:border-b md:border-foreground/60 md:px-0 md:py-1 md:pb-1 md:text-xs"
-          >
-            Fale com a produção
-          </Link>
+          {primaryUrl ? (
+            <a
+              href={primaryUrl}
+              className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3.5 font-display text-[11px] font-bold uppercase tracking-[0.28em] text-background hover:opacity-90 md:px-7 md:py-4 md:text-xs"
+            >
+              {primaryLabel} <ArrowRight className="h-4 w-4" />
+            </a>
+          ) : (
+            <Link
+              to="/eventos"
+              className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3.5 font-display text-[11px] font-bold uppercase tracking-[0.28em] text-background hover:opacity-90 md:px-7 md:py-4 md:text-xs"
+            >
+              {primaryLabel} <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
+          {secondaryUrl ? (
+            <a
+              href={secondaryUrl}
+              className="inline-flex items-center justify-center gap-2 border border-foreground/40 px-6 py-3.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary md:border-0 md:border-b md:border-foreground/60 md:px-0 md:py-1 md:pb-1 md:text-xs"
+            >
+              {secondaryLabel}
+            </a>
+          ) : (
+            <Link
+              to="/contato"
+              className="inline-flex items-center justify-center gap-2 border border-foreground/40 px-6 py-3.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary md:border-0 md:border-b md:border-foreground/60 md:px-0 md:py-1 md:pb-1 md:text-xs"
+            >
+              {secondaryLabel}
+            </Link>
+          )}
         </div>
       </div>
     </section>
@@ -388,17 +434,27 @@ const CATEGORY_LABEL: Record<HomeExperience["category"], string> = {
   other: "Área especial",
 };
 
-function ExperiencesSection({ items }: { items: HomeExperience[] }) {
+function ExperiencesSection({
+  items,
+  cms,
+}: {
+  items: HomeExperience[];
+  cms: SiteHome | null;
+}) {
   const attribution = useAttribution();
   const search = buildSearch(attribution);
+  const headline = cms?.experiences_headline || "Viva o evento de outro jeito.";
+  const body =
+    cms?.experiences_body ||
+    "Camarotes, bistrôs, mesas e áreas especiais com solicitação direta na página de cada evento.";
   return (
     <section>
       <div className="container-page py-12 md:py-24">
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">Experiências</p>
-          <h2 className="mt-4 section-title text-foreground">Viva o evento de outro jeito.</h2>
-          <p className="mt-4 max-w-2xl text-base text-muted-foreground md:mt-6 md:text-lg">
-            Camarotes, bistrôs, mesas e áreas especiais com solicitação direta na página de cada evento.
+          <h2 className="mt-4 section-title text-foreground">{headline}</h2>
+          <p className="mt-4 max-w-2xl whitespace-pre-line text-base text-muted-foreground md:mt-6 md:text-lg">
+            {body}
           </p>
         </div>
         <ul className="mt-8 grid gap-6 md:mt-12 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -502,24 +558,97 @@ function MemorySection({ events }: { events: PublicEvent[] }) {
   );
 }
 
+/* =============================== MEMÓRIA CMS ============================== */
+
+function CmsMemorySection({ items }: { items: SiteMemoryItem[] }) {
+  const attribution = useAttribution();
+  const search = buildSearch(attribution);
+  return (
+    <section className="bg-surface/30">
+      <div className="container-page py-12 md:py-24">
+        <div className="max-w-4xl">
+          <p className="eyebrow-label text-primary">Memória em foco</p>
+          <h2 className="mt-4 section-title text-foreground">Arquivo Prudente em Foco.</h2>
+        </div>
+        <ul className="mt-8 divide-y divide-[color-mix(in_oklab,var(--foreground)_12%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)]">
+          {items.map((item) => {
+            const body = (
+              <div className="grid grid-cols-[auto,1fr] items-baseline gap-6 py-5 md:gap-10 md:py-7">
+                <span className="date-block text-2xl text-[var(--gold)] md:text-4xl">
+                  {item.year_label || "—"}
+                </span>
+                <div className="min-w-0">
+                  <h3 className="poster text-lg text-foreground md:text-3xl">
+                    {item.title}
+                  </h3>
+                  {item.description && (
+                    <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                      {item.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+            return (
+              <li key={item.id}>
+                {item.related_event_slug ? (
+                  <Link
+                    to="/eventos/$slug"
+                    params={{ slug: item.related_event_slug }}
+                    search={search}
+                    className="group block transition-colors hover:text-primary"
+                  >
+                    {body}
+                  </Link>
+                ) : (
+                  body
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 /* =============================== CTA FINAL ============================== */
 
-function FinalCTA() {
+function FinalCTA({ cms }: { cms: SiteHome | null }) {
+  const headline =
+    cms?.final_cta_headline || "O próximo grande momento começa aqui.";
+  const body = cms?.final_cta_body || "";
+  const label = cms?.final_cta_button_label || "Ver agenda";
+  const url = cms?.final_cta_button_url || "";
   return (
     <section className="py-10 md:py-24">
       <div className="container-page">
         <div className="mx-auto max-w-3xl border-t border-[color-mix(in_oklab,var(--foreground)_15%,transparent)] pt-10 text-center md:pt-14">
           <p className="eyebrow-label text-primary">Agenda oficial</p>
           <h2 className="mx-auto mt-4 max-w-2xl font-display text-2xl font-semibold leading-tight text-foreground md:text-4xl">
-            O próximo grande momento começa aqui.
+            {headline}
           </h2>
+          {body && (
+            <p className="mx-auto mt-4 max-w-xl whitespace-pre-line text-sm text-muted-foreground md:text-base">
+              {body}
+            </p>
+          )}
           <div className="mt-6 md:mt-8">
-            <Link
-              to="/eventos"
-              className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 font-display text-xs font-bold uppercase tracking-[0.3em] text-foreground transition-colors hover:text-primary"
-            >
-              Ver agenda <ArrowRight className="h-4 w-4" />
-            </Link>
+            {url ? (
+              <a
+                href={url}
+                className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 font-display text-xs font-bold uppercase tracking-[0.3em] text-foreground transition-colors hover:text-primary"
+              >
+                {label} <ArrowRight className="h-4 w-4" />
+              </a>
+            ) : (
+              <Link
+                to="/eventos"
+                className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 font-display text-xs font-bold uppercase tracking-[0.3em] text-foreground transition-colors hover:text-primary"
+              >
+                {label} <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
           </div>
         </div>
       </div>

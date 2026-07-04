@@ -1,13 +1,16 @@
 import { Link } from "@tanstack/react-router";
+import { useSiteMenu } from "@/hooks/use-site-menu";
 
-const NAV = [
-  { to: "/eventos", label: "Eventos" },
-  { to: "/experiencias", label: "Experiências" },
-  { to: "/sobre", label: "Nossa História" },
-  { to: "/contato", label: "Contato" },
+const ALL_NAV = [
+  { to: "/eventos", label: "Eventos", flag: "show_eventos" },
+  { to: "/experiencias", label: "Experiências", flag: "show_experiencias" },
+  { to: "/sobre", label: "Nossa História", flag: "show_sobre" },
+  { to: "/contato", label: "Contato", flag: "show_contato" },
 ] as const;
 
 export function SiteFooter() {
+  const menu = useSiteMenu();
+  const NAV = ALL_NAV.filter((n) => menu[n.flag]);
   return (
     <footer className="mt-16 bg-background text-foreground md:mt-24">
       <div className="rule-line" />
