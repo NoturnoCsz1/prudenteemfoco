@@ -123,61 +123,63 @@ export function SiteHeader() {
           />
         </button>
       </div>
+    </header>
 
-      {/* Full-viewport editorial mobile menu */}
-      <div
-        className={`fixed inset-x-0 bottom-0 top-14 z-50 overflow-y-auto overscroll-contain bg-background md:hidden ${
-          open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
-        } transition-opacity duration-200 motion-reduce:transition-none`}
-        aria-hidden={!open}
-      >
-        <div className="flex min-h-full flex-col pt-6 pb-10">
-          <nav
-            aria-label="Menu principal"
-            className="container-page flex flex-col"
-          >
-            {NAV.map((item, i) => (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setOpen(false)}
-                style={{
-                  transitionDelay: open ? `${80 + i * 55}ms` : "0ms",
-                }}
-                className={`group flex items-start gap-4 border-b border-foreground/10 py-5 transition-all duration-300 motion-reduce:transition-none ${
-                  open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
-                }`}
-              >
-                <span className="eyebrow-label mt-2 w-7 shrink-0 text-primary">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="poster min-w-0 flex-1 break-words text-[clamp(2rem,9vw,3rem)] leading-[0.95] text-foreground transition-colors group-hover:text-primary">
-                  {item.label.toUpperCase()}
-                </span>
-              </Link>
-            ))}
-          </nav>
-
-          <div className="container-page mt-8 flex flex-col gap-4">
+    {/* Full-viewport editorial mobile menu — sibling of <header> to escape backdrop-filter containing block */}
+    <div
+      className={`fixed inset-x-0 bottom-0 top-14 z-50 overflow-y-auto overscroll-contain bg-background md:hidden ${
+        open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+      } transition-opacity duration-200 motion-reduce:transition-none`}
+      aria-hidden={!open}
+    >
+      <div className="flex min-h-full flex-col pt-6 pb-10">
+        <nav
+          aria-label="Menu principal"
+          className="container-page flex flex-col"
+        >
+          {NAV.map((item, i) => (
             <Link
-              to="/eventos"
+              key={item.to}
+              to={item.to}
               onClick={() => setOpen(false)}
-              className="poster text-2xl leading-none text-primary"
+              style={{
+                transitionDelay: open ? `${80 + i * 55}ms` : "0ms",
+              }}
+              className={`group flex items-start gap-4 border-b border-foreground/10 py-5 transition-all duration-300 motion-reduce:transition-none ${
+                open ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+              }`}
             >
-              VER AGENDA →
+              <span className="eyebrow-label mt-2 w-7 shrink-0 text-primary">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="poster min-w-0 flex-1 break-words text-[clamp(2rem,9vw,3rem)] leading-[0.95] text-foreground transition-colors group-hover:text-primary">
+                {item.label.toUpperCase()}
+              </span>
             </Link>
-            {!loading && user ? (
-              <Link
-                to="/admin"
-                onClick={() => setOpen(false)}
-                className="inline-flex items-center gap-2 eyebrow-label text-muted-foreground"
-              >
-                <ShieldCheck className="h-3.5 w-3.5" /> Painel Admin
-              </Link>
-            ) : null}
-          </div>
+          ))}
+        </nav>
+
+        <div className="container-page mt-8 flex flex-col gap-4">
+          <Link
+            to="/eventos"
+            onClick={() => setOpen(false)}
+            className="poster text-2xl leading-none text-primary"
+          >
+            VER AGENDA →
+          </Link>
+          {!loading && user ? (
+            <Link
+              to="/admin"
+              onClick={() => setOpen(false)}
+              className="inline-flex items-center gap-2 eyebrow-label text-muted-foreground"
+            >
+              <ShieldCheck className="h-3.5 w-3.5" /> Painel Admin
+            </Link>
+          ) : null}
         </div>
       </div>
-    </header>
+    </div>
+    </>
   );
 }
+
