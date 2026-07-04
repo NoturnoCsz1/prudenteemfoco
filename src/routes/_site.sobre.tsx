@@ -22,18 +22,19 @@ export const Route = createFileRoute("/_site/sobre")({
 function SobrePage() {
   return (
     <>
-      <section className="container-page pt-24 pb-10 md:pt-32 md:pb-16">
+      <section className="container-page pt-20 pb-8 md:pt-32 md:pb-16">
         <p className="eyebrow-label text-primary">Nossa história</p>
-        <h1 className="poster mt-6 text-[clamp(3rem,12vw,8.5rem)] leading-[0.86] text-foreground">
+        <h1 className="poster mt-5 text-[clamp(2.8rem,13vw,8.5rem)] leading-[0.88] text-foreground md:mt-6">
           PRUDENTE
           <br />
           <span className="text-primary">EM FOCO.</span>
         </h1>
-        <p className="mt-8 max-w-2xl font-display text-lg leading-snug text-foreground/85 md:text-2xl">
+        <p className="mt-6 max-w-2xl font-display text-base leading-snug text-foreground/85 md:mt-8 md:text-2xl">
           Uma história no centro dos acontecimentos de Presidente Prudente —
           eventos, cultura e memória.
         </p>
       </section>
+
 
       <div className="container-page">
         <div className="rule-line" />
