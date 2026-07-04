@@ -46,6 +46,12 @@ export function OperationsNav({
       to: `/admin/eventos/${eventId}/access-engine`,
       icon: <Gauge className="h-3.5 w-3.5" />,
     },
+    {
+      key: "entrance",
+      label: "Entrada",
+      to: `/admin/eventos/${eventId}/entrada`,
+      icon: <DoorOpen className="h-3.5 w-3.5" />,
+    },
   ];
   return (
     <div className="border-b border-border">
