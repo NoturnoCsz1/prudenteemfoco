@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, LayoutGrid, MapPin, PencilLine } from "lucide-react";
+import { ArrowLeft, KeyRound, LayoutGrid, MapPin, PencilLine } from "lucide-react";
 
 export function OperationsNav({
   eventId,
@@ -7,7 +7,7 @@ export function OperationsNav({
   eventTitle,
 }: {
   eventId: string;
-  active: "details" | "sectors" | "spaces";
+  active: "details" | "sectors" | "spaces" | "access";
   eventTitle?: string | null;
 }) {
   const items: {
@@ -33,6 +33,12 @@ export function OperationsNav({
       label: "Espaços",
       to: `/admin/eventos/${eventId}/espacos`,
       icon: <MapPin className="h-3.5 w-3.5" />,
+    },
+    {
+      key: "access",
+      label: "Acesso",
+      to: `/admin/eventos/${eventId}/acesso`,
+      icon: <KeyRound className="h-3.5 w-3.5" />,
     },
   ];
   return (
