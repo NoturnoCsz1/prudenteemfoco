@@ -10,32 +10,82 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SiteRouteImport } from './routes/_site'
+import { Route as SiteIndexRouteImport } from './routes/_site.index'
+import { Route as SiteSobreRouteImport } from './routes/_site.sobre'
+import { Route as SiteExperienciasRouteImport } from './routes/_site.experiencias'
+import { Route as SiteEventosRouteImport } from './routes/_site.eventos'
+import { Route as SiteContatoRouteImport } from './routes/_site.contato'
 
 const SiteRoute = SiteRouteImport.update({
   id: '/_site',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SiteIndexRoute = SiteIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteSobreRoute = SiteSobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteExperienciasRoute = SiteExperienciasRouteImport.update({
+  id: '/experiencias',
+  path: '/experiencias',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteEventosRoute = SiteEventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
+  getParentRoute: () => SiteRoute,
+} as any)
+const SiteContatoRoute = SiteContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => SiteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof SiteRoute
+  '/': typeof SiteIndexRoute
+  '/contato': typeof SiteContatoRoute
+  '/eventos': typeof SiteEventosRoute
+  '/experiencias': typeof SiteExperienciasRoute
+  '/sobre': typeof SiteSobreRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof SiteRoute
+  '/contato': typeof SiteContatoRoute
+  '/eventos': typeof SiteEventosRoute
+  '/experiencias': typeof SiteExperienciasRoute
+  '/sobre': typeof SiteSobreRoute
+  '/': typeof SiteIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_site': typeof SiteRoute
+  '/_site': typeof SiteRouteWithChildren
+  '/_site/contato': typeof SiteContatoRoute
+  '/_site/eventos': typeof SiteEventosRoute
+  '/_site/experiencias': typeof SiteExperienciasRoute
+  '/_site/sobre': typeof SiteSobreRoute
+  '/_site/': typeof SiteIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/contato' | '/eventos' | '/experiencias' | '/sobre'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/_site'
+  to: '/contato' | '/eventos' | '/experiencias' | '/sobre' | '/'
+  id:
+    | '__root__'
+    | '/_site'
+    | '/_site/contato'
+    | '/_site/eventos'
+    | '/_site/experiencias'
+    | '/_site/sobre'
+    | '/_site/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  SiteRoute: typeof SiteRoute
+  SiteRoute: typeof SiteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -47,11 +97,64 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_site/': {
+      id: '/_site/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof SiteIndexRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/sobre': {
+      id: '/_site/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SiteSobreRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/experiencias': {
+      id: '/_site/experiencias'
+      path: '/experiencias'
+      fullPath: '/experiencias'
+      preLoaderRoute: typeof SiteExperienciasRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/eventos': {
+      id: '/_site/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof SiteEventosRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/contato': {
+      id: '/_site/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof SiteContatoRouteImport
+      parentRoute: typeof SiteRoute
+    }
   }
 }
 
+interface SiteRouteChildren {
+  SiteContatoRoute: typeof SiteContatoRoute
+  SiteEventosRoute: typeof SiteEventosRoute
+  SiteExperienciasRoute: typeof SiteExperienciasRoute
+  SiteSobreRoute: typeof SiteSobreRoute
+  SiteIndexRoute: typeof SiteIndexRoute
+}
+
+const SiteRouteChildren: SiteRouteChildren = {
+  SiteContatoRoute: SiteContatoRoute,
+  SiteEventosRoute: SiteEventosRoute,
+  SiteExperienciasRoute: SiteExperienciasRoute,
+  SiteSobreRoute: SiteSobreRoute,
+  SiteIndexRoute: SiteIndexRoute,
+}
+
+const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  SiteRoute: SiteRoute,
+  SiteRoute: SiteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
