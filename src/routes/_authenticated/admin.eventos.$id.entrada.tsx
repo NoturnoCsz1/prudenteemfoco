@@ -282,14 +282,14 @@ function EntrancePage() {
                 ))}
               </select>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <input
                 type="number"
                 min={1}
                 value={tokenCap}
                 onChange={(e) => setTokenCap(e.target.value)}
                 placeholder="Limite (opcional)"
-                className="h-9 w-40 rounded-md border border-input bg-background px-2 text-sm"
+                className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm sm:w-40"
               />
               <input
                 value={tokenLabel}
