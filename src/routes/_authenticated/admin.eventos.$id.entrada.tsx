@@ -231,7 +231,7 @@ function EntrancePage() {
   }
 
   return (
-    <div className="p-5 md:p-8">
+    <div className="w-full min-w-0 p-4 sm:p-5 md:p-8">
       <OperationsNav
         eventId={eventId}
         active="entrance"
