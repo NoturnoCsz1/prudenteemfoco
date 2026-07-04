@@ -147,3 +147,99 @@
     box-shadow: 0 0 0 2px var(--ring);
   }
 }
+
+/* ================= COMMAND CENTER (admin) ================= */
+
+@utility command-font {
+  font-family: var(--font-command);
+  letter-spacing: 0.01em;
+}
+
+@utility ops-font {
+  font-family: var(--font-ops);
+}
+
+@utility panel {
+  position: relative;
+  border-radius: 0.875rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--surface-elevated) 92%, transparent),
+    color-mix(in oklab, var(--surface) 88%, transparent)
+  );
+  box-shadow:
+    0 1px 0 color-mix(in oklab, white 4%, transparent) inset,
+    0 20px 40px -30px color-mix(in oklab, black 60%, transparent);
+}
+
+@utility panel-glow-primary {
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(140deg, color-mix(in oklab, var(--primary) 45%, transparent), transparent 55%);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+@utility panel-glow-violet {
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(140deg, color-mix(in oklab, var(--violet) 55%, transparent), transparent 55%);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+@utility live-dot {
+  position: relative;
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--live);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--live) 60%, transparent);
+  animation: live-pulse 1.6s ease-out infinite;
+}
+
+@keyframes live-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--live) 60%, transparent); }
+  70% { box-shadow: 0 0 0 10px color-mix(in oklab, var(--live) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--live) 0%, transparent); }
+}
+
+@utility hero-number {
+  font-family: var(--font-command);
+  font-size: clamp(2.75rem, 6vw, 4.25rem);
+  line-height: 0.9;
+  letter-spacing: 0.005em;
+  font-weight: 400;
+  tab-size: 4;
+  font-variant-numeric: tabular-nums;
+}
+
+@utility eyebrow {
+  font-family: var(--font-ops);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
