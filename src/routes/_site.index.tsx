@@ -302,6 +302,7 @@ function Section({
 
 function FestivalPoster({ event, index }: { event: PublicEvent; index: number }) {
   const flipped = index % 2 === 1;
+  const cover = normalizeCoverUrl(event.cover_image_url);
   return (
     <Link
       to="/eventos/$slug"
@@ -313,9 +314,9 @@ function FestivalPoster({ event, index }: { event: PublicEvent; index: number })
           flipped ? "md:order-2 md:col-start-5" : ""
         }`}
       >
-        {event.cover_image_url ? (
+        {cover ? (
           <img
-            src={event.cover_image_url}
+            src={cover}
             alt=""
             loading="lazy"
             className="image-zoom h-full w-full object-cover"
