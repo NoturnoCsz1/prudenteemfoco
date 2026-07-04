@@ -434,17 +434,27 @@ const CATEGORY_LABEL: Record<HomeExperience["category"], string> = {
   other: "Área especial",
 };
 
-function ExperiencesSection({ items }: { items: HomeExperience[] }) {
+function ExperiencesSection({
+  items,
+  cms,
+}: {
+  items: HomeExperience[];
+  cms: SiteHome | null;
+}) {
   const attribution = useAttribution();
   const search = buildSearch(attribution);
+  const headline = cms?.experiences_headline || "Viva o evento de outro jeito.";
+  const body =
+    cms?.experiences_body ||
+    "Camarotes, bistrôs, mesas e áreas especiais com solicitação direta na página de cada evento.";
   return (
     <section>
       <div className="container-page py-12 md:py-24">
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">Experiências</p>
-          <h2 className="mt-4 section-title text-foreground">Viva o evento de outro jeito.</h2>
-          <p className="mt-4 max-w-2xl text-base text-muted-foreground md:mt-6 md:text-lg">
-            Camarotes, bistrôs, mesas e áreas especiais com solicitação direta na página de cada evento.
+          <h2 className="mt-4 section-title text-foreground">{headline}</h2>
+          <p className="mt-4 max-w-2xl whitespace-pre-line text-base text-muted-foreground md:mt-6 md:text-lg">
+            {body}
           </p>
         </div>
         <ul className="mt-8 grid gap-6 md:mt-12 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
