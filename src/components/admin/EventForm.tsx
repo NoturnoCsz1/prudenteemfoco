@@ -124,7 +124,10 @@ export function EventForm({
         long_description: values.long_description,
         instagram_url: values.instagram_url,
         external_ticket_url: values.external_ticket_url,
+        is_featured: values.is_featured,
+        featured_order: values.featured_order,
       };
+
 
 
       if (mode === "create") {
