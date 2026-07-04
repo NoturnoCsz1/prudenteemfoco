@@ -244,6 +244,47 @@ export function EventForm({
         />
       </Field>
 
+      <Field
+        label="Descrição longa (editorial)"
+        error={errors.long_description?.message}
+        hint="Texto completo exibido na página pública do evento. Aceita quebras de linha."
+      >
+        <textarea
+          {...form.register("long_description")}
+          rows={6}
+          className="input resize-y"
+          maxLength={8000}
+        />
+      </Field>
+
+      <div className="grid gap-5 md:grid-cols-2">
+        <Field
+          label="Instagram oficial (https://)"
+          error={errors.instagram_url?.message}
+          hint="Link para o perfil oficial do evento."
+        >
+          <input
+            type="url"
+            {...form.register("instagram_url")}
+            className="input"
+            placeholder="https://instagram.com/..."
+          />
+        </Field>
+        <Field
+          label="Link de venda externa (https://)"
+          error={errors.external_ticket_url?.message}
+          hint="URL da bilheteira externa. Aparece como CTA principal se preenchido."
+        >
+          <input
+            type="url"
+            {...form.register("external_ticket_url")}
+            className="input"
+            placeholder="https://..."
+          />
+        </Field>
+      </div>
+
+
       {mode === "edit" && initial?.id && membership ? (
         <CoverUpload
           organizationId={membership.organization_id}
