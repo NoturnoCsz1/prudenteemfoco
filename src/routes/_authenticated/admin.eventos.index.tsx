@@ -9,6 +9,9 @@ import {
   Pencil,
   Archive,
   Trash2,
+  LayoutDashboard,
+  Globe,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -253,17 +256,52 @@ function EventosAdminPage() {
                     <Link
                       to="/admin/eventos/$id"
                       params={{ id: row.id }}
-                      className="inline-flex items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                      className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                    >
+                      <LayoutDashboard className="h-3.5 w-3.5" />
+                      Gerenciar
+                    </Link>
+                    <Link
+                      to="/admin/eventos/$id/editar"
+                      params={{ id: row.id }}
+                      className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                       Editar
                     </Link>
+                    <Link
+                      to="/admin/eventos/$id/hotsite"
+                      params={{ id: row.id }}
+                      className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                    >
+                      <Globe className="h-3.5 w-3.5" />
+                      Hotsite
+                    </Link>
+                    {row.status === "published" ? (
+                      <a
+                        href={`/eventos/${row.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        Visualizar
+                      </a>
+                    ) : (
+                      <span
+                        title="Publique o evento para visualizar a página pública"
+                        className="inline-flex min-h-[36px] cursor-not-allowed items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground/60"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        Visualizar
+                      </span>
+                    )}
                     {canManage && (
                       <button
                         type="button"
                         onClick={() => archiveMut.mutate(row)}
                         disabled={archiveMut.isPending}
-                        className="inline-flex items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent disabled:opacity-60"
+                        className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent disabled:opacity-60"
                       >
                         <Archive className="h-3.5 w-3.5" />
                         {row.status === "archived" ? "Desarquivar" : "Arquivar"}
@@ -282,7 +320,7 @@ function EventosAdminPage() {
                           deleteMut.mutate(row);
                         }}
                         disabled={deleteMut.isPending}
-                        className="inline-flex items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/20 disabled:opacity-60"
+                        className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/20 disabled:opacity-60"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         Excluir
