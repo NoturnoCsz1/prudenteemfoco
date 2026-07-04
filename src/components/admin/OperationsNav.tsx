@@ -19,6 +19,8 @@ export type OperationsTab =
   | "credentials"
   | "engine"
   | "spaces"
+  | "leads"
+  | "promoters"
   | "edit"
   // legacy tab keys — routes still exist but not shown in nav
   | "details"
