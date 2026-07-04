@@ -66,7 +66,44 @@ function attractionsQueryOptions(slug: string) {
 
 const searchSchema = z.object({
   promoter: z.string().trim().min(1).max(64).optional(),
+  utm_source: z.string().trim().max(120).optional(),
+  utm_medium: z.string().trim().max(120).optional(),
+  utm_campaign: z.string().trim().max(120).optional(),
+  utm_content: z.string().trim().max(120).optional(),
+  utm_term: z.string().trim().max(120).optional(),
 });
+
+function hotsiteQO(slug: string) {
+  return queryOptions({
+    queryKey: ["public", "event", slug, "hotsite"],
+    queryFn: () => getHotsiteBySlug({ data: { slug } }),
+  });
+}
+function sponsorsQO(slug: string) {
+  return queryOptions({
+    queryKey: ["public", "event", slug, "sponsors"],
+    queryFn: () => listSponsorsBySlug({ data: { slug } }),
+  });
+}
+function bannersQO(slug: string) {
+  return queryOptions({
+    queryKey: ["public", "event", slug, "banners"],
+    queryFn: () => listBannersBySlug({ data: { slug } }),
+  });
+}
+function newsQO(slug: string) {
+  return queryOptions({
+    queryKey: ["public", "event", slug, "news"],
+    queryFn: () => listNewsBySlug({ data: { slug, limit: 6 } }),
+  });
+}
+function commercialLinksQO(slug: string) {
+  return queryOptions({
+    queryKey: ["public", "event", slug, "commercial-links"],
+    queryFn: () => listCommercialLinksBySlug({ data: { slug } }),
+  });
+}
+
 
 export const Route = createFileRoute("/_site/eventos/$slug")({
   validateSearch: (s) => searchSchema.parse(s),
