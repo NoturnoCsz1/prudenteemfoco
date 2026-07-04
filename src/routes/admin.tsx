@@ -102,7 +102,8 @@ function AdminLink({
   pathname: string;
   onClick?: () => void;
 }) {
-  const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+  const exact = "exact" in item && item.exact === true;
+  const active = exact ? pathname === item.to : pathname.startsWith(item.to);
   const Icon = item.icon;
   return (
     <Link

@@ -9,21 +9,57 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as SiteRouteImport } from './routes/_site'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SiteIndexRouteImport } from './routes/_site.index'
+import { Route as AdminOperacaoRouteImport } from './routes/admin.operacao'
+import { Route as AdminExperienciasRouteImport } from './routes/admin.experiencias'
+import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
+import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
 import { Route as SiteSobreRouteImport } from './routes/_site.sobre'
 import { Route as SiteExperienciasRouteImport } from './routes/_site.experiencias'
 import { Route as SiteEventosRouteImport } from './routes/_site.eventos'
 import { Route as SiteContatoRouteImport } from './routes/_site.contato'
 
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SiteRoute = SiteRouteImport.update({
   id: '/_site',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const SiteIndexRoute = SiteIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SiteRoute,
+} as any)
+const AdminOperacaoRoute = AdminOperacaoRouteImport.update({
+  id: '/operacao',
+  path: '/operacao',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminExperienciasRoute = AdminExperienciasRouteImport.update({
+  id: '/experiencias',
+  path: '/experiencias',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEventosRoute = AdminEventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => AdminRoute,
 } as any)
 const SiteSobreRoute = SiteSobreRouteImport.update({
   id: '/sobre',
@@ -48,48 +84,100 @@ const SiteContatoRoute = SiteContatoRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/contato': typeof SiteContatoRoute
   '/eventos': typeof SiteEventosRoute
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/eventos': typeof AdminEventosRoute
+  '/admin/experiencias': typeof AdminExperienciasRoute
+  '/admin/operacao': typeof AdminOperacaoRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/contato': typeof SiteContatoRoute
   '/eventos': typeof SiteEventosRoute
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/eventos': typeof AdminEventosRoute
+  '/admin/experiencias': typeof AdminExperienciasRoute
+  '/admin/operacao': typeof AdminOperacaoRoute
   '/': typeof SiteIndexRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_site': typeof SiteRouteWithChildren
+  '/admin': typeof AdminRouteWithChildren
   '/_site/contato': typeof SiteContatoRoute
   '/_site/eventos': typeof SiteEventosRoute
   '/_site/experiencias': typeof SiteExperienciasRoute
   '/_site/sobre': typeof SiteSobreRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/eventos': typeof AdminEventosRoute
+  '/admin/experiencias': typeof AdminExperienciasRoute
+  '/admin/operacao': typeof AdminOperacaoRoute
   '/_site/': typeof SiteIndexRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/contato' | '/eventos' | '/experiencias' | '/sobre'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/contato'
+    | '/eventos'
+    | '/experiencias'
+    | '/sobre'
+    | '/admin/configuracoes'
+    | '/admin/eventos'
+    | '/admin/experiencias'
+    | '/admin/operacao'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/contato' | '/eventos' | '/experiencias' | '/sobre' | '/'
+  to:
+    | '/contato'
+    | '/eventos'
+    | '/experiencias'
+    | '/sobre'
+    | '/admin/configuracoes'
+    | '/admin/eventos'
+    | '/admin/experiencias'
+    | '/admin/operacao'
+    | '/'
+    | '/admin'
   id:
     | '__root__'
     | '/_site'
+    | '/admin'
     | '/_site/contato'
     | '/_site/eventos'
     | '/_site/experiencias'
     | '/_site/sobre'
+    | '/admin/configuracoes'
+    | '/admin/eventos'
+    | '/admin/experiencias'
+    | '/admin/operacao'
     | '/_site/'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   SiteRoute: typeof SiteRouteWithChildren
+  AdminRoute: typeof AdminRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_site': {
       id: '/_site'
       path: ''
@@ -97,12 +185,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_site/': {
       id: '/_site/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof SiteIndexRouteImport
       parentRoute: typeof SiteRoute
+    }
+    '/admin/operacao': {
+      id: '/admin/operacao'
+      path: '/operacao'
+      fullPath: '/admin/operacao'
+      preLoaderRoute: typeof AdminOperacaoRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/experiencias': {
+      id: '/admin/experiencias'
+      path: '/experiencias'
+      fullPath: '/admin/experiencias'
+      preLoaderRoute: typeof AdminExperienciasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/eventos': {
+      id: '/admin/eventos'
+      path: '/eventos'
+      fullPath: '/admin/eventos'
+      preLoaderRoute: typeof AdminEventosRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/configuracoes': {
+      id: '/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AdminConfiguracoesRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/_site/sobre': {
       id: '/_site/sobre'
@@ -153,8 +276,27 @@ const SiteRouteChildren: SiteRouteChildren = {
 
 const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
 
+interface AdminRouteChildren {
+  AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
+  AdminEventosRoute: typeof AdminEventosRoute
+  AdminExperienciasRoute: typeof AdminExperienciasRoute
+  AdminOperacaoRoute: typeof AdminOperacaoRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminConfiguracoesRoute: AdminConfiguracoesRoute,
+  AdminEventosRoute: AdminEventosRoute,
+  AdminExperienciasRoute: AdminExperienciasRoute,
+  AdminOperacaoRoute: AdminOperacaoRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   SiteRoute: SiteRouteWithChildren,
+  AdminRoute: AdminRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
