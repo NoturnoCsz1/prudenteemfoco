@@ -4,6 +4,61 @@ export type SectorStatus = Database["public"]["Enums"]["sector_status"];
 export type SpaceTypeStatus = Database["public"]["Enums"]["space_type_status"];
 export type SpaceOperationalStatus =
   Database["public"]["Enums"]["space_operational_status"];
+export type SpaceTypeCategory =
+  Database["public"]["Enums"]["space_type_category"];
+export type SpaceCommercialStatus =
+  Database["public"]["Enums"]["space_commercial_status"];
+
+export const SPACE_TYPE_CATEGORIES: readonly SpaceTypeCategory[] = [
+  "camarote",
+  "bistro",
+  "mesa",
+  "outro",
+] as const;
+
+export const SPACE_TYPE_CATEGORY_LABEL: Record<SpaceTypeCategory, string> = {
+  camarote: "Camarote",
+  bistro: "Bistrô",
+  mesa: "Mesa",
+  outro: "Outro",
+};
+
+export const SPACE_TYPE_CATEGORY_PLURAL: Record<SpaceTypeCategory, string> = {
+  camarote: "Camarotes",
+  bistro: "Bistrôs",
+  mesa: "Mesas",
+  outro: "Outros",
+};
+
+export const SPACE_COMMERCIAL_STATUSES: readonly SpaceCommercialStatus[] = [
+  "available",
+  "negotiating",
+  "reserved",
+  "confirmed",
+  "unavailable",
+] as const;
+
+export const SPACE_COMMERCIAL_STATUS_LABEL: Record<
+  SpaceCommercialStatus,
+  string
+> = {
+  available: "Disponível",
+  negotiating: "Em negociação",
+  reserved: "Reservado",
+  confirmed: "Confirmado",
+  unavailable: "Indisponível",
+};
+
+export const SPACE_COMMERCIAL_STATUS_TONE: Record<
+  SpaceCommercialStatus,
+  string
+> = {
+  available: "bg-emerald-500/15 text-emerald-400",
+  negotiating: "bg-amber-500/15 text-amber-400",
+  reserved: "bg-sky-500/15 text-sky-400",
+  confirmed: "bg-primary/20 text-primary",
+  unavailable: "bg-destructive/15 text-destructive",
+};
 
 export const SECTOR_STATUSES: readonly SectorStatus[] = [
   "active",
