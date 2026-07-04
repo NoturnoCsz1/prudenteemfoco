@@ -384,18 +384,14 @@ function LineupSection({ slug }: { slug: string }) {
     groups.find((g) => g.day === activeDay) ?? groups[0];
 
   return (
-    <section className="border-b border-border">
-      <div className="container-page py-14 md:py-20">
-        <SectionEyebrow icon={<Music2 className="h-4 w-4" />}>
-          Line-up e atrações
-        </SectionEyebrow>
-        <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
-          Programação por dia
-        </h2>
+    <section className="border-y border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
+      <div className="container-page py-20 md:py-32">
+        <p className="eyebrow-label text-primary">Programação</p>
+        <h2 className="mt-4 section-title text-foreground">Line-up por dia.</h2>
 
-        {/* Mobile: chips de dia + um dia em foco */}
+        {/* Mobile: chips + dia em foco */}
         {hasMultipleDays && (
-          <div className="mt-6 -mx-5 flex gap-2 overflow-x-auto px-5 pb-2 md:hidden">
+          <div className="mt-10 -mx-5 flex gap-3 overflow-x-auto px-5 pb-2 md:hidden">
             {groups.map(({ day }) => {
               const label = day ? formatDayLabel(day) : null;
               const active = day === focusedGroup.day;
@@ -404,26 +400,25 @@ function LineupSection({ slug }: { slug: string }) {
                   key={day ?? "sem-data"}
                   type="button"
                   onClick={() => setActiveDay(day)}
-                  className={`inline-flex shrink-0 items-baseline gap-2 rounded-full border px-4 py-2 text-xs uppercase tracking-[0.2em] transition-colors ${
+                  className={`inline-flex shrink-0 flex-col items-center gap-0.5 border-b-2 px-3 pb-2 transition-colors ${
                     active
-                      ? "border-primary/60 bg-primary/15 text-foreground"
-                      : "border-border-strong bg-surface/60 text-muted-foreground"
+                      ? "border-primary text-foreground"
+                      : "border-transparent text-muted-foreground"
                   }`}
+                  aria-pressed={active}
                 >
                   {label ? (
                     <>
-                      <span className="font-display text-base font-black tabular-nums text-foreground">
-                        {label.day}
-                      </span>
-                      <span className="font-display text-[10px] font-semibold text-primary">
+                      <span className="date-block text-3xl">{label.day}</span>
+                      <span className="font-display text-[10px] font-bold uppercase tracking-[0.28em] text-primary">
                         {label.month}
                       </span>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="font-display text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
                         {label.weekday}
                       </span>
                     </>
                   ) : (
-                    <span>A definir</span>
+                    <span className="font-display text-xs uppercase tracking-[0.28em]">A definir</span>
                   )}
                 </button>
               );
@@ -431,19 +426,17 @@ function LineupSection({ slug }: { slug: string }) {
           </div>
         )}
 
-        {/* Mobile: dia em foco */}
-        <div className="mt-6 md:hidden">
-          <DayBlock group={focusedGroup} />
+        <div className="mt-8 md:hidden">
+          <LineupDay group={focusedGroup} />
         </div>
 
-        {/* Desktop: composição editorial completa */}
-        <div className="mt-8 hidden space-y-10 md:block">
+        <div className="mt-12 hidden gap-x-12 gap-y-16 md:grid md:grid-cols-2 lg:grid-cols-3">
           {groups.map((g) => (
-            <DayBlock key={g.day ?? "sem-data"} group={g} />
+            <LineupDay key={g.day ?? "sem-data"} group={g} />
           ))}
         </div>
 
-        <p className="mt-8 text-xs text-muted-foreground">
+        <p className="mt-16 max-w-xl font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
           Horários e ordem de apresentação serão divulgados pela produção próximo ao evento.
         </p>
       </div>
@@ -451,42 +444,43 @@ function LineupSection({ slug }: { slug: string }) {
   );
 }
 
-function DayBlock({
+function LineupDay({
   group,
 }: {
   group: { day: string | null; items: PublicAttraction[] };
 }) {
   return (
-    <div className="grid gap-5 md:grid-cols-[auto,1fr] md:gap-8">
-      <div className="md:min-w-[7rem]">
-        {group.day ? (
-          (() => {
-            const l = formatDayLabel(group.day);
-            return (
-              <div className="inline-flex items-baseline gap-2 rounded-xl border border-border-strong bg-surface/60 px-4 py-3 md:flex-col md:items-center md:gap-0 md:px-5 md:py-4">
-                <span className="font-display text-4xl font-black leading-none tracking-tight md:text-5xl">
-                  {l.day}
-                </span>
-                <span className="font-display text-xs uppercase tracking-[0.25em] text-primary md:mt-1">
+    <div>
+      {group.day ? (
+        (() => {
+          const l = formatDayLabel(group.day);
+          return (
+            <div className="flex items-baseline gap-4 pb-4">
+              <span className="date-block text-6xl text-foreground md:text-7xl">
+                {l.day}
+              </span>
+              <div className="flex flex-col leading-tight">
+                <span className="font-display text-xs font-bold uppercase tracking-[0.3em] text-primary">
                   {l.month}
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground md:mt-0.5">
+                <span className="font-display text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
                   {l.weekday}
                 </span>
               </div>
-            );
-          })()
-        ) : (
-          <div className="inline-flex rounded-xl border border-dashed border-border-strong bg-surface/40 px-4 py-3 text-xs uppercase tracking-[0.25em] text-muted-foreground">
-            Data a definir
-          </div>
-        )}
-      </div>
-      <ul className="grid gap-2 self-center sm:grid-cols-2">
+            </div>
+          );
+        })()
+      ) : (
+        <p className="font-display text-xs uppercase tracking-[0.28em] text-muted-foreground">
+          Data a definir
+        </p>
+      )}
+      <div className="rule-line mb-6" />
+      <ul className="space-y-3 md:space-y-4">
         {group.items.map((a) => (
           <li
             key={a.id}
-            className="rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium transition-colors hover:border-primary/40"
+            className="poster text-2xl leading-none text-foreground transition-colors hover:text-primary md:text-3xl"
           >
             {a.name}
           </li>
@@ -495,6 +489,7 @@ function DayBlock({
     </div>
   );
 }
+
 
 
 
