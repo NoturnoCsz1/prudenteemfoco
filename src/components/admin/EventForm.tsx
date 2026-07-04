@@ -50,15 +50,6 @@ export function EventForm({
   mode: "create" | "edit";
   initial?: EventFormRecord;
 }) {
-
-
-export function EventForm({
-  mode,
-  initial,
-}: {
-  mode: "create" | "edit";
-  initial?: EventFormRecord;
-}) {
   const navigate = useNavigate();
   const { data: membership } = useOrgMembership();
   const [submitting, setSubmitting] = useState(false);
@@ -70,6 +61,8 @@ export function EventForm({
       title: initial?.title ?? "",
       slug: initial?.slug ?? "",
       status: initial?.status ?? "draft",
+      kind: initial?.kind ?? "other",
+      format: initial?.format ?? "one_off",
       starts_at: initial?.starts_at
         ? isoToLocalInput(initial.starts_at)
         : "",
