@@ -4,6 +4,7 @@ import {
   BarChart3,
   DoorOpen,
   Gauge,
+  Globe,
   LayoutDashboard,
   MapPin,
   Megaphone,
