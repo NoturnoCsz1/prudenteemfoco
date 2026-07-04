@@ -333,6 +333,27 @@ export function EventForm({
         </Field>
       )}
 
+      <div className="grid gap-5 md:grid-cols-2">
+        <Field label="Tipo do evento" error={errors.kind?.message}>
+          <select {...form.register("kind")} className="input">
+            {EVENT_KINDS.map((k) => (
+              <option key={k} value={k}>
+                {EVENT_KIND_LABEL[k]}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Formato" error={errors.format?.message}>
+          <select {...form.register("format")} className="input">
+            {EVENT_FORMATS.map((f) => (
+              <option key={f} value={f}>
+                {EVENT_FORMAT_LABEL[f]}
+              </option>
+            ))}
+          </select>
+        </Field>
+      </div>
+
       <Field label="Status" error={errors.status?.message}>
         <select {...form.register("status")} className="input">
           {EVENT_STATUSES.map((s) => (
