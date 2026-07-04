@@ -131,8 +131,6 @@
   color: var(--foreground);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
-}
-@utility input {
   &::placeholder {
     color: color-mix(in oklab, var(--muted-foreground) 60%, transparent);
   }
