@@ -86,10 +86,10 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: url },
-        ...(ev?.cover_image_url
+        ...(normalizeCoverUrl(ev?.cover_image_url)
           ? [
-              { property: "og:image", content: ev.cover_image_url },
-              { name: "twitter:image", content: ev.cover_image_url },
+              { property: "og:image", content: normalizeCoverUrl(ev!.cover_image_url)! },
+              { name: "twitter:image", content: normalizeCoverUrl(ev!.cover_image_url)! },
             ]
           : []),
       ],
@@ -105,7 +105,7 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
                 description: ev.short_description ?? undefined,
                 startDate: ev.starts_at ?? undefined,
                 endDate: ev.ends_at ?? undefined,
-                image: ev.cover_image_url ?? undefined,
+                image: normalizeCoverUrl(ev.cover_image_url) ?? undefined,
                 location:
                   ev.venue_name || ev.city
                     ? {
