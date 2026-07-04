@@ -128,10 +128,17 @@ function EventRow({ event }: { event: PublicEvent }) {
               />
             </div>
           ) : (
-            <div className="flex aspect-[16/10] w-full items-center justify-center bg-[color-mix(in_oklab,var(--foreground)_6%,var(--background))] p-6">
-              <span className="poster text-center text-3xl text-foreground/60 md:text-5xl">
-                {event.title}
-              </span>
+            <div
+              className="flex aspect-[16/10] w-full flex-col justify-between p-6 md:p-10"
+              style={{
+                background:
+                  "radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--primary) 20%, transparent) 0%, transparent 55%), linear-gradient(180deg, color-mix(in oklab, var(--foreground) 4%, var(--background)) 0%, var(--background) 100%)",
+              }}
+            >
+              <p className="eyebrow-label text-primary">Prudente em Foco</p>
+              <p className="font-display text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                Imagem oficial em breve
+              </p>
             </div>
           )}
         </div>
