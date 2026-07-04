@@ -123,6 +123,144 @@ export type Database = {
           },
         ]
       }
+      access_sessions: {
+        Row: {
+          attempt_id: string | null
+          consumed_at: string | null
+          created_at: string
+          event_id: string
+          id: string
+          organization_id: string
+          reason: string | null
+          sector_id: string | null
+          space_id: string | null
+          status: Database["public"]["Enums"]["access_session_status"]
+          subject_id: string
+          subject_type: Database["public"]["Enums"]["access_subject_type"]
+          token_id: string | null
+        }
+        Insert: {
+          attempt_id?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          organization_id: string
+          reason?: string | null
+          sector_id?: string | null
+          space_id?: string | null
+          status?: Database["public"]["Enums"]["access_session_status"]
+          subject_id: string
+          subject_type: Database["public"]["Enums"]["access_subject_type"]
+          token_id?: string | null
+        }
+        Update: {
+          attempt_id?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          organization_id?: string
+          reason?: string | null
+          sector_id?: string | null
+          space_id?: string | null
+          status?: Database["public"]["Enums"]["access_session_status"]
+          subject_id?: string
+          subject_type?: Database["public"]["Enums"]["access_subject_type"]
+          token_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_sessions_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "access_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "access_sessions_event_org_fk"
+            columns: ["event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id", "organization_id"]
+          },
+          {
+            foreignKeyName: "access_sessions_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "access_tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      access_tokens: {
+        Row: {
+          capacity_limit: number | null
+          created_at: string
+          created_by: string | null
+          event_id: string
+          id: string
+          label: string | null
+          organization_id: string
+          revoked_at: string | null
+          status: Database["public"]["Enums"]["access_token_status"]
+          subject_id: string | null
+          subject_type:
+            | Database["public"]["Enums"]["access_subject_type"]
+            | null
+          target_id: string
+          target_type: Database["public"]["Enums"]["access_target_type"]
+          token_hash: string
+          usage_count: number
+        }
+        Insert: {
+          capacity_limit?: number | null
+          created_at?: string
+          created_by?: string | null
+          event_id: string
+          id?: string
+          label?: string | null
+          organization_id: string
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["access_token_status"]
+          subject_id?: string | null
+          subject_type?:
+            | Database["public"]["Enums"]["access_subject_type"]
+            | null
+          target_id: string
+          target_type: Database["public"]["Enums"]["access_target_type"]
+          token_hash: string
+          usage_count?: number
+        }
+        Update: {
+          capacity_limit?: number | null
+          created_at?: string
+          created_by?: string | null
+          event_id?: string
+          id?: string
+          label?: string | null
+          organization_id?: string
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["access_token_status"]
+          subject_id?: string | null
+          subject_type?:
+            | Database["public"]["Enums"]["access_subject_type"]
+            | null
+          target_id?: string
+          target_type?: Database["public"]["Enums"]["access_target_type"]
+          token_hash?: string
+          usage_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_tokens_event_org_fk"
+            columns: ["event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -645,6 +783,25 @@ export type Database = {
     Functions: {
       can_manage_event_cover: { Args: { _path: string }; Returns: boolean }
       claim_first_owner: { Args: { _org_slug: string }; Returns: string }
+      consume_access_session: {
+        Args: { _session_id: string }
+        Returns: undefined
+      }
+      create_access_token: {
+        Args: {
+          _capacity_limit?: number
+          _event_id: string
+          _label?: string
+          _subject_id?: string
+          _subject_type?: Database["public"]["Enums"]["access_subject_type"]
+          _target_id: string
+          _target_type: Database["public"]["Enums"]["access_target_type"]
+        }
+        Returns: {
+          token_id: string
+          token_plain: string
+        }[]
+      }
       current_user_org: {
         Args: never
         Returns: {
@@ -732,6 +889,22 @@ export type Database = {
         }
         Returns: string
       }
+      redeem_access_token: {
+        Args: {
+          _subject_id?: string
+          _subject_type?: Database["public"]["Enums"]["access_subject_type"]
+          _token_plain: string
+        }
+        Returns: {
+          attempt_id: string
+          reason: string
+          remaining_capacity: number
+          rule_applied: string
+          session_id: string
+          status: Database["public"]["Enums"]["access_session_status"]
+        }[]
+      }
+      revoke_access_token: { Args: { _token_id: string }; Returns: undefined }
       role_rank: {
         Args: { _role: Database["public"]["Enums"]["member_role"] }
         Returns: number
@@ -741,8 +914,10 @@ export type Database = {
       access_attempt_status: "processing" | "allowed" | "denied"
       access_rule_target: "invite" | "credential" | "sector" | "space"
       access_rule_type: "allow" | "deny"
+      access_session_status: "active" | "consumed" | "blocked"
       access_subject_type: "invite" | "credential" | "user"
       access_target_type: "event" | "sector" | "space"
+      access_token_status: "active" | "revoked" | "expired"
       credential_role_type:
         | "staff"
         | "security"
@@ -907,8 +1082,10 @@ export const Constants = {
       access_attempt_status: ["processing", "allowed", "denied"],
       access_rule_target: ["invite", "credential", "sector", "space"],
       access_rule_type: ["allow", "deny"],
+      access_session_status: ["active", "consumed", "blocked"],
       access_subject_type: ["invite", "credential", "user"],
       access_target_type: ["event", "sector", "space"],
+      access_token_status: ["active", "revoked", "expired"],
       credential_role_type: [
         "staff",
         "security",
