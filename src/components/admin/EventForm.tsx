@@ -105,6 +105,8 @@ export function EventForm({
         title: values.title,
         slug: values.slug,
         status: values.status,
+        kind: values.kind,
+        format: values.format,
         starts_at: values.starts_at
           ? localInputToIso(values.starts_at as unknown as string)
           : null,
