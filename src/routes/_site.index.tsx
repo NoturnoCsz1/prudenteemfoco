@@ -558,24 +558,97 @@ function MemorySection({ events }: { events: PublicEvent[] }) {
   );
 }
 
+/* =============================== MEMÓRIA CMS ============================== */
+
+function CmsMemorySection({ items }: { items: SiteMemoryItem[] }) {
+  const attribution = useAttribution();
+  const search = buildSearch(attribution);
+  return (
+    <section className="bg-surface/30">
+      <div className="container-page py-12 md:py-24">
+        <div className="max-w-4xl">
+          <p className="eyebrow-label text-primary">Memória em foco</p>
+          <h2 className="mt-4 section-title text-foreground">Arquivo Prudente em Foco.</h2>
+        </div>
+        <ul className="mt-8 divide-y divide-[color-mix(in_oklab,var(--foreground)_12%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)]">
+          {items.map((item) => {
+            const body = (
+              <div className="grid grid-cols-[auto,1fr] items-baseline gap-6 py-5 md:gap-10 md:py-7">
+                <span className="date-block text-2xl text-[var(--gold)] md:text-4xl">
+                  {item.year_label || "—"}
+                </span>
+                <div className="min-w-0">
+                  <h3 className="poster text-lg text-foreground md:text-3xl">
+                    {item.title}
+                  </h3>
+                  {item.description && (
+                    <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                      {item.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+            return (
+              <li key={item.id}>
+                {item.related_event_slug ? (
+                  <Link
+                    to="/eventos/$slug"
+                    params={{ slug: item.related_event_slug }}
+                    search={search}
+                    className="group block transition-colors hover:text-primary"
+                  >
+                    {body}
+                  </Link>
+                ) : (
+                  body
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 /* =============================== CTA FINAL ============================== */
 
-function FinalCTA() {
+function FinalCTA({ cms }: { cms: SiteHome | null }) {
+  const headline =
+    cms?.final_cta_headline || "O próximo grande momento começa aqui.";
+  const body = cms?.final_cta_body || "";
+  const label = cms?.final_cta_button_label || "Ver agenda";
+  const url = cms?.final_cta_button_url || "";
   return (
     <section className="py-10 md:py-24">
       <div className="container-page">
         <div className="mx-auto max-w-3xl border-t border-[color-mix(in_oklab,var(--foreground)_15%,transparent)] pt-10 text-center md:pt-14">
           <p className="eyebrow-label text-primary">Agenda oficial</p>
           <h2 className="mx-auto mt-4 max-w-2xl font-display text-2xl font-semibold leading-tight text-foreground md:text-4xl">
-            O próximo grande momento começa aqui.
+            {headline}
           </h2>
+          {body && (
+            <p className="mx-auto mt-4 max-w-xl whitespace-pre-line text-sm text-muted-foreground md:text-base">
+              {body}
+            </p>
+          )}
           <div className="mt-6 md:mt-8">
-            <Link
-              to="/eventos"
-              className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 font-display text-xs font-bold uppercase tracking-[0.3em] text-foreground transition-colors hover:text-primary"
-            >
-              Ver agenda <ArrowRight className="h-4 w-4" />
-            </Link>
+            {url ? (
+              <a
+                href={url}
+                className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 font-display text-xs font-bold uppercase tracking-[0.3em] text-foreground transition-colors hover:text-primary"
+              >
+                {label} <ArrowRight className="h-4 w-4" />
+              </a>
+            ) : (
+              <Link
+                to="/eventos"
+                className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 font-display text-xs font-bold uppercase tracking-[0.3em] text-foreground transition-colors hover:text-primary"
+              >
+                {label} <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
           </div>
         </div>
       </div>
