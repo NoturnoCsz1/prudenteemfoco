@@ -27,7 +27,7 @@ import {
   createSpaceReservationRequest,
   type PublicSpaceType,
 } from "@/lib/reservations.functions";
-import { formatEventDateRange } from "@/lib/events";
+import { formatEventDateRange, formatEventDateEditorial } from "@/lib/events";
 
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -187,92 +187,80 @@ function EventDetailPage() {
 
   return (
     <article>
-      {/* HERO VISUAL */}
-      <section className="relative overflow-hidden border-b border-border">
+      {/* HERO — CARTAZ DO EVENTO */}
+      <section className="relative isolate -mt-14 md:-mt-16">
         {event.cover_image_url ? (
-          <>
-            <div className="absolute inset-0 -z-10">
-              <img
-                src={event.cover_image_url}
-                alt=""
-                className="h-full w-full object-cover"
-              />
-              <div
-                aria-hidden
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(180deg, color-mix(in oklab, var(--background) 60%, transparent) 0%, color-mix(in oklab, var(--background) 92%, transparent) 75%, var(--background) 100%)",
-                }}
-              />
-            </div>
-            <div className="aspect-[16/10] w-full md:aspect-[21/9]" />
-          </>
+          <div className="absolute inset-0 -z-10">
+            <img
+              src={event.cover_image_url}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, color-mix(in oklab, var(--background) 25%, transparent) 0%, color-mix(in oklab, var(--background) 10%, transparent) 45%, color-mix(in oklab, var(--background) 90%, transparent) 90%, var(--background) 100%)",
+              }}
+            />
+          </div>
         ) : (
           <div
             aria-hidden
             className="absolute inset-0 -z-10"
             style={{
               background:
-                "radial-gradient(60% 55% at 15% 0%, color-mix(in oklab, var(--primary) 22%, transparent) 0%, transparent 65%)",
+                "radial-gradient(60% 55% at 15% 100%, color-mix(in oklab, var(--primary) 20%, transparent) 0%, transparent 65%)",
             }}
           />
         )}
-        <div className="container-page pb-14 pt-10 md:pb-20 md:pt-16">
+        <div
+          className={`container-page flex flex-col justify-end pb-16 pt-32 md:pb-24 md:pt-40 ${
+            event.cover_image_url
+              ? "min-h-[92vh] md:min-h-[100vh]"
+              : "min-h-[70vh]"
+          }`}
+        >
           <Link
             to="/eventos"
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+            className="mb-8 inline-flex items-center gap-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/80 hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Todos os eventos
           </Link>
-          <p className="mt-8 font-display text-[11px] uppercase tracking-[0.35em] text-primary">
+          <p className="eyebrow-label text-primary">
             Evento oficial · Prudente em Foco
           </p>
-          <h1 className="mt-4 max-w-4xl break-words font-display text-4xl font-black leading-[1] tracking-tight sm:text-5xl md:text-7xl">
+          <h1 className="mt-6 display-xl break-words text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)]">
             {event.title}
           </h1>
 
-          <dl className="mt-10 grid gap-4 md:grid-cols-2 md:max-w-3xl">
-            <div className="flex items-start gap-3 rounded-xl border border-border bg-surface/80 p-4 backdrop-blur">
-              <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <div className="min-w-0">
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-                  Quando
-                </dt>
-                <dd className="mt-1 text-sm">
-                  {formatEventDateRange(event.starts_at, event.ends_at)}
-                </dd>
-              </div>
-            </div>
+          <div className="mt-10 flex flex-wrap items-baseline gap-x-10 gap-y-3">
+            <p className="date-block text-3xl text-foreground md:text-5xl">
+              {formatEventDateEditorial(event.starts_at, event.ends_at)}
+            </p>
             {(event.venue_name || event.city) && (
-              <div className="flex items-start gap-3 rounded-xl border border-border bg-surface/80 p-4 backdrop-blur">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <div className="min-w-0">
-                  <dt className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-                    Onde
-                  </dt>
-                  <dd className="mt-1 text-sm">
-                    {[event.venue_name, event.city].filter(Boolean).join(", ")}
-                  </dd>
-                </div>
-              </div>
+              <p className="flex items-center gap-1.5 font-display text-sm font-semibold uppercase tracking-[0.28em] text-foreground/85 md:text-base">
+                <MapPin className="h-4 w-4" />
+                {[event.venue_name, event.city].filter(Boolean).join(" · ")}
+              </p>
             )}
-          </dl>
+          </div>
 
           {event.short_description && (
-            <p className="mt-10 max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">
+            <p className="mt-8 max-w-2xl text-base leading-relaxed text-foreground/85 md:text-lg">
               {event.short_description}
             </p>
           )}
 
-          <div className="mt-10 flex flex-wrap gap-3">
+          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
             {event.external_ticket_url && (
               <a
                 href={event.external_ticket_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 bg-primary px-7 py-4 font-display text-xs font-bold uppercase tracking-[0.28em] text-primary-foreground hover:opacity-90"
               >
                 <TicketIcon className="h-4 w-4" />
                 Comprar ingresso
@@ -280,23 +268,23 @@ function EventDetailPage() {
             )}
             <a
               href="#reservas"
-              className={`inline-flex items-center gap-2 rounded-md px-6 py-3 text-sm font-semibold transition-opacity hover:opacity-90 ${
+              className={
                 event.external_ticket_url
-                  ? "border border-border-strong text-foreground"
-                  : "bg-primary text-primary-foreground"
-              }`}
+                  ? "inline-flex items-center gap-2 border-b border-foreground/60 pb-1 font-display text-xs font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary"
+                  : "inline-flex items-center gap-2 bg-foreground px-7 py-4 font-display text-xs font-bold uppercase tracking-[0.28em] text-background hover:opacity-90"
+              }
             >
-              Solicitar reserva <ArrowRight className="h-4 w-4" />
+              Solicitar reserva <ArrowRight className="h-3.5 w-3.5" />
             </a>
             {event.instagram_url && (
               <a
                 href={event.instagram_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-md border border-border-strong px-6 py-3 text-sm font-medium hover:bg-accent"
+                className="inline-flex items-center gap-1.5 font-display text-xs font-semibold uppercase tracking-[0.28em] text-foreground/80 hover:text-primary"
               >
-                <Instagram className="h-4 w-4" />
-                Instagram oficial
+                <Instagram className="h-3.5 w-3.5" />
+                Instagram
               </a>
             )}
           </div>
@@ -304,59 +292,24 @@ function EventDetailPage() {
       </section>
 
       {event.long_description && (
-        <section className="border-b border-border bg-surface/20">
-          <div className="container-page py-12 md:py-16">
-            <div className="max-w-3xl whitespace-pre-line text-base leading-relaxed text-muted-foreground md:text-lg">
+        <section className="border-y border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
+          <div className="container-page py-16 md:py-24">
+            <div className="max-w-3xl whitespace-pre-line text-base leading-relaxed text-foreground/85 md:text-lg">
               {event.long_description}
             </div>
           </div>
         </section>
       )}
 
-      {/* LINE-UP / ATRAÇÕES — dados reais */}
+      {/* LINE-UP */}
       <LineupSection slug={slug} />
-
-
-      {/* SETORES E EXPERIÊNCIAS — placeholder estrutural */}
-      <section className="border-b border-border bg-surface/30">
-        <div className="container-page py-14 md:py-20">
-          <SectionEyebrow icon={<Layers className="h-4 w-4" />}>
-            Setores e experiências
-          </SectionEyebrow>
-          <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
-            Como o evento se organiza
-          </h2>
-          <p className="mt-4 max-w-2xl text-sm text-muted-foreground">
-            Setores, áreas e experiências específicas serão publicados quando o
-            mapa oficial do evento for divulgado. Reservas comerciais de
-            camarotes, bistrôs e mesas estão na seção abaixo.
-          </p>
-        </div>
-      </section>
 
       <div id="reservas" />
       <SpacesSection slug={slug} promoterCode={promoter ?? null} />
-
-      {/* MEMÓRIA / HISTÓRICO — placeholder estrutural */}
-      <section className="border-t border-border">
-        <div className="container-page py-14 md:py-20">
-          <SectionEyebrow icon={<History className="h-4 w-4" />}>
-            Memória do evento
-          </SectionEyebrow>
-          <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
-            Edições anteriores
-          </h2>
-          <div className="mt-8 rounded-2xl border border-dashed border-border-strong bg-surface/40 p-8 text-center md:p-12">
-            <p className="text-sm text-muted-foreground">
-              O histórico e os registros de edições anteriores aparecerão aqui
-              conforme forem oficialmente publicados pela produção.
-            </p>
-          </div>
-        </div>
-      </section>
     </article>
   );
 }
+
 
 function SectionEyebrow({
   children,
@@ -431,18 +384,14 @@ function LineupSection({ slug }: { slug: string }) {
     groups.find((g) => g.day === activeDay) ?? groups[0];
 
   return (
-    <section className="border-b border-border">
-      <div className="container-page py-14 md:py-20">
-        <SectionEyebrow icon={<Music2 className="h-4 w-4" />}>
-          Line-up e atrações
-        </SectionEyebrow>
-        <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
-          Programação por dia
-        </h2>
+    <section className="border-y border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
+      <div className="container-page py-20 md:py-32">
+        <p className="eyebrow-label text-primary">Programação</p>
+        <h2 className="mt-4 section-title text-foreground">Line-up por dia.</h2>
 
-        {/* Mobile: chips de dia + um dia em foco */}
+        {/* Mobile: chips + dia em foco */}
         {hasMultipleDays && (
-          <div className="mt-6 -mx-5 flex gap-2 overflow-x-auto px-5 pb-2 md:hidden">
+          <div className="mt-10 -mx-5 flex gap-3 overflow-x-auto px-5 pb-2 md:hidden">
             {groups.map(({ day }) => {
               const label = day ? formatDayLabel(day) : null;
               const active = day === focusedGroup.day;
@@ -451,26 +400,25 @@ function LineupSection({ slug }: { slug: string }) {
                   key={day ?? "sem-data"}
                   type="button"
                   onClick={() => setActiveDay(day)}
-                  className={`inline-flex shrink-0 items-baseline gap-2 rounded-full border px-4 py-2 text-xs uppercase tracking-[0.2em] transition-colors ${
+                  className={`inline-flex shrink-0 flex-col items-center gap-0.5 border-b-2 px-3 pb-2 transition-colors ${
                     active
-                      ? "border-primary/60 bg-primary/15 text-foreground"
-                      : "border-border-strong bg-surface/60 text-muted-foreground"
+                      ? "border-primary text-foreground"
+                      : "border-transparent text-muted-foreground"
                   }`}
+                  aria-pressed={active}
                 >
                   {label ? (
                     <>
-                      <span className="font-display text-base font-black tabular-nums text-foreground">
-                        {label.day}
-                      </span>
-                      <span className="font-display text-[10px] font-semibold text-primary">
+                      <span className="date-block text-3xl">{label.day}</span>
+                      <span className="font-display text-[10px] font-bold uppercase tracking-[0.28em] text-primary">
                         {label.month}
                       </span>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="font-display text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
                         {label.weekday}
                       </span>
                     </>
                   ) : (
-                    <span>A definir</span>
+                    <span className="font-display text-xs uppercase tracking-[0.28em]">A definir</span>
                   )}
                 </button>
               );
@@ -478,19 +426,17 @@ function LineupSection({ slug }: { slug: string }) {
           </div>
         )}
 
-        {/* Mobile: dia em foco */}
-        <div className="mt-6 md:hidden">
-          <DayBlock group={focusedGroup} />
+        <div className="mt-8 md:hidden">
+          <LineupDay group={focusedGroup} />
         </div>
 
-        {/* Desktop: composição editorial completa */}
-        <div className="mt-8 hidden space-y-10 md:block">
+        <div className="mt-12 hidden gap-x-12 gap-y-16 md:grid md:grid-cols-2 lg:grid-cols-3">
           {groups.map((g) => (
-            <DayBlock key={g.day ?? "sem-data"} group={g} />
+            <LineupDay key={g.day ?? "sem-data"} group={g} />
           ))}
         </div>
 
-        <p className="mt-8 text-xs text-muted-foreground">
+        <p className="mt-16 max-w-xl font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
           Horários e ordem de apresentação serão divulgados pela produção próximo ao evento.
         </p>
       </div>
@@ -498,42 +444,43 @@ function LineupSection({ slug }: { slug: string }) {
   );
 }
 
-function DayBlock({
+function LineupDay({
   group,
 }: {
   group: { day: string | null; items: PublicAttraction[] };
 }) {
   return (
-    <div className="grid gap-5 md:grid-cols-[auto,1fr] md:gap-8">
-      <div className="md:min-w-[7rem]">
-        {group.day ? (
-          (() => {
-            const l = formatDayLabel(group.day);
-            return (
-              <div className="inline-flex items-baseline gap-2 rounded-xl border border-border-strong bg-surface/60 px-4 py-3 md:flex-col md:items-center md:gap-0 md:px-5 md:py-4">
-                <span className="font-display text-4xl font-black leading-none tracking-tight md:text-5xl">
-                  {l.day}
-                </span>
-                <span className="font-display text-xs uppercase tracking-[0.25em] text-primary md:mt-1">
+    <div>
+      {group.day ? (
+        (() => {
+          const l = formatDayLabel(group.day);
+          return (
+            <div className="flex items-baseline gap-4 pb-4">
+              <span className="date-block text-6xl text-foreground md:text-7xl">
+                {l.day}
+              </span>
+              <div className="flex flex-col leading-tight">
+                <span className="font-display text-xs font-bold uppercase tracking-[0.3em] text-primary">
                   {l.month}
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground md:mt-0.5">
+                <span className="font-display text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
                   {l.weekday}
                 </span>
               </div>
-            );
-          })()
-        ) : (
-          <div className="inline-flex rounded-xl border border-dashed border-border-strong bg-surface/40 px-4 py-3 text-xs uppercase tracking-[0.25em] text-muted-foreground">
-            Data a definir
-          </div>
-        )}
-      </div>
-      <ul className="grid gap-2 self-center sm:grid-cols-2">
+            </div>
+          );
+        })()
+      ) : (
+        <p className="font-display text-xs uppercase tracking-[0.28em] text-muted-foreground">
+          Data a definir
+        </p>
+      )}
+      <div className="rule-line mb-6" />
+      <ul className="space-y-3 md:space-y-4">
         {group.items.map((a) => (
           <li
             key={a.id}
-            className="rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium transition-colors hover:border-primary/40"
+            className="poster text-2xl leading-none text-foreground transition-colors hover:text-primary md:text-3xl"
           >
             {a.name}
           </li>
@@ -542,6 +489,7 @@ function DayBlock({
     </div>
   );
 }
+
 
 
 
@@ -571,44 +519,49 @@ function SpacesSection({
   const hasAny = (typesQuery.data?.length ?? 0) > 0;
 
   return (
-    <section className="border-t border-border bg-surface/40">
-      <div className="container-page py-12 md:py-16">
-        <p className="font-display text-xs uppercase tracking-[0.3em] text-primary">
-          Espaços comerciais
-        </p>
-        <h2 className="mt-3 text-3xl font-semibold md:text-4xl">
-          Reserve seu espaço
-        </h2>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-          Solicite reserva de camarote, bistrô ou mesa. Nossa equipe entra em
-          contato para confirmar disponibilidade e condições.
-        </p>
+    <section className="bg-surface/30">
+      <div className="container-page py-20 md:py-32">
+        <div className="max-w-3xl">
+          <p className="eyebrow-label text-primary">Experiências</p>
+          <h2 className="mt-4 section-title text-foreground">
+            Viva o evento de outro jeito.
+          </h2>
+          <p className="mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
+            Camarote, bistrô ou mesa exclusiva. Solicite sua reserva — a produção confirma disponibilidade e condições.
+          </p>
+        </div>
 
         {typesQuery.isLoading ? (
-          <div className="mt-10 flex items-center justify-center py-16">
+          <div className="mt-12 flex items-center justify-center py-16">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
         ) : !hasAny ? (
-          <div className="mt-10 rounded-lg border border-dashed border-border-strong bg-background p-10 text-center text-sm text-muted-foreground">
-            Ainda não há espaços comerciais disponíveis para este evento.
-          </div>
+          <p className="mt-12 max-w-xl font-display text-sm uppercase tracking-[0.28em] text-muted-foreground">
+            Espaços comerciais deste evento ainda não foram publicados.
+          </p>
         ) : (
-          <div className="mt-10 space-y-10">
+          <div className="mt-14 space-y-16 md:mt-20 md:space-y-20">
             {SPACE_TYPE_CATEGORIES.map((cat) =>
               grouped[cat].length === 0 ? null : (
                 <div key={cat}>
-                  <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {SPACE_TYPE_CATEGORY_PLURAL[cat]}
-                  </h3>
-                  <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="mb-6 flex items-baseline justify-between gap-4">
+                    <h3 className="font-display text-xs font-bold uppercase tracking-[0.3em] text-primary">
+                      {SPACE_TYPE_CATEGORY_PLURAL[cat]}
+                    </h3>
+                    <span className="font-display text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+                      {grouped[cat].length}{" "}
+                      {grouped[cat].length === 1 ? "opção" : "opções"}
+                    </span>
+                  </div>
+                  <ul className="divide-y divide-[color-mix(in_oklab,var(--foreground)_10%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
                     {grouped[cat].map((t) => (
-                      <SpaceCard
+                      <SpaceRow
                         key={t.space_type_id}
                         type={t}
                         onSelect={() => setSelected(t)}
                       />
                     ))}
-                  </div>
+                  </ul>
                 </div>
               ),
             )}
@@ -628,7 +581,7 @@ function SpacesSection({
   );
 }
 
-function SpaceCard({
+function SpaceRow({
   type,
   onSelect,
 }: {
@@ -637,65 +590,65 @@ function SpaceCard({
 }) {
   const available = type.available_units > 0;
   return (
-    <article className="flex flex-col overflow-hidden rounded-lg border border-border bg-background">
-      {type.image_url ? (
-        <div className="aspect-video w-full overflow-hidden bg-muted">
-          <img src={type.image_url} alt="" className="h-full w-full object-cover" />
-        </div>
-      ) : (
-        <div className="flex aspect-video items-center justify-center bg-muted text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          {SPACE_TYPE_CATEGORY_LABEL[type.category]}
-        </div>
-      )}
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-primary">
-              {SPACE_TYPE_CATEGORY_LABEL[type.category]}
+    <li>
+      <button
+        type="button"
+        onClick={onSelect}
+        className="group grid w-full grid-cols-[1fr,auto] items-baseline gap-x-6 gap-y-3 py-6 text-left md:grid-cols-[1fr,auto,auto,auto] md:gap-x-10 md:py-10"
+      >
+        <div className="min-w-0 md:col-start-1">
+          <p className="font-display text-[11px] font-bold uppercase tracking-[0.28em] text-primary">
+            {SPACE_TYPE_CATEGORY_LABEL[type.category]}
+          </p>
+          <h4 className="mt-2 poster text-2xl text-foreground transition-colors group-hover:text-primary md:text-4xl">
+            {type.name}
+          </h4>
+          {type.description && (
+            <p className="mt-2 max-w-xl line-clamp-2 text-sm text-muted-foreground">
+              {type.description}
             </p>
-            <h4 className="mt-1 truncate font-semibold">{type.name}</h4>
-          </div>
-          {type.base_price != null && (
-            <p className="whitespace-nowrap text-sm font-semibold">
+          )}
+        </div>
+        <div className="col-span-2 flex items-baseline gap-6 text-muted-foreground md:col-span-1 md:col-start-2 md:flex-col md:items-end md:gap-1 md:text-right">
+          {type.capacity_per_unit != null && (
+            <>
+              <span className="date-block text-2xl text-foreground md:text-3xl">
+                {type.capacity_per_unit}
+              </span>
+              <span className="font-display text-[10px] font-bold uppercase tracking-[0.28em]">
+                pessoas
+              </span>
+            </>
+          )}
+        </div>
+        <div className="text-right md:col-start-3">
+          {type.base_price != null ? (
+            <p className="date-block text-2xl text-foreground md:text-3xl">
               {formatCurrencyBRL(type.base_price, type.currency)}
             </p>
+          ) : (
+            <p className="font-display text-[11px] uppercase tracking-[0.28em] text-muted-foreground">
+              Sob consulta
+            </p>
           )}
-        </div>
-        {type.description && (
-          <p className="line-clamp-3 text-sm text-muted-foreground">
-            {type.description}
-          </p>
-        )}
-        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-          {type.capacity_per_unit != null && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5">
-              <Users className="h-3 w-3" />
-              {type.capacity_per_unit} pessoas
-            </span>
-          )}
-          <span
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 ${
-              available
-                ? "bg-emerald-500/15 text-emerald-400"
-                : "bg-muted text-muted-foreground"
+          <p
+            className={`mt-1 font-display text-[10px] font-bold uppercase tracking-[0.28em] ${
+              available ? "text-primary" : "text-muted-foreground"
             }`}
           >
             {available
-              ? `${type.available_units} disponível(is)`
+              ? `${type.available_units} disponível${type.available_units > 1 ? "eis" : ""}`
               : "Sob consulta"}
-          </span>
+          </p>
         </div>
-        <button
-          type="button"
-          onClick={onSelect}
-          className="mt-auto inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
-        >
-          Solicitar reserva
-        </button>
-      </div>
-    </article>
+        <span className="hidden items-center gap-2 border-b border-foreground/40 pb-1 font-display text-xs font-bold uppercase tracking-[0.28em] text-foreground group-hover:border-primary group-hover:text-primary md:inline-flex md:col-start-4">
+          Reservar <ArrowRight className="h-3.5 w-3.5" />
+        </span>
+      </button>
+    </li>
   );
 }
+
 
 function ReservationDialog({
   slug,
