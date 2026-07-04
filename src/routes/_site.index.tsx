@@ -125,20 +125,20 @@ function HomePage() {
 
       {/* CTA FINAL */}
       <section className="py-16 md:py-28">
-        <div className="container-page text-center">
-          <p className="meta-label">Agenda oficial</p>
-          <h2 className="mx-auto mt-6 max-w-4xl display-lg text-foreground">
-            O próximo grande
-            <br />
-            momento começa aqui.
-          </h2>
-          <div className="mt-12">
-            <Link
-              to="/eventos"
-              className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 font-display text-sm font-semibold uppercase tracking-[0.3em] text-foreground transition-colors hover:text-primary"
-            >
-              Ver agenda <ArrowRight className="h-4 w-4" />
-            </Link>
+        <div className="container-page">
+          <div className="mx-auto max-w-3xl border-t border-[color-mix(in_oklab,var(--foreground)_15%,transparent)] pt-12 text-center md:pt-16">
+            <p className="eyebrow-label text-primary">Agenda oficial</p>
+            <h2 className="mx-auto mt-5 max-w-2xl font-display text-2xl font-semibold leading-tight text-foreground md:text-4xl">
+              O próximo grande momento começa aqui.
+            </h2>
+            <div className="mt-8">
+              <Link
+                to="/eventos"
+                className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 font-display text-xs font-bold uppercase tracking-[0.3em] text-foreground transition-colors hover:text-primary"
+              >
+                Ver agenda <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
