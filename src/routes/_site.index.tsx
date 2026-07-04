@@ -62,7 +62,7 @@ function HomePage() {
 
   return (
     <>
-      {featured && featured.cover_image_url ? (
+      {featured && featuredCover ? (
         <PosterHero event={featured} />
       ) : (
         <InstitutionalHero />
