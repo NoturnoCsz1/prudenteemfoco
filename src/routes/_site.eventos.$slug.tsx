@@ -2,7 +2,19 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery, useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { ArrowLeft, CalendarDays, MapPin, Users, Check, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CalendarDays,
+  MapPin,
+  Users,
+  Check,
+  Loader2,
+  Music2,
+  Layers,
+  History,
+  Sparkles,
+} from "lucide-react";
 import {
   getPublishedEventBySlug,
   type PublicEvent,
