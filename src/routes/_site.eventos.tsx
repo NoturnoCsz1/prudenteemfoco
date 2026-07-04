@@ -1,10 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CalendarDays, MapPin } from "lucide-react";
+import { CalendarDays, ArrowRight, MapPin } from "lucide-react";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { PageHero } from "@/components/site/PageHero";
-import { EmptyState } from "@/components/site/EmptyState";
 import { listPublishedEvents, type PublicEvent } from "@/lib/events.functions";
-import { formatEventDateRange } from "@/lib/events";
+import { formatEventDateEditorial } from "@/lib/events";
 
 const eventsQueryOptions = queryOptions({
   queryKey: ["public", "events", "list"],
@@ -14,16 +12,17 @@ const eventsQueryOptions = queryOptions({
 export const Route = createFileRoute("/_site/eventos")({
   head: () => ({
     meta: [
-      { title: "Eventos — Prudente em Foco" },
+      { title: "Agenda — Prudente em Foco" },
       {
         name: "description",
         content:
-          "Agenda oficial dos eventos institucionais da Prudente em Foco.",
+          "Agenda oficial de festivais, shows e eventos da Prudente em Foco em Presidente Prudente.",
       },
-      { property: "og:title", content: "Eventos — Prudente em Foco" },
+      { property: "og:title", content: "Agenda — Prudente em Foco" },
       {
         property: "og:description",
-        content: "Agenda oficial dos eventos institucionais da Prudente em Foco.",
+        content:
+          "Agenda oficial de festivais, shows e eventos da Prudente em Foco.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/eventos" },
@@ -38,81 +37,102 @@ export const Route = createFileRoute("/_site/eventos")({
       <p className="text-sm text-destructive">{error.message}</p>
     </section>
   ),
-  notFoundComponent: () => (
-    <section className="container-page py-16">
-      <p className="text-sm text-muted-foreground">Página não encontrada.</p>
-    </section>
-  ),
 });
+
+function isUpcoming(ev: PublicEvent): boolean {
+  if (!ev.starts_at) return true;
+  const start = Date.parse(ev.starts_at);
+  if (Number.isNaN(start)) return true;
+  return start >= Date.now() - 6 * 60 * 60 * 1000;
+}
 
 function EventosPage() {
   const { data: events } = useSuspenseQuery(eventsQueryOptions);
+  const upcoming = events
+    .filter(isUpcoming)
+    .sort((a, b) =>
+      (a.starts_at ? Date.parse(a.starts_at) : Infinity) -
+      (b.starts_at ? Date.parse(b.starts_at) : Infinity),
+    );
 
   return (
     <>
-      <PageHero
-        eyebrow="Eventos"
-        title="Agenda oficial Prudente em Foco"
-        description="Publicamos aqui apenas eventos oficialmente confirmados. Nada de conteúdo especulativo — cada evento é verificado antes de ir ao ar."
-      />
-      <section className="container-page pb-20">
-        {events.length === 0 ? (
-          <EmptyState
-            icon={<CalendarDays className="h-6 w-6" />}
-            title="Nenhum evento publicado no momento"
-            description="Assim que novos eventos forem oficializados, aparecerão nesta agenda. Volte em breve."
-          />
-        ) : (
-          <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {events.map((ev) => (
-              <EventCard key={ev.slug} event={ev} />
-            ))}
-          </ul>
-        )}
+      <section>
+        <div className="container-page pb-8 pt-24 md:pb-12 md:pt-32">
+          <p className="eyebrow-label text-primary">Agenda oficial</p>
+          <h1 className="mt-6 display-xl text-foreground">Programação.</h1>
+          <p className="mt-8 max-w-xl text-base text-muted-foreground md:text-lg">
+            Cada evento é publicado aqui quando confirmado. Sem especulação.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <div className="container-page pb-32">
+          {upcoming.length === 0 ? (
+            <div className="border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)] py-24 text-center">
+              <CalendarDays className="mx-auto h-8 w-8 text-muted-foreground" />
+              <p className="mt-6 font-display text-sm font-bold uppercase tracking-[0.28em] text-foreground">
+                Nenhum evento publicado no momento
+              </p>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Novas datas aparecem aqui assim que forem confirmadas.
+              </p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-[color-mix(in_oklab,var(--foreground)_12%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)]">
+              {upcoming.map((ev) => (
+                <EventRow key={ev.slug} event={ev} />
+              ))}
+            </ul>
+          )}
+        </div>
       </section>
     </>
   );
 }
 
-function EventCard({ event }: { event: PublicEvent }) {
+function EventRow({ event }: { event: PublicEvent }) {
   return (
     <li>
       <Link
         to="/eventos/$slug"
         params={{ slug: event.slug }}
-        className="group block overflow-hidden rounded-2xl border border-border bg-surface transition-colors hover:border-primary/40"
+        className="group grid gap-4 py-10 md:grid-cols-[minmax(0,1fr),1.6fr] md:items-center md:gap-12 md:py-16"
       >
-        <div className="aspect-[16/10] w-full overflow-hidden bg-muted">
-          {event.cover_image_url ? (
-            <img
-              src={event.cover_image_url}
-              alt=""
-              loading="lazy"
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-muted-foreground/40">
-              <CalendarDays className="h-10 w-10" />
-            </div>
-          )}
-        </div>
-        <div className="p-5">
-          <p className="font-display text-xs uppercase tracking-[0.25em] text-primary">
-            {formatEventDateRange(event.starts_at, event.ends_at)}
+        <div className="order-2 md:order-1">
+          <p className="date-block text-3xl text-primary md:text-4xl">
+            {formatEventDateEditorial(event.starts_at, event.ends_at)}
           </p>
-          <h3 className="mt-2 font-display text-xl font-semibold leading-tight">
+          <h2 className="mt-3 poster text-3xl text-foreground transition-colors group-hover:text-primary md:text-6xl">
             {event.title}
-          </h3>
+          </h2>
           {(event.venue_name || event.city) && (
-            <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <p className="mt-4 flex items-center gap-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-muted-foreground md:text-xs">
               <MapPin className="h-3.5 w-3.5" />
-              {[event.venue_name, event.city].filter(Boolean).join(", ")}
+              {[event.venue_name, event.city].filter(Boolean).join(" · ")}
             </p>
           )}
-          {event.short_description && (
-            <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">
-              {event.short_description}
-            </p>
+          <span className="mt-6 inline-flex items-center gap-2 border-b border-foreground/40 pb-1 font-display text-xs font-bold uppercase tracking-[0.28em] text-foreground group-hover:border-primary group-hover:text-primary">
+            Ver evento <ArrowRight className="h-3.5 w-3.5" />
+          </span>
+        </div>
+        <div className="order-1 md:order-2">
+          {event.cover_image_url ? (
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+              <img
+                src={event.cover_image_url}
+                alt=""
+                loading="lazy"
+                className="image-zoom h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="flex aspect-[16/10] w-full items-center justify-center bg-[color-mix(in_oklab,var(--foreground)_6%,var(--background))] p-6">
+              <span className="poster text-center text-3xl text-foreground/60 md:text-5xl">
+                {event.title}
+              </span>
+            </div>
           )}
         </div>
       </Link>
