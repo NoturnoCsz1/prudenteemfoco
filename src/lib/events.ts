@@ -88,6 +88,12 @@ export const eventFormSchema = z
         "Use apenas letras minúsculas, números e hífens.",
       ),
     status: z.enum(EVENT_STATUSES as unknown as [EventStatus, ...EventStatus[]]),
+    kind: z
+      .enum(EVENT_KINDS as unknown as [EventKind, ...EventKind[]])
+      .default("other"),
+    format: z
+      .enum(EVENT_FORMATS as unknown as [EventFormat, ...EventFormat[]])
+      .default("one_off"),
     starts_at: nullableIso,
     ends_at: nullableIso,
     venue_name: z
