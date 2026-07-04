@@ -48,6 +48,7 @@ export function SiteHeader() {
   const transparent = hasHero && !scrolled && !open;
 
   return (
+    <>
     <header
       className={`sticky top-0 z-40 transition-colors duration-300 ${
         transparent
@@ -55,6 +56,7 @@ export function SiteHeader() {
           : "bg-background/90 backdrop-blur-md"
       }`}
     >
+
       <div className="container-page flex h-14 items-center justify-between md:h-16">
         <Link
           to="/"
