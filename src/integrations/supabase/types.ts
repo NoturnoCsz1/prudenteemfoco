@@ -1454,6 +1454,316 @@ export type Database = {
           },
         ]
       }
+      site_about: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          memory_body: string | null
+          organization_id: string
+          origin_body: string | null
+          subtitle: string | null
+          title: string | null
+          today_body: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          memory_body?: string | null
+          organization_id: string
+          origin_body?: string | null
+          subtitle?: string | null
+          title?: string | null
+          today_body?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          memory_body?: string | null
+          organization_id?: string
+          origin_body?: string | null
+          subtitle?: string | null
+          title?: string | null
+          today_body?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_about_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_contact: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          instagram_url: string | null
+          institutional_message: string | null
+          is_active: boolean
+          organization_id: string
+          service_message: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          instagram_url?: string | null
+          institutional_message?: string | null
+          is_active?: boolean
+          organization_id: string
+          service_message?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          instagram_url?: string | null
+          institutional_message?: string | null
+          is_active?: boolean
+          organization_id?: string
+          service_message?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_contact_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_home: {
+        Row: {
+          created_at: string
+          cta_primary_label: string | null
+          cta_primary_url: string | null
+          cta_secondary_label: string | null
+          cta_secondary_url: string | null
+          experiences_body: string | null
+          experiences_headline: string | null
+          final_cta_body: string | null
+          final_cta_button_label: string | null
+          final_cta_button_url: string | null
+          final_cta_headline: string | null
+          hero_eyebrow: string | null
+          hero_subtitle: string | null
+          hero_title: string | null
+          id: string
+          is_active: boolean
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_primary_label?: string | null
+          cta_primary_url?: string | null
+          cta_secondary_label?: string | null
+          cta_secondary_url?: string | null
+          experiences_body?: string | null
+          experiences_headline?: string | null
+          final_cta_body?: string | null
+          final_cta_button_label?: string | null
+          final_cta_button_url?: string | null
+          final_cta_headline?: string | null
+          hero_eyebrow?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          is_active?: boolean
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_primary_label?: string | null
+          cta_primary_url?: string | null
+          cta_secondary_label?: string | null
+          cta_secondary_url?: string | null
+          experiences_body?: string | null
+          experiences_headline?: string | null
+          final_cta_body?: string | null
+          final_cta_button_label?: string | null
+          final_cta_button_url?: string | null
+          final_cta_headline?: string | null
+          hero_eyebrow?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string | null
+          id?: string
+          is_active?: boolean
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_home_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_memory_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          organization_id: string
+          related_event_id: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+          year_label: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          organization_id: string
+          related_event_id?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+          year_label?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          organization_id?: string
+          related_event_id?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          year_label?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_memory_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "site_memory_items_related_event_id_fkey"
+            columns: ["related_event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_menu: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          show_contato: boolean
+          show_eventos: boolean
+          show_experiencias: boolean
+          show_sobre: boolean
+          show_ver_agenda: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          show_contato?: boolean
+          show_eventos?: boolean
+          show_experiencias?: boolean
+          show_sobre?: boolean
+          show_ver_agenda?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          show_contato?: boolean
+          show_eventos?: boolean
+          show_experiencias?: boolean
+          show_sobre?: boolean
+          show_ver_agenda?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_menu_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_seo: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          og_image_url: string | null
+          organization_id: string
+          page_key: Database["public"]["Enums"]["site_page"]
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          og_image_url?: string | null
+          organization_id: string
+          page_key: Database["public"]["Enums"]["site_page"]
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          og_image_url?: string | null
+          organization_id?: string
+          page_key?: Database["public"]["Enums"]["site_page"]
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_seo_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       space_reservation_requests: {
         Row: {
           admin_notes: string | null
@@ -1688,6 +1998,63 @@ export type Database = {
           venue_name: string
         }[]
       }
+      get_site_about: {
+        Args: never
+        Returns: {
+          image_url: string
+          memory_body: string
+          origin_body: string
+          subtitle: string
+          title: string
+          today_body: string
+        }[]
+      }
+      get_site_contact: {
+        Args: never
+        Returns: {
+          email: string
+          instagram_url: string
+          institutional_message: string
+          service_message: string
+          whatsapp: string
+        }[]
+      }
+      get_site_home: {
+        Args: never
+        Returns: {
+          cta_primary_label: string
+          cta_primary_url: string
+          cta_secondary_label: string
+          cta_secondary_url: string
+          experiences_body: string
+          experiences_headline: string
+          final_cta_body: string
+          final_cta_button_label: string
+          final_cta_button_url: string
+          final_cta_headline: string
+          hero_eyebrow: string
+          hero_subtitle: string
+          hero_title: string
+        }[]
+      }
+      get_site_menu: {
+        Args: never
+        Returns: {
+          show_contato: boolean
+          show_eventos: boolean
+          show_experiencias: boolean
+          show_sobre: boolean
+          show_ver_agenda: boolean
+        }[]
+      }
+      get_site_seo: {
+        Args: { _page_key: Database["public"]["Enums"]["site_page"] }
+        Returns: {
+          description: string
+          og_image_url: string
+          title: string
+        }[]
+      }
       has_org_role_at_least: {
         Args: {
           _min_role: Database["public"]["Enums"]["member_role"]
@@ -1846,6 +2213,19 @@ export type Database = {
           venue_name: string
         }[]
       }
+      list_site_memory_items: {
+        Args: never
+        Returns: {
+          description: string
+          id: string
+          image_url: string
+          related_event_slug: string
+          sort_order: number
+          title: string
+          year_label: string
+        }[]
+      }
+      primary_site_org_id: { Args: never; Returns: string }
       process_access_attempt: {
         Args: {
           _event_id: string
@@ -2073,6 +2453,7 @@ export type Database = {
       org_type: "institutional" | "partner" | "other"
       promotion_type: "discount" | "vip_access" | "early_access"
       sector_status: "active" | "inactive" | "archived"
+      site_page: "home" | "sobre" | "contato" | "experiencias" | "eventos"
       space_commercial_status:
         | "available"
         | "negotiating"
@@ -2308,6 +2689,7 @@ export const Constants = {
       org_type: ["institutional", "partner", "other"],
       promotion_type: ["discount", "vip_access", "early_access"],
       sector_status: ["active", "inactive", "archived"],
+      site_page: ["home", "sobre", "contato", "experiencias", "eventos"],
       space_commercial_status: [
         "available",
         "negotiating",
