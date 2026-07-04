@@ -219,11 +219,11 @@ function EventDetailPage() {
   const { data: hotsite } = useQuery(hotsiteQO(slug));
 
   const utms = {
-    utm_source: search.utm_source ?? null,
-    utm_medium: search.utm_medium ?? null,
-    utm_campaign: search.utm_campaign ?? null,
-    utm_content: search.utm_content ?? null,
-    utm_term: search.utm_term ?? null,
+    utm_source: search.utm_source ?? undefined,
+    utm_medium: search.utm_medium ?? undefined,
+    utm_campaign: search.utm_campaign ?? undefined,
+    utm_content: search.utm_content ?? undefined,
+    utm_term: search.utm_term ?? undefined,
   };
 
   useEffect(() => {
