@@ -220,6 +220,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_first_owner: { Args: { _org_slug: string }; Returns: string }
+      current_user_org: {
+        Args: never
+        Returns: {
+          organization_id: string
+          role: Database["public"]["Enums"]["member_role"]
+          status: Database["public"]["Enums"]["member_status"]
+        }[]
+      }
       has_org_role_at_least: {
         Args: {
           _min_role: Database["public"]["Enums"]["member_role"]
