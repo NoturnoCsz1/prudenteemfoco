@@ -552,6 +552,70 @@ export type Database = {
           },
         ]
       }
+      leads: {
+        Row: {
+          contact: string | null
+          created_at: string
+          event_id: string
+          id: string
+          metadata: Json
+          name: string | null
+          organization_id: string
+          promoter_id: string | null
+          source: Database["public"]["Enums"]["lead_source"]
+          status: Database["public"]["Enums"]["lead_status"]
+          updated_at: string
+        }
+        Insert: {
+          contact?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          metadata?: Json
+          name?: string | null
+          organization_id: string
+          promoter_id?: string | null
+          source?: Database["public"]["Enums"]["lead_source"]
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+        }
+        Update: {
+          contact?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          metadata?: Json
+          name?: string | null
+          organization_id?: string
+          promoter_id?: string | null
+          source?: Database["public"]["Enums"]["lead_source"]
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_promoter_id_fkey"
+            columns: ["promoter_id"]
+            isOneToOne: false
+            referencedRelation: "promoters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_members: {
         Row: {
           created_at: string
@@ -649,6 +713,60 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      promoters: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          created_by: string | null
+          event_id: string
+          id: string
+          name: string
+          notes: string | null
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          created_by?: string | null
+          event_id: string
+          id?: string
+          name: string
+          notes?: string | null
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          event_id?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promoters_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promoters_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reservable_space_types: {
         Row: {
@@ -941,6 +1059,8 @@ export type Database = {
         | "partner"
         | "artist"
         | "production"
+      lead_source: "roxou" | "direct" | "instagram" | "promoter" | "other"
+      lead_status: "new" | "interested" | "converted" | "lost"
       member_role: "owner" | "admin" | "manager" | "operator" | "viewer"
       member_status: "active" | "invited" | "suspended" | "removed"
       org_status: "active" | "inactive" | "archived"
@@ -1112,6 +1232,8 @@ export const Constants = {
         "artist",
         "production",
       ],
+      lead_source: ["roxou", "direct", "instagram", "promoter", "other"],
+      lead_status: ["new", "interested", "converted", "lost"],
       member_role: ["owner", "admin", "manager", "operator", "viewer"],
       member_status: ["active", "invited", "suspended", "removed"],
       org_status: ["active", "inactive", "archived"],
