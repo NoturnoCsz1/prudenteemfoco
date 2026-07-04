@@ -80,6 +80,10 @@
   --border-strong: oklch(1 0 0 / 16%);
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.78 0.19 148 / 60%);
+
+  /* Glass Aurora accents — command center */
+  --violet: oklch(0.72 0.17 300);
+  --live: oklch(0.82 0.2 148);
 }
 
 .dark {
