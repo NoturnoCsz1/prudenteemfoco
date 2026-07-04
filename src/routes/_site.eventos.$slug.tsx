@@ -254,7 +254,7 @@ function EventDetailPage() {
         .rpc("track_hotsite_event", {
           _event_slug: slug,
           _kind: "page_view",
-          _promoter_code: promoter ?? null,
+          _promoter_code: promoter ?? undefined,
           _utm_source: utms.utm_source,
           _utm_medium: utms.utm_medium,
           _utm_campaign: utms.utm_campaign,
