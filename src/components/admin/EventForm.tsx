@@ -238,7 +238,7 @@ export function EventForm({
           eventId={initial.id}
           value={form.watch("cover_image_url") ?? null}
           onChange={(url) =>
-            form.setValue("cover_image_url", url, { shouldValidate: true, shouldDirty: true })
+            form.setValue("cover_image_url", url ?? "", { shouldValidate: true, shouldDirty: true })
           }
           onAudit={async (action, metadata) => {
             const { data: userRes } = await supabase.auth.getUser();
@@ -249,7 +249,7 @@ export function EventForm({
               _action: action,
               _entity_type: "event",
               _entity_id: initial.id!,
-              _metadata: metadata as unknown as Record<string, unknown>,
+              _metadata: metadata as unknown as import("@/integrations/supabase/types").Json,
             });
           }}
         />
