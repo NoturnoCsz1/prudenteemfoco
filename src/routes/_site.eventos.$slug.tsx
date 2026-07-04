@@ -936,3 +936,338 @@ function ReservationDialog({
     </div>
   );
 }
+
+// ============ HOTSITE BLOCKS ============
+
+function BannersSlot({
+  slug,
+  placement,
+}: {
+  slug: string;
+  placement: PublicBanner["placement"];
+}) {
+  const { data } = useQuery(bannersQO(slug));
+  const items = (data ?? []).filter((b) => b.placement === placement);
+  if (items.length === 0) return null;
+  return (
+    <section className="border-b border-[color-mix(in_oklab,var(--foreground)_8%,transparent)]">
+      <div className="container-page grid gap-4 py-8 md:py-12">
+        {items.map((b) =>
+          b.link_url ? (
+            <a
+              key={b.id}
+              href={b.link_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block overflow-hidden rounded-lg border border-border/60"
+            >
+              <img
+                src={b.image_url}
+                alt={b.title ?? ""}
+                className="h-auto w-full object-cover"
+                loading="lazy"
+              />
+            </a>
+          ) : (
+            <div
+              key={b.id}
+              className="overflow-hidden rounded-lg border border-border/60"
+            >
+              <img
+                src={b.image_url}
+                alt={b.title ?? ""}
+                className="h-auto w-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          ),
+        )}
+      </div>
+    </section>
+  );
+}
+
+function CountdownBlock({ startsAt }: { startsAt: string }) {
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  if (now === null) return null;
+  const diff = Math.max(0, new Date(startsAt).getTime() - now);
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff / 3600000) % 24);
+  const m = Math.floor((diff / 60000) % 60);
+  const s = Math.floor((diff / 1000) % 60);
+  if (diff === 0) return null;
+  const cells: [number, string][] = [
+    [d, "dias"],
+    [h, "horas"],
+    [m, "min"],
+    [s, "seg"],
+  ];
+  return (
+    <section className="border-b border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
+      <div className="container-page py-12 md:py-16">
+        <p className="eyebrow-label text-primary">Contagem regressiva</p>
+        <div className="mt-6 grid grid-cols-4 gap-3 md:gap-8">
+          {cells.map(([v, label]) => (
+            <div key={label} className="text-center">
+              <p className="date-block text-4xl text-foreground md:text-6xl tabular-nums">
+                {String(v).padStart(2, "0")}
+              </p>
+              <p className="mt-1 font-display text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
+                {label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CommercialLinksSection({
+  slug,
+  promoter,
+  utms,
+}: {
+  slug: string;
+  promoter: string | null;
+  utms: {
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_content?: string;
+    utm_term?: string;
+  };
+}) {
+  const { data } = useQuery(commercialLinksQO(slug));
+  const items = data ?? [];
+  if (items.length === 0) return null;
+
+  function handleClick(l: PublicCommercialLink) {
+    if (!l.tracking_enabled) return;
+    supabase
+      .rpc("track_hotsite_event", {
+        _event_slug: slug,
+        _kind: "commercial_link",
+        _commercial_link_id: l.id,
+        _promoter_code: promoter ?? undefined,
+        _utm_source: utms.utm_source,
+        _utm_medium: utms.utm_medium,
+        _utm_campaign: utms.utm_campaign,
+        _utm_content: utms.utm_content,
+        _utm_term: utms.utm_term,
+      })
+      .then(({ error }) => {
+        if (error) console.warn("[track_hotsite_event]", error.message);
+      });
+  }
+
+  return (
+    <section className="border-b border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
+      <div className="container-page py-16 md:py-24">
+        <p className="eyebrow-label text-primary">Ingressos</p>
+        <h2 className="mt-4 section-title text-foreground">Garanta o seu.</h2>
+        <ul className="mt-10 grid gap-3 md:grid-cols-2">
+          {items.map((l) => (
+            <li key={l.id}>
+              <a
+                href={l.destination_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handleClick(l)}
+                className="flex items-center justify-between gap-4 border border-border-strong bg-background/50 px-5 py-4 font-display text-xs font-bold uppercase tracking-[0.28em] hover:border-primary hover:text-primary"
+              >
+                <span className="min-w-0 truncate">{l.label}</span>
+                <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function SponsorsSection({ slug }: { slug: string }) {
+  const { data } = useQuery(sponsorsQO(slug));
+  const items = data ?? [];
+  if (items.length === 0) return null;
+
+  const byCat = new Map<PublicSponsor["category"], PublicSponsor[]>();
+  for (const s of items) {
+    if (!byCat.has(s.category)) byCat.set(s.category, []);
+    byCat.get(s.category)!.push(s);
+  }
+
+  return (
+    <section className="border-b border-[color-mix(in_oklab,var(--foreground)_10%,transparent)] bg-surface/30">
+      <div className="container-page py-20 md:py-28">
+        <p className="eyebrow-label text-primary">Realização e apoio</p>
+        <h2 className="mt-4 section-title text-foreground">Quem faz acontecer.</h2>
+        <div className="mt-12 space-y-12">
+          {SPONSOR_CATEGORIES.map((cat) => {
+            const list = byCat.get(cat);
+            if (!list || list.length === 0) return null;
+            return (
+              <div key={cat}>
+                <p className="font-display text-[11px] font-bold uppercase tracking-[0.3em] text-primary">
+                  {SPONSOR_CATEGORY_LABEL[cat]}
+                </p>
+                <ul className="mt-4 flex flex-wrap items-center gap-x-8 gap-y-6">
+                  {list.map((s) =>
+                    s.website_url ? (
+                      <li key={s.id}>
+                        <a
+                          href={s.website_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-3"
+                          title={s.name}
+                        >
+                          {s.logo_url ? (
+                            <img
+                              src={s.logo_url}
+                              alt={s.name}
+                              className="h-12 w-auto max-w-[160px] object-contain opacity-90 hover:opacity-100"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <span className="font-display text-sm uppercase tracking-[0.2em] text-foreground/85">
+                              {s.name}
+                            </span>
+                          )}
+                        </a>
+                      </li>
+                    ) : (
+                      <li key={s.id} title={s.name}>
+                        {s.logo_url ? (
+                          <img
+                            src={s.logo_url}
+                            alt={s.name}
+                            className="h-12 w-auto max-w-[160px] object-contain opacity-90"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <span className="font-display text-sm uppercase tracking-[0.2em] text-foreground/85">
+                            {s.name}
+                          </span>
+                        )}
+                      </li>
+                    ),
+                  )}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function NewsSection({ slug }: { slug: string }) {
+  const { data } = useQuery(newsQO(slug));
+  const items = data ?? [];
+  if (items.length === 0) return null;
+  return (
+    <section className="border-b border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
+      <div className="container-page py-20 md:py-28">
+        <p className="eyebrow-label text-primary">Notícias</p>
+        <h2 className="mt-4 section-title text-foreground">Últimas atualizações.</h2>
+        <ul className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {items.map((n) => (
+            <li key={n.id}>
+              <Link
+                to="/eventos/$slug/noticias/$newsSlug"
+                params={{ slug, newsSlug: n.slug }}
+                className="group block overflow-hidden border border-border/60 hover:border-primary"
+              >
+                {n.image_url && (
+                  <img
+                    src={n.image_url}
+                    alt=""
+                    className="h-44 w-full object-cover"
+                    loading="lazy"
+                  />
+                )}
+                <div className="p-5">
+                  {n.published_at && (
+                    <p className="font-display text-[10px] uppercase tracking-[0.3em] text-primary">
+                      {new Date(n.published_at).toLocaleDateString("pt-BR")}
+                    </p>
+                  )}
+                  <h3 className="mt-2 font-display text-lg font-semibold leading-tight text-foreground group-hover:text-primary">
+                    {n.title}
+                  </h3>
+                  {n.excerpt && (
+                    <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                      {n.excerpt}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function InfoSection({
+  hotsite,
+  event,
+}: {
+  hotsite: PublicHotsiteSettings | null;
+  event: PublicEvent;
+}) {
+  const address = hotsite?.info_address ?? event.venue_name ?? event.city ?? null;
+  const rows: [string, string | null][] = [
+    ["Local", address],
+    ["Abertura dos portões", hotsite?.info_gates_open_at ?? null],
+    ["Classificação", hotsite?.info_age_rating ?? null],
+    ["Estacionamento", hotsite?.info_parking ?? null],
+    ["Regras de acesso", hotsite?.info_rules ?? null],
+  ];
+  const has = rows.some(([, v]) => !!v) || !!hotsite?.info_map_url;
+  if (!has) return null;
+  return (
+    <section className="border-b border-[color-mix(in_oklab,var(--foreground)_10%,transparent)] bg-surface/30">
+      <div className="container-page py-20 md:py-28">
+        <p className="eyebrow-label text-primary">Informações úteis</p>
+        <h2 className="mt-4 section-title text-foreground">Antes de ir.</h2>
+        <dl className="mt-10 grid gap-x-10 gap-y-6 md:grid-cols-2">
+          {rows.map(([label, value]) =>
+            value ? (
+              <div key={label}>
+                <dt className="font-display text-[11px] font-bold uppercase tracking-[0.3em] text-primary">
+                  {label}
+                </dt>
+                <dd className="mt-2 whitespace-pre-line text-sm text-foreground/85">
+                  {value}
+                </dd>
+              </div>
+            ) : null,
+          )}
+          {hotsite?.info_map_url && (
+            <div className="md:col-span-2">
+              <a
+                href={hotsite.info_map_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border-b border-foreground/60 pb-1 font-display text-xs font-bold uppercase tracking-[0.28em] hover:border-primary hover:text-primary"
+              >
+                Abrir mapa <ArrowRight className="h-3.5 w-3.5" />
+              </a>
+            </div>
+          )}
+        </dl>
+      </div>
+    </section>
+  );
+}
+
