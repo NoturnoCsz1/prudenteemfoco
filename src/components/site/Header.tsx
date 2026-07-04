@@ -115,7 +115,7 @@ export function SiteHeader() {
 
       {/* Full-viewport editorial mobile menu */}
       <div
-        className={`fixed inset-0 top-14 z-30 overflow-y-auto bg-background md:hidden ${
+        className={`fixed inset-x-0 bottom-0 top-14 z-50 overflow-y-auto overscroll-contain bg-background md:hidden ${
           open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         } transition-opacity duration-200 motion-reduce:transition-none`}
         aria-hidden={!open}
