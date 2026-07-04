@@ -262,7 +262,7 @@ function EntrancePage() {
                   setTokenTarget(t);
                   setTokenTargetId(t === "event" ? eventId : "");
                 }}
-                className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+                className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm sm:w-auto"
               >
                 <option value="event">Evento</option>
                 <option value="sector">Setor</option>
