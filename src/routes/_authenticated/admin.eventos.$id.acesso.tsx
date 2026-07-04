@@ -878,7 +878,7 @@ function RuleForm({
         organization_id: organizationId,
         target,
         rule_type: ruleType,
-        conditions: cond as Record<string, unknown>,
+        conditions: cond as never,
       };
       if (isEdit) {
         const { error } = await supabase
