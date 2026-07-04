@@ -322,10 +322,22 @@ function FestivalPoster({ event, index }: { event: PublicEvent; index: number })
             className="image-zoom h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-[color-mix(in_oklab,var(--foreground)_6%,var(--background))] p-8">
-            <span className="poster text-center text-5xl text-foreground/70 md:text-7xl">
-              {event.title}
-            </span>
+          <div
+            className="flex h-full w-full flex-col justify-between p-6 md:p-10"
+            style={{
+              background:
+                "radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--primary) 22%, transparent) 0%, transparent 55%), linear-gradient(180deg, color-mix(in oklab, var(--foreground) 4%, var(--background)) 0%, var(--background) 100%)",
+            }}
+          >
+            <p className="eyebrow-label text-primary">Prudente em Foco</p>
+            <div>
+              <span className="poster block text-[clamp(2.4rem,8vw,5.5rem)] leading-[0.9] text-foreground">
+                {event.title}
+              </span>
+              <p className="mt-4 font-display text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                Imagem oficial em breve
+              </p>
+            </div>
           </div>
         )}
         <div
