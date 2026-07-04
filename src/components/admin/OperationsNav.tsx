@@ -48,6 +48,8 @@ export function OperationsNav({
     { key: "credentials", label: "Credenciais", to: `/admin/eventos/${eventId}/credenciais`, icon: <ShieldCheck className="h-3.5 w-3.5" /> },
     { key: "engine", label: "Engine", to: `/admin/eventos/${eventId}/engine`, icon: <Gauge className="h-3.5 w-3.5" /> },
     { key: "spaces", label: "Espaços", to: `/admin/eventos/${eventId}/espacos`, icon: <MapPin className="h-3.5 w-3.5" /> },
+    { key: "leads", label: "Leads", to: `/admin/eventos/${eventId}/leads`, icon: <UserPlus className="h-3.5 w-3.5" /> },
+    { key: "promoters", label: "Promoters", to: `/admin/eventos/${eventId}/promoters`, icon: <Megaphone className="h-3.5 w-3.5" /> },
     { key: "edit", label: "Editar", to: `/admin/eventos/${eventId}/editar`, icon: <PencilLine className="h-3.5 w-3.5" /> },
   ];
   return (
