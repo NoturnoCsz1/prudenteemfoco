@@ -1,11 +1,11 @@
-# Arquitetura — Prudente em Foco (Fase 0)
+# Arquitetura — Prudente em Foco
 
-## Objetivo da Fase 0
+## Objetivo da Fase 1
 
-Estabelecer uma **fundação limpa, segura, modular e rápida** para a nova
-plataforma institucional da Prudente em Foco. Esta fase entrega apenas o
-esqueleto público e o shell administrativo — nenhum módulo operacional foi
-implementado.
+Adicionar à fundação da Fase 0: **autenticação, banco, permissões e
+auditoria inicial**, mantendo a plataforma leve e sem antecipar
+funcionalidades operacionais. Ver [`SECURITY.md`](./SECURITY.md) para o
+detalhamento de segurança e [`ROADMAP_RULES.md`](./ROADMAP_RULES.md).
 
 ## Estrutura atual
 
