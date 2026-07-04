@@ -2,7 +2,18 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery, useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { ArrowLeft, CalendarDays, MapPin, Users, Check, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CalendarDays,
+  MapPin,
+  Users,
+  Check,
+  Loader2,
+  Music2,
+  Layers,
+  History,
+} from "lucide-react";
 import {
   getPublishedEventBySlug,
   type PublicEvent,
@@ -152,66 +163,169 @@ function EventDetailPage() {
 
   return (
     <article>
-      {event.cover_image_url && (
-        <div className="relative aspect-[21/9] w-full overflow-hidden border-b border-border bg-muted">
-          <img
-            src={event.cover_image_url}
-            alt=""
-            className="h-full w-full object-cover"
-          />
-        </div>
-      )}
-      <section className="container-page py-12 md:py-16">
-        <Link
-          to="/eventos"
-          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Todos os eventos
-        </Link>
-        <p className="mt-6 font-display text-xs uppercase tracking-[0.3em] text-primary">
-          Evento oficial
-        </p>
-        <h1 className="mt-3 max-w-3xl text-4xl font-semibold leading-tight md:text-5xl">
-          {event.title}
-        </h1>
-
-        <dl className="mt-8 grid gap-4 md:grid-cols-2">
-          <div className="flex items-start gap-3 rounded-lg border border-border bg-surface p-4">
-            <CalendarDays className="mt-0.5 h-4 w-4 text-primary" />
-            <div>
-              <dt className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                Quando
-              </dt>
-              <dd className="mt-1 text-sm">
-                {formatEventDateRange(event.starts_at, event.ends_at)}
-              </dd>
+      {/* HERO VISUAL */}
+      <section className="relative overflow-hidden border-b border-border">
+        {event.cover_image_url ? (
+          <>
+            <div className="absolute inset-0 -z-10">
+              <img
+                src={event.cover_image_url}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(180deg, color-mix(in oklab, var(--background) 60%, transparent) 0%, color-mix(in oklab, var(--background) 92%, transparent) 75%, var(--background) 100%)",
+                }}
+              />
             </div>
-          </div>
-          {(event.venue_name || event.city) && (
-            <div className="flex items-start gap-3 rounded-lg border border-border bg-surface p-4">
-              <MapPin className="mt-0.5 h-4 w-4 text-primary" />
-              <div>
-                <dt className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                  Onde
+            <div className="aspect-[16/10] w-full md:aspect-[21/9]" />
+          </>
+        ) : (
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10"
+            style={{
+              background:
+                "radial-gradient(60% 55% at 15% 0%, color-mix(in oklab, var(--primary) 22%, transparent) 0%, transparent 65%)",
+            }}
+          />
+        )}
+        <div className="container-page pb-14 pt-10 md:pb-20 md:pt-16">
+          <Link
+            to="/eventos"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Todos os eventos
+          </Link>
+          <p className="mt-8 font-display text-[11px] uppercase tracking-[0.35em] text-primary">
+            Evento oficial · Prudente em Foco
+          </p>
+          <h1 className="mt-4 max-w-4xl font-display text-5xl font-black leading-[0.98] tracking-tight md:text-7xl">
+            {event.title}
+          </h1>
+
+          <dl className="mt-10 grid gap-4 md:grid-cols-2 md:max-w-3xl">
+            <div className="flex items-start gap-3 rounded-xl border border-border bg-surface/80 p-4 backdrop-blur">
+              <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <div className="min-w-0">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                  Quando
                 </dt>
                 <dd className="mt-1 text-sm">
-                  {[event.venue_name, event.city].filter(Boolean).join(", ")}
+                  {formatEventDateRange(event.starts_at, event.ends_at)}
                 </dd>
               </div>
             </div>
-          )}
-        </dl>
+            {(event.venue_name || event.city) && (
+              <div className="flex items-start gap-3 rounded-xl border border-border bg-surface/80 p-4 backdrop-blur">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <div className="min-w-0">
+                  <dt className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                    Onde
+                  </dt>
+                  <dd className="mt-1 text-sm">
+                    {[event.venue_name, event.city].filter(Boolean).join(", ")}
+                  </dd>
+                </div>
+              </div>
+            )}
+          </dl>
 
-        {event.short_description && (
-          <p className="mt-10 max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">
-            {event.short_description}
-          </p>
-        )}
+          {event.short_description && (
+            <p className="mt-10 max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">
+              {event.short_description}
+            </p>
+          )}
+
+          <div className="mt-10 flex flex-wrap gap-3">
+            <a
+              href="#reservas"
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              Solicitar reserva <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
       </section>
 
+      {/* LINE-UP / ATRAÇÕES — placeholder estrutural */}
+      <section className="border-b border-border">
+        <div className="container-page py-14 md:py-20">
+          <SectionEyebrow icon={<Music2 className="h-4 w-4" />}>
+            Line-up e atrações
+          </SectionEyebrow>
+          <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
+            Atrações confirmadas
+          </h2>
+          <div className="mt-8 rounded-2xl border border-dashed border-border-strong bg-surface/40 p-8 text-center md:p-12">
+            <p className="text-sm text-muted-foreground">
+              As atrações deste evento serão publicadas aqui assim que forem
+              oficializadas. Nada de conteúdo especulativo.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SETORES E EXPERIÊNCIAS — placeholder estrutural */}
+      <section className="border-b border-border bg-surface/30">
+        <div className="container-page py-14 md:py-20">
+          <SectionEyebrow icon={<Layers className="h-4 w-4" />}>
+            Setores e experiências
+          </SectionEyebrow>
+          <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
+            Como o evento se organiza
+          </h2>
+          <p className="mt-4 max-w-2xl text-sm text-muted-foreground">
+            Setores, áreas e experiências específicas serão publicados quando o
+            mapa oficial do evento for divulgado. Reservas comerciais de
+            camarotes, bistrôs e mesas estão na seção abaixo.
+          </p>
+        </div>
+      </section>
+
+      <div id="reservas" />
       <SpacesSection slug={slug} promoterCode={promoter ?? null} />
+
+      {/* MEMÓRIA / HISTÓRICO — placeholder estrutural */}
+      <section className="border-t border-border">
+        <div className="container-page py-14 md:py-20">
+          <SectionEyebrow icon={<History className="h-4 w-4" />}>
+            Memória do evento
+          </SectionEyebrow>
+          <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
+            Edições anteriores
+          </h2>
+          <div className="mt-8 rounded-2xl border border-dashed border-border-strong bg-surface/40 p-8 text-center md:p-12">
+            <p className="text-sm text-muted-foreground">
+              O histórico e os registros de edições anteriores aparecerão aqui
+              conforme forem oficialmente publicados pela produção.
+            </p>
+          </div>
+        </div>
+      </section>
     </article>
+  );
+}
+
+function SectionEyebrow({
+  children,
+  icon,
+}: {
+  children: React.ReactNode;
+  icon?: React.ReactNode;
+}) {
+  return (
+    <div className="flex items-center gap-2 text-primary">
+      {icon}
+      <p className="font-display text-[11px] uppercase tracking-[0.35em]">
+        {children}
+      </p>
+    </div>
   );
 }
 
