@@ -557,8 +557,10 @@ export type Database = {
           created_at: string
           ends_at: string | null
           external_ticket_url: string | null
+          format: Database["public"]["Enums"]["event_format"]
           id: string
           instagram_url: string | null
+          kind: Database["public"]["Enums"]["event_kind"]
           long_description: string | null
           organization_id: string
           short_description: string | null
@@ -575,8 +577,10 @@ export type Database = {
           created_at?: string
           ends_at?: string | null
           external_ticket_url?: string | null
+          format?: Database["public"]["Enums"]["event_format"]
           id?: string
           instagram_url?: string | null
+          kind?: Database["public"]["Enums"]["event_kind"]
           long_description?: string | null
           organization_id: string
           short_description?: string | null
@@ -593,8 +597,10 @@ export type Database = {
           created_at?: string
           ends_at?: string | null
           external_ticket_url?: string | null
+          format?: Database["public"]["Enums"]["event_format"]
           id?: string
           instagram_url?: string | null
+          kind?: Database["public"]["Enums"]["event_kind"]
           long_description?: string | null
           organization_id?: string
           short_description?: string | null
@@ -1205,7 +1211,9 @@ export type Database = {
           cover_image_url: string
           ends_at: string
           external_ticket_url: string
+          format: Database["public"]["Enums"]["event_format"]
           instagram_url: string
+          kind: Database["public"]["Enums"]["event_kind"]
           long_description: string
           short_description: string
           slug: string
@@ -1267,7 +1275,9 @@ export type Database = {
           cover_image_url: string
           ends_at: string
           external_ticket_url: string
+          format: Database["public"]["Enums"]["event_format"]
           instagram_url: string
+          kind: Database["public"]["Enums"]["event_kind"]
           long_description: string
           short_description: string
           slug: string
@@ -1423,6 +1433,8 @@ export type Database = {
         | "supplier"
         | "press"
       credential_status: "active" | "inactive"
+      event_format: "recurring" | "one_off"
+      event_kind: "festival" | "show" | "special_event" | "other"
       event_status:
         | "draft"
         | "scheduled"
@@ -1615,6 +1627,8 @@ export const Constants = {
         "press",
       ],
       credential_status: ["active", "inactive"],
+      event_format: ["recurring", "one_off"],
+      event_kind: ["festival", "show", "special_event", "other"],
       event_status: [
         "draft",
         "scheduled",
