@@ -21,7 +21,7 @@ import {
 } from "@/lib/events";
 import { AdminPageHeader } from "@/components/admin/AdminPage";
 
-export const Route = createFileRoute("/_authenticated/admin/eventos")({
+export const Route = createFileRoute("/_authenticated/admin/eventos/")({
   head: () => ({
     meta: [
       { title: "Admin — Eventos · Prudente em Foco" },

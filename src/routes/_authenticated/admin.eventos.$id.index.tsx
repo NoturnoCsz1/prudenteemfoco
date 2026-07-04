@@ -17,7 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { OperationsNav } from "@/components/admin/OperationsNav";
 import { LiveLog } from "@/components/admin/LiveLog";
 
-export const Route = createFileRoute("/_authenticated/admin/eventos/$id")({
+export const Route = createFileRoute("/_authenticated/admin/eventos/$id/")({
   head: () => ({
     meta: [
       { title: "Centro de Controle — Admin · Prudente em Foco" },
