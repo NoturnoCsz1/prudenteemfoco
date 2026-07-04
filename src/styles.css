@@ -161,12 +161,13 @@
 /* ================= COMMAND CENTER (admin) ================= */
 
 @utility command-font {
-  font-family: var(--font-command);
-  letter-spacing: 0.01em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 @utility ops-font {
-  font-family: var(--font-ops);
+  font-family: var(--font-sans);
 }
 
 @utility panel {
