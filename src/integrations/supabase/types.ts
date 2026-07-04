@@ -899,9 +899,11 @@ export type Database = {
           created_at: string
           ends_at: string | null
           external_ticket_url: string | null
+          featured_order: number | null
           format: Database["public"]["Enums"]["event_format"]
           id: string
           instagram_url: string | null
+          is_featured: boolean
           kind: Database["public"]["Enums"]["event_kind"]
           long_description: string | null
           organization_id: string
@@ -919,9 +921,11 @@ export type Database = {
           created_at?: string
           ends_at?: string | null
           external_ticket_url?: string | null
+          featured_order?: number | null
           format?: Database["public"]["Enums"]["event_format"]
           id?: string
           instagram_url?: string | null
+          is_featured?: boolean
           kind?: Database["public"]["Enums"]["event_kind"]
           long_description?: string | null
           organization_id: string
@@ -939,9 +943,11 @@ export type Database = {
           created_at?: string
           ends_at?: string | null
           external_ticket_url?: string | null
+          featured_order?: number | null
           format?: Database["public"]["Enums"]["event_format"]
           id?: string
           instagram_url?: string | null
+          is_featured?: boolean
           kind?: Database["public"]["Enums"]["event_kind"]
           long_description?: string | null
           organization_id?: string
@@ -1669,8 +1675,10 @@ export type Database = {
           cover_image_url: string
           ends_at: string
           external_ticket_url: string
+          featured_order: number
           format: Database["public"]["Enums"]["event_format"]
           instagram_url: string
+          is_featured: boolean
           kind: Database["public"]["Enums"]["event_kind"]
           long_description: string
           short_description: string
@@ -1772,6 +1780,52 @@ export type Database = {
           website_url: string
         }[]
       }
+      list_home_experiences: {
+        Args: { _limit?: number }
+        Returns: {
+          available_units: number
+          base_price: number
+          category: Database["public"]["Enums"]["space_type_category"]
+          currency: string
+          event_slug: string
+          event_starts_at: string
+          event_title: string
+          image_url: string
+          name: string
+          space_type_id: string
+        }[]
+      }
+      list_home_featured_events: {
+        Args: never
+        Returns: {
+          city: string
+          cover_image_url: string
+          ends_at: string
+          featured_order: number
+          format: Database["public"]["Enums"]["event_format"]
+          is_featured: boolean
+          kind: Database["public"]["Enums"]["event_kind"]
+          short_description: string
+          slug: string
+          starts_at: string
+          title: string
+          venue_name: string
+        }[]
+      }
+      list_home_news: {
+        Args: { _limit?: number }
+        Returns: {
+          event_slug: string
+          event_title: string
+          excerpt: string
+          id: string
+          image_url: string
+          is_featured: boolean
+          published_at: string
+          slug: string
+          title: string
+        }[]
+      }
       list_published_events: {
         Args: never
         Returns: {
@@ -1779,8 +1833,10 @@ export type Database = {
           cover_image_url: string
           ends_at: string
           external_ticket_url: string
+          featured_order: number
           format: Database["public"]["Enums"]["event_format"]
           instagram_url: string
+          is_featured: boolean
           kind: Database["public"]["Enums"]["event_kind"]
           long_description: string
           short_description: string
@@ -1987,6 +2043,13 @@ export type Database = {
         | "commercial_link"
         | "reservation_intent"
         | "other"
+        | "home_hero_view"
+        | "home_hero_click"
+        | "home_event_card_click"
+        | "home_news_click"
+        | "home_experience_click"
+        | "home_agenda_click"
+        | "home_ticket_click"
       invite_status: "active" | "revoked" | "used" | "expired"
       invite_type:
         | "guest"
@@ -2212,6 +2275,13 @@ export const Constants = {
         "commercial_link",
         "reservation_intent",
         "other",
+        "home_hero_view",
+        "home_hero_click",
+        "home_event_card_click",
+        "home_news_click",
+        "home_experience_click",
+        "home_agenda_click",
+        "home_ticket_click",
       ],
       invite_status: ["active", "revoked", "used", "expired"],
       invite_type: [
