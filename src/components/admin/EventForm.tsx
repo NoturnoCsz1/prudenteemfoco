@@ -105,7 +105,11 @@ export function EventForm({
         city: values.city,
         short_description: values.short_description,
         cover_image_url: values.cover_image_url,
+        long_description: values.long_description,
+        instagram_url: values.instagram_url,
+        external_ticket_url: values.external_ticket_url,
       };
+
 
       if (mode === "create") {
         const { data, error } = await supabase
