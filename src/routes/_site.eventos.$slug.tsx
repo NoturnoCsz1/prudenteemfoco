@@ -213,31 +213,73 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
 
 function EventDetailPage() {
   const { slug } = Route.useParams();
-  const { promoter } = Route.useSearch();
+  const search = Route.useSearch();
+  const promoter = search.promoter;
   const { data: event } = useSuspenseQuery(eventQueryOptions(slug));
+  const { data: hotsite } = useQuery(hotsiteQO(slug));
+
+  const utms = {
+    utm_source: search.utm_source ?? null,
+    utm_medium: search.utm_medium ?? null,
+    utm_campaign: search.utm_campaign ?? null,
+    utm_content: search.utm_content ?? null,
+    utm_term: search.utm_term ?? null,
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const key = `pf:lead:${slug}:${promoter ?? ""}`;
-    if (sessionStorage.getItem(key)) return;
-    sessionStorage.setItem(key, "1");
-    supabase
-      .rpc("track_public_lead", {
-        _event_slug: slug,
-        _promoter_code: promoter ?? null,
-        _source: promoter ? "promoter" : "direct",
-        _metadata: {
-          referrer: document.referrer || null,
-          ua: navigator.userAgent,
-        },
-      })
-      .then(({ error }) => {
-        if (error) console.warn("[track_public_lead]", error.message);
-      });
+    if (!sessionStorage.getItem(key)) {
+      sessionStorage.setItem(key, "1");
+      supabase
+        .rpc("track_public_lead", {
+          _event_slug: slug,
+          _promoter_code: promoter ?? null,
+          _source: promoter ? "promoter" : "direct",
+          _metadata: {
+            referrer: document.referrer || null,
+            ua: navigator.userAgent,
+            ...utms,
+          },
+        })
+        .then(({ error }) => {
+          if (error) console.warn("[track_public_lead]", error.message);
+        });
+    }
+    // page_view tracking (uma vez por sessão por slug)
+    const viewKey = `pf:pv:${slug}`;
+    if (!sessionStorage.getItem(viewKey)) {
+      sessionStorage.setItem(viewKey, "1");
+      supabase
+        .rpc("track_hotsite_event", {
+          _event_slug: slug,
+          _kind: "page_view",
+          _promoter_code: promoter ?? null,
+          _utm_source: utms.utm_source,
+          _utm_medium: utms.utm_medium,
+          _utm_campaign: utms.utm_campaign,
+          _utm_content: utms.utm_content,
+          _utm_term: utms.utm_term,
+          _referrer: document.referrer || null,
+        })
+        .then(({ error }) => {
+          if (error) console.warn("[track_hotsite_event]", error.message);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, promoter]);
 
   if (!event) return null;
   const cover = normalizeCoverUrl(event.cover_image_url);
+  const showLineup = hotsite?.show_lineup ?? true;
+  const showTickets = hotsite?.show_tickets ?? true;
+  const showExperiences = hotsite?.show_experiences ?? true;
+  const showSponsors = hotsite?.show_sponsors ?? true;
+  const showNews = hotsite?.show_news ?? true;
+  const showInfo = hotsite?.show_info ?? true;
+  const showBanners = hotsite?.show_banners ?? true;
+  const showCountdown = hotsite?.show_countdown ?? true;
+
 
   return (
     <article>
