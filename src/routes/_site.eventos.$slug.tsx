@@ -234,7 +234,7 @@ function EventDetailPage() {
       supabase
         .rpc("track_public_lead", {
           _event_slug: slug,
-          _promoter_code: promoter ?? null,
+          _promoter_code: promoter ?? undefined,
           _source: promoter ? "promoter" : "direct",
           _metadata: {
             referrer: document.referrer || null,
