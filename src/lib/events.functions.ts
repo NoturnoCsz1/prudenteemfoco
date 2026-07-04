@@ -36,6 +36,8 @@ export type PublicEvent = {
   external_ticket_url: string | null;
   kind: "festival" | "show" | "special_event" | "other";
   format: "recurring" | "one_off";
+  is_featured: boolean;
+  featured_order: number | null;
 };
 
 export type PublicAttraction = {
