@@ -5,9 +5,11 @@ import {
   Gauge,
   LayoutDashboard,
   MapPin,
+  Megaphone,
   PencilLine,
   ShieldCheck,
   Ticket,
+  UserPlus,
 } from "lucide-react";
 
 export type OperationsTab =
