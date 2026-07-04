@@ -15,7 +15,10 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, loading } = useSession();
+  const menu = useSiteMenu();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const NAV = useMemo(() => ALL_NAV.filter((n) => menu[n.flag]), [menu]);
+  const showVerAgenda = menu.show_ver_agenda;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
