@@ -59,7 +59,7 @@ async function audit(
     _action: action,
     _entity_type: entityType,
     _entity_id: entityId,
-    _metadata: metadata,
+    _metadata: metadata as never,
   });
 }
 
