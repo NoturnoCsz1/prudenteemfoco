@@ -119,7 +119,7 @@ function HomePage() {
       )}
 
       {/* CTA FINAL */}
-      <section className="py-16 md:py-28">
+      <section className="py-12 md:py-28">
         <div className="container-page">
           <div className="mx-auto max-w-3xl border-t border-[color-mix(in_oklab,var(--foreground)_15%,transparent)] pt-12 text-center md:pt-16">
             <p className="eyebrow-label text-primary">Agenda oficial</p>
