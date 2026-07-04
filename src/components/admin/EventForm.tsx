@@ -16,6 +16,7 @@ import {
   type EventStatus,
 } from "@/lib/events";
 import { useOrgMembership } from "@/hooks/use-org-membership";
+import { CoverUpload } from "./CoverUpload";
 
 export type EventFormRecord = {
   id?: string;
