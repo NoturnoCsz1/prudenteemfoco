@@ -36,60 +36,70 @@
   --color-ring: var(--ring);
   --color-violet: var(--violet);
   --color-live: var(--live);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-neutral: var(--neutral);
 
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-command: "Bebas Neue", "Barlow Condensed", ui-sans-serif, sans-serif;
-  --font-ops: "Barlow", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-command: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-ops: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.625rem;
 
-  /* Base — preto/grafite institucional */
-  --background: oklch(0.14 0.005 260);
-  --foreground: oklch(0.98 0.005 260);
-  --surface: oklch(0.18 0.006 260);
-  --surface-elevated: oklch(0.22 0.007 260);
+  /* Base — Premium SaaS dark (#0A0F1C) */
+  --background: oklch(0.16 0.02 260);          /* #0A0F1C */
+  --foreground: oklch(0.98 0.005 240);         /* near white */
+  --surface: oklch(0.2 0.02 260);              /* elevated surface */
+  --surface-elevated: oklch(0.235 0.022 260);  /* card top */
 
-  --card: oklch(0.18 0.006 260);
-  --card-foreground: oklch(0.98 0.005 260);
-  --popover: oklch(0.18 0.006 260);
-  --popover-foreground: oklch(0.98 0.005 260);
+  --card: oklch(0.2 0.02 260);
+  --card-foreground: oklch(0.98 0.005 240);
+  --popover: oklch(0.2 0.02 260);
+  --popover-foreground: oklch(0.98 0.005 240);
 
-  /* Verde vibrante — usado com controle */
-  --primary: oklch(0.78 0.19 148);
-  --primary-foreground: oklch(0.14 0.005 260);
+  /* Success / brand primary — emerald #22C55E */
+  --primary: oklch(0.72 0.19 148);
+  --primary-foreground: oklch(0.14 0.01 260);
 
-  --secondary: oklch(0.24 0.008 260);
-  --secondary-foreground: oklch(0.98 0.005 260);
+  --secondary: oklch(0.26 0.02 260);
+  --secondary-foreground: oklch(0.98 0.005 240);
 
-  --muted: oklch(0.22 0.007 260);
-  --muted-foreground: oklch(0.68 0.01 260);
+  --muted: oklch(0.24 0.018 260);
+  --muted-foreground: oklch(0.72 0.03 256);    /* #94A3B8 neutral */
 
-  --accent: oklch(0.28 0.01 260);
-  --accent-foreground: oklch(0.98 0.005 260);
+  --accent: oklch(0.3 0.02 260);
+  --accent-foreground: oklch(0.98 0.005 240);
 
-  /* Dourado discreto */
   --gold: oklch(0.82 0.11 85);
 
-  --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.98 0.005 260);
+  /* Semantic — Stripe-like */
+  --success: oklch(0.72 0.19 148);             /* #22C55E */
+  --warning: oklch(0.78 0.17 75);              /* #F59E0B */
+  --danger: oklch(0.65 0.23 27);               /* #EF4444 */
+  --info: oklch(0.62 0.21 260);                /* #3B82F6 */
+  --neutral: oklch(0.72 0.03 256);             /* #94A3B8 */
+
+  --destructive: var(--danger);
+  --destructive-foreground: oklch(0.98 0.005 240);
 
   --border: oklch(1 0 0 / 8%);
-  --border-strong: oklch(1 0 0 / 16%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.78 0.19 148 / 60%);
+  --border-strong: oklch(1 0 0 / 14%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.62 0.21 260 / 55%);
 
-  /* Glass Aurora accents — command center */
   --violet: oklch(0.72 0.17 300);
-  --live: oklch(0.82 0.2 148);
+  --live: var(--success);
 }
 
 .dark {
-  /* Projeto é dark por padrão — mantido para compatibilidade shadcn */
-  --background: oklch(0.14 0.005 260);
-  --foreground: oklch(0.98 0.005 260);
+  --background: oklch(0.16 0.02 260);
+  --foreground: oklch(0.98 0.005 240);
 }
 
 @layer base {
@@ -151,12 +161,13 @@
 /* ================= COMMAND CENTER (admin) ================= */
 
 @utility command-font {
-  font-family: var(--font-command);
-  letter-spacing: 0.01em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 @utility ops-font {
-  font-family: var(--font-ops);
+  font-family: var(--font-sans);
 }
 
 @utility panel {
@@ -225,21 +236,41 @@
 }
 
 @utility hero-number {
-  font-family: var(--font-command);
-  font-size: clamp(2.75rem, 6vw, 4.25rem);
-  line-height: 0.9;
-  letter-spacing: 0.005em;
-  font-weight: 400;
-  tab-size: 4;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
 @utility eyebrow {
-  font-family: var(--font-ops);
+  font-family: var(--font-sans);
   font-size: 0.6875rem;
   font-weight: 600;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
+
+@utility mono {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+}
+
+@utility card-premium {
+  position: relative;
+  border-radius: 0.875rem;
+  border: 1px solid color-mix(in oklab, white 6%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--surface-elevated) 100%, transparent) 0%,
+    color-mix(in oklab, var(--surface) 100%, transparent) 100%
+  );
+  box-shadow:
+    0 1px 0 0 color-mix(in oklab, white 6%, transparent) inset,
+    0 1px 2px 0 rgb(0 0 0 / 0.4),
+    0 8px 24px -12px rgb(0 0 0 / 0.5);
+}
+
 

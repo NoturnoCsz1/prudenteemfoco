@@ -53,27 +53,27 @@ export function LiveLog({
   }
 
   return (
-    <ul className="max-h-[360px] space-y-1.5 overflow-y-auto rounded-lg border border-border bg-card p-2">
+    <ul className="mono max-h-[360px] space-y-1 overflow-y-auto rounded-lg border border-border bg-background/60 p-2 text-[12px]">
       {q.data.map((a) => {
         const allow = a.status === "allowed";
         return (
           <li
             key={a.id}
-            className="flex items-start gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-muted/40"
+            className="group flex items-start gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-muted/40"
           >
             {allow ? (
-              <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" />
+              <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[color:var(--success)]" />
             ) : (
-              <XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-destructive" />
+              <XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[color:var(--danger)]" />
             )}
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
                 <span
-                  className={`font-medium ${
-                    allow ? "text-emerald-500" : "text-destructive"
+                  className={`font-semibold uppercase tracking-wider ${
+                    allow ? "text-[color:var(--success)]" : "text-[color:var(--danger)]"
                   }`}
                 >
-                  {allow ? "Permitido" : "Negado"}
+                  {allow ? "ALLOW" : "DENY"}
                 </span>
                 <span className="text-muted-foreground tabular-nums">
                   {new Date(a.created_at).toLocaleTimeString("pt-BR", {
