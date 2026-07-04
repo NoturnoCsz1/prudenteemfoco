@@ -29,7 +29,11 @@ export type EventFormRecord = {
   city: string | null;
   short_description: string | null;
   cover_image_url: string | null;
+  long_description: string | null;
+  instagram_url: string | null;
+  external_ticket_url: string | null;
 };
+
 
 export function EventForm({
   mode,
