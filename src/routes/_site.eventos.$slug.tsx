@@ -260,7 +260,7 @@ function EventDetailPage() {
           _utm_campaign: utms.utm_campaign,
           _utm_content: utms.utm_content,
           _utm_term: utms.utm_term,
-          _referrer: document.referrer || null,
+          _referrer: document.referrer || undefined,
         })
         .then(({ error }) => {
           if (error) console.warn("[track_hotsite_event]", error.message);
