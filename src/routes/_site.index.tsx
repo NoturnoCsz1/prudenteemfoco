@@ -28,6 +28,7 @@ import {
 } from "@/components/site/HeroCarousel";
 import { useAttribution, buildSearch } from "@/lib/attribution";
 import { trackHomeEvent } from "@/lib/home-tracking";
+import { getSiteHome, listSiteMemoryItems, type SiteHome, type SiteMemoryItem } from "@/lib/site.functions";
 
 const eventsQO = queryOptions({
   queryKey: ["public", "events", "list"],
@@ -44,6 +45,16 @@ const newsQO = queryOptions({
 const experiencesQO = queryOptions({
   queryKey: ["public", "home", "experiences"],
   queryFn: () => listHomeExperiences({ data: { limit: 4 } }),
+});
+const siteHomeQO = queryOptions({
+  queryKey: ["site", "home"],
+  queryFn: () => getSiteHome(),
+  staleTime: 60_000,
+});
+const siteMemoryQO = queryOptions({
+  queryKey: ["site", "memory"],
+  queryFn: () => listSiteMemoryItems(),
+  staleTime: 60_000,
 });
 
 export const Route = createFileRoute("/_site/")({
