@@ -110,34 +110,34 @@ export function SiteHeader() {
 
       {/* Full-viewport editorial mobile menu */}
       <div
-        className={`fixed inset-0 z-30 bg-background md:hidden ${
+        className={`fixed inset-0 top-14 z-30 overflow-y-auto bg-background md:hidden ${
           open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         } transition-opacity duration-200 motion-reduce:transition-none`}
         aria-hidden={!open}
       >
-        <div className="flex h-full flex-col pt-20 pb-10">
+        <div className="flex min-h-full flex-col pt-6 pb-10">
           <nav
             aria-label="Menu principal"
-            className="container-page flex flex-1 flex-col justify-center gap-6"
+            className="container-page flex flex-col"
           >
             {NAV.map((item, i) => (
               <Link
                 key={item.to}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className="group flex items-baseline gap-4 border-b border-foreground/10 pb-4"
+                className="group flex items-start gap-4 border-b border-foreground/10 py-5"
               >
-                <span className="eyebrow-label w-8 text-primary">
+                <span className="eyebrow-label mt-2 w-7 shrink-0 text-primary">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="poster text-[clamp(2.4rem,10vw,3.5rem)] leading-none text-foreground transition-colors group-hover:text-primary">
+                <span className="poster min-w-0 flex-1 break-words text-[clamp(2rem,9vw,3rem)] leading-[0.95] text-foreground transition-colors group-hover:text-primary">
                   {item.label.toUpperCase()}
                 </span>
               </Link>
             ))}
           </nav>
 
-          <div className="container-page mt-auto flex flex-col gap-4 pt-8">
+          <div className="container-page mt-8 flex flex-col gap-4">
             <Link
               to="/eventos"
               onClick={() => setOpen(false)}
