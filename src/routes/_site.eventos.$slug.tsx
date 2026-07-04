@@ -112,10 +112,15 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
       eventQueryOptions(params.slug),
     );
     if (!event) throw notFound();
-    // pré-carrega line-up (opcional, sem falhar a rota)
     void context.queryClient.prefetchQuery(attractionsQueryOptions(params.slug));
+    void context.queryClient.prefetchQuery(hotsiteQO(params.slug));
+    void context.queryClient.prefetchQuery(sponsorsQO(params.slug));
+    void context.queryClient.prefetchQuery(bannersQO(params.slug));
+    void context.queryClient.prefetchQuery(newsQO(params.slug));
+    void context.queryClient.prefetchQuery(commercialLinksQO(params.slug));
     return event;
   },
+
 
   head: ({ loaderData, params }) => {
     const ev = loaderData as PublicEvent | undefined;
