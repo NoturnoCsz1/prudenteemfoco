@@ -24,6 +24,7 @@ export type OperationsTab =
   | "leads"
   | "promoters"
   | "promotions"
+  | "intelligence"
   | "edit"
   // legacy tab keys — routes still exist but not shown in nav
   | "details"
