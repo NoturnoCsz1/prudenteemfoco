@@ -187,92 +187,80 @@ function EventDetailPage() {
 
   return (
     <article>
-      {/* HERO VISUAL */}
-      <section className="relative overflow-hidden border-b border-border">
+      {/* HERO — CARTAZ DO EVENTO */}
+      <section className="relative isolate -mt-14 md:-mt-16">
         {event.cover_image_url ? (
-          <>
-            <div className="absolute inset-0 -z-10">
-              <img
-                src={event.cover_image_url}
-                alt=""
-                className="h-full w-full object-cover"
-              />
-              <div
-                aria-hidden
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(180deg, color-mix(in oklab, var(--background) 60%, transparent) 0%, color-mix(in oklab, var(--background) 92%, transparent) 75%, var(--background) 100%)",
-                }}
-              />
-            </div>
-            <div className="aspect-[16/10] w-full md:aspect-[21/9]" />
-          </>
+          <div className="absolute inset-0 -z-10">
+            <img
+              src={event.cover_image_url}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, color-mix(in oklab, var(--background) 25%, transparent) 0%, color-mix(in oklab, var(--background) 10%, transparent) 45%, color-mix(in oklab, var(--background) 90%, transparent) 90%, var(--background) 100%)",
+              }}
+            />
+          </div>
         ) : (
           <div
             aria-hidden
             className="absolute inset-0 -z-10"
             style={{
               background:
-                "radial-gradient(60% 55% at 15% 0%, color-mix(in oklab, var(--primary) 22%, transparent) 0%, transparent 65%)",
+                "radial-gradient(60% 55% at 15% 100%, color-mix(in oklab, var(--primary) 20%, transparent) 0%, transparent 65%)",
             }}
           />
         )}
-        <div className="container-page pb-14 pt-10 md:pb-20 md:pt-16">
+        <div
+          className={`container-page flex flex-col justify-end pb-16 pt-32 md:pb-24 md:pt-40 ${
+            event.cover_image_url
+              ? "min-h-[92vh] md:min-h-[100vh]"
+              : "min-h-[70vh]"
+          }`}
+        >
           <Link
             to="/eventos"
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+            className="mb-8 inline-flex items-center gap-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/80 hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Todos os eventos
           </Link>
-          <p className="mt-8 font-display text-[11px] uppercase tracking-[0.35em] text-primary">
+          <p className="eyebrow-label text-primary">
             Evento oficial · Prudente em Foco
           </p>
-          <h1 className="mt-4 max-w-4xl break-words font-display text-4xl font-black leading-[1] tracking-tight sm:text-5xl md:text-7xl">
+          <h1 className="mt-6 display-xl break-words text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)]">
             {event.title}
           </h1>
 
-          <dl className="mt-10 grid gap-4 md:grid-cols-2 md:max-w-3xl">
-            <div className="flex items-start gap-3 rounded-xl border border-border bg-surface/80 p-4 backdrop-blur">
-              <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <div className="min-w-0">
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-                  Quando
-                </dt>
-                <dd className="mt-1 text-sm">
-                  {formatEventDateRange(event.starts_at, event.ends_at)}
-                </dd>
-              </div>
-            </div>
+          <div className="mt-10 flex flex-wrap items-baseline gap-x-10 gap-y-3">
+            <p className="date-block text-3xl text-foreground md:text-5xl">
+              {formatEventDateEditorial(event.starts_at, event.ends_at)}
+            </p>
             {(event.venue_name || event.city) && (
-              <div className="flex items-start gap-3 rounded-xl border border-border bg-surface/80 p-4 backdrop-blur">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                <div className="min-w-0">
-                  <dt className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-                    Onde
-                  </dt>
-                  <dd className="mt-1 text-sm">
-                    {[event.venue_name, event.city].filter(Boolean).join(", ")}
-                  </dd>
-                </div>
-              </div>
+              <p className="flex items-center gap-1.5 font-display text-sm font-semibold uppercase tracking-[0.28em] text-foreground/85 md:text-base">
+                <MapPin className="h-4 w-4" />
+                {[event.venue_name, event.city].filter(Boolean).join(" · ")}
+              </p>
             )}
-          </dl>
+          </div>
 
           {event.short_description && (
-            <p className="mt-10 max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">
+            <p className="mt-8 max-w-2xl text-base leading-relaxed text-foreground/85 md:text-lg">
               {event.short_description}
             </p>
           )}
 
-          <div className="mt-10 flex flex-wrap gap-3">
+          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
             {event.external_ticket_url && (
               <a
                 href={event.external_ticket_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 bg-primary px-7 py-4 font-display text-xs font-bold uppercase tracking-[0.28em] text-primary-foreground hover:opacity-90"
               >
                 <TicketIcon className="h-4 w-4" />
                 Comprar ingresso
@@ -280,23 +268,23 @@ function EventDetailPage() {
             )}
             <a
               href="#reservas"
-              className={`inline-flex items-center gap-2 rounded-md px-6 py-3 text-sm font-semibold transition-opacity hover:opacity-90 ${
+              className={
                 event.external_ticket_url
-                  ? "border border-border-strong text-foreground"
-                  : "bg-primary text-primary-foreground"
-              }`}
+                  ? "inline-flex items-center gap-2 border-b border-foreground/60 pb-1 font-display text-xs font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary"
+                  : "inline-flex items-center gap-2 bg-foreground px-7 py-4 font-display text-xs font-bold uppercase tracking-[0.28em] text-background hover:opacity-90"
+              }
             >
-              Solicitar reserva <ArrowRight className="h-4 w-4" />
+              Solicitar reserva <ArrowRight className="h-3.5 w-3.5" />
             </a>
             {event.instagram_url && (
               <a
                 href={event.instagram_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-md border border-border-strong px-6 py-3 text-sm font-medium hover:bg-accent"
+                className="inline-flex items-center gap-1.5 font-display text-xs font-semibold uppercase tracking-[0.28em] text-foreground/80 hover:text-primary"
               >
-                <Instagram className="h-4 w-4" />
-                Instagram oficial
+                <Instagram className="h-3.5 w-3.5" />
+                Instagram
               </a>
             )}
           </div>
@@ -304,59 +292,24 @@ function EventDetailPage() {
       </section>
 
       {event.long_description && (
-        <section className="border-b border-border bg-surface/20">
-          <div className="container-page py-12 md:py-16">
-            <div className="max-w-3xl whitespace-pre-line text-base leading-relaxed text-muted-foreground md:text-lg">
+        <section className="border-y border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
+          <div className="container-page py-16 md:py-24">
+            <div className="max-w-3xl whitespace-pre-line text-base leading-relaxed text-foreground/85 md:text-lg">
               {event.long_description}
             </div>
           </div>
         </section>
       )}
 
-      {/* LINE-UP / ATRAÇÕES — dados reais */}
+      {/* LINE-UP */}
       <LineupSection slug={slug} />
-
-
-      {/* SETORES E EXPERIÊNCIAS — placeholder estrutural */}
-      <section className="border-b border-border bg-surface/30">
-        <div className="container-page py-14 md:py-20">
-          <SectionEyebrow icon={<Layers className="h-4 w-4" />}>
-            Setores e experiências
-          </SectionEyebrow>
-          <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
-            Como o evento se organiza
-          </h2>
-          <p className="mt-4 max-w-2xl text-sm text-muted-foreground">
-            Setores, áreas e experiências específicas serão publicados quando o
-            mapa oficial do evento for divulgado. Reservas comerciais de
-            camarotes, bistrôs e mesas estão na seção abaixo.
-          </p>
-        </div>
-      </section>
 
       <div id="reservas" />
       <SpacesSection slug={slug} promoterCode={promoter ?? null} />
-
-      {/* MEMÓRIA / HISTÓRICO — placeholder estrutural */}
-      <section className="border-t border-border">
-        <div className="container-page py-14 md:py-20">
-          <SectionEyebrow icon={<History className="h-4 w-4" />}>
-            Memória do evento
-          </SectionEyebrow>
-          <h2 className="mt-3 font-display text-3xl font-black leading-tight md:text-4xl">
-            Edições anteriores
-          </h2>
-          <div className="mt-8 rounded-2xl border border-dashed border-border-strong bg-surface/40 p-8 text-center md:p-12">
-            <p className="text-sm text-muted-foreground">
-              O histórico e os registros de edições anteriores aparecerão aqui
-              conforme forem oficialmente publicados pela produção.
-            </p>
-          </div>
-        </div>
-      </section>
     </article>
   );
 }
+
 
 function SectionEyebrow({
   children,
