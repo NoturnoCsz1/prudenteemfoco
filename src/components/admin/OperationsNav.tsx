@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   MapPin,
   Megaphone,
+  Music2,
   PencilLine,
   Sparkles,
   ShieldCheck,
@@ -23,6 +24,7 @@ export type OperationsTab =
   | "engine"
   | "spaces"
   | "reservations"
+  | "lineup"
   | "leads"
   | "promoters"
   | "promotions"
@@ -31,6 +33,7 @@ export type OperationsTab =
   | "details"
   | "sectors"
   | "access";
+
 
 export function OperationsNav({
   eventId,
