@@ -20,10 +20,7 @@ import { Route as SiteContatoRouteImport } from './routes/_site.contato'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as SiteEventosSlugRouteImport } from './routes/_site.eventos.$slug'
-import { Route as AuthenticatedAdminOperacaoRouteImport } from './routes/_authenticated/admin.operacao'
-import { Route as AuthenticatedAdminExperienciasRouteImport } from './routes/_authenticated/admin.experiencias'
 import { Route as AuthenticatedAdminEquipeRouteImport } from './routes/_authenticated/admin.equipe'
-import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
 import { Route as AuthenticatedAdminEventosIndexRouteImport } from './routes/_authenticated/admin.eventos.index'
 import { Route as AuthenticatedAdminEventosNovoRouteImport } from './routes/_authenticated/admin.eventos.novo'
 import { Route as AuthenticatedAdminEventosIdIndexRouteImport } from './routes/_authenticated/admin.eventos.$id.index'
@@ -97,28 +94,10 @@ const SiteEventosSlugRoute = SiteEventosSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => SiteEventosRoute,
 } as any)
-const AuthenticatedAdminOperacaoRoute =
-  AuthenticatedAdminOperacaoRouteImport.update({
-    id: '/operacao',
-    path: '/operacao',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminExperienciasRoute =
-  AuthenticatedAdminExperienciasRouteImport.update({
-    id: '/experiencias',
-    path: '/experiencias',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminEquipeRoute =
   AuthenticatedAdminEquipeRouteImport.update({
     id: '/equipe',
     path: '/equipe',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminConfiguracoesRoute =
-  AuthenticatedAdminConfiguracoesRouteImport.update({
-    id: '/configuracoes',
-    path: '/configuracoes',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIndexRoute =
@@ -244,10 +223,7 @@ export interface FileRoutesByFullPath {
   '/eventos': typeof SiteEventosRouteWithChildren
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
-  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
-  '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
-  '/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
   '/eventos/$slug': typeof SiteEventosSlugRouteWithChildren
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
@@ -277,10 +253,7 @@ export interface FileRoutesByTo {
   '/eventos': typeof SiteEventosRouteWithChildren
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
-  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
-  '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
-  '/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
   '/eventos/$slug': typeof SiteEventosSlugRouteWithChildren
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
@@ -314,10 +287,7 @@ export interface FileRoutesById {
   '/_site/experiencias': typeof SiteExperienciasRoute
   '/_site/sobre': typeof SiteSobreRoute
   '/_site/': typeof SiteIndexRoute
-  '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/equipe': typeof AuthenticatedAdminEquipeRoute
-  '/_authenticated/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
-  '/_authenticated/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
   '/_site/eventos/$slug': typeof SiteEventosSlugRouteWithChildren
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
@@ -350,10 +320,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/experiencias'
     | '/sobre'
-    | '/admin/configuracoes'
     | '/admin/equipe'
-    | '/admin/experiencias'
-    | '/admin/operacao'
     | '/eventos/$slug'
     | '/admin/'
     | '/admin/eventos/novo'
@@ -383,10 +350,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/experiencias'
     | '/sobre'
-    | '/admin/configuracoes'
     | '/admin/equipe'
-    | '/admin/experiencias'
-    | '/admin/operacao'
     | '/eventos/$slug'
     | '/admin'
     | '/admin/eventos/novo'
@@ -419,10 +383,7 @@ export interface FileRouteTypes {
     | '/_site/experiencias'
     | '/_site/sobre'
     | '/_site/'
-    | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/equipe'
-    | '/_authenticated/admin/experiencias'
-    | '/_authenticated/admin/operacao'
     | '/_site/eventos/$slug'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/eventos/novo'
@@ -531,32 +492,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteEventosSlugRouteImport
       parentRoute: typeof SiteEventosRoute
     }
-    '/_authenticated/admin/operacao': {
-      id: '/_authenticated/admin/operacao'
-      path: '/operacao'
-      fullPath: '/admin/operacao'
-      preLoaderRoute: typeof AuthenticatedAdminOperacaoRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/experiencias': {
-      id: '/_authenticated/admin/experiencias'
-      path: '/experiencias'
-      fullPath: '/admin/experiencias'
-      preLoaderRoute: typeof AuthenticatedAdminExperienciasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/equipe': {
       id: '/_authenticated/admin/equipe'
       path: '/equipe'
       fullPath: '/admin/equipe'
       preLoaderRoute: typeof AuthenticatedAdminEquipeRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/configuracoes': {
-      id: '/_authenticated/admin/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/admin/configuracoes'
-      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/': {
@@ -696,10 +636,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminEquipeRoute: typeof AuthenticatedAdminEquipeRoute
-  AuthenticatedAdminExperienciasRoute: typeof AuthenticatedAdminExperienciasRoute
-  AuthenticatedAdminOperacaoRoute: typeof AuthenticatedAdminOperacaoRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminEventosNovoRoute: typeof AuthenticatedAdminEventosNovoRoute
   AuthenticatedAdminEventosIndexRoute: typeof AuthenticatedAdminEventosIndexRoute
@@ -722,10 +659,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
   AuthenticatedAdminEquipeRoute: AuthenticatedAdminEquipeRoute,
-  AuthenticatedAdminExperienciasRoute: AuthenticatedAdminExperienciasRoute,
-  AuthenticatedAdminOperacaoRoute: AuthenticatedAdminOperacaoRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminEventosNovoRoute: AuthenticatedAdminEventosNovoRoute,
   AuthenticatedAdminEventosIndexRoute: AuthenticatedAdminEventosIndexRoute,
