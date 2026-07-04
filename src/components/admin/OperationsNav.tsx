@@ -30,6 +30,7 @@ export type OperationsTab =
   | "promoters"
   | "promotions"
   | "intelligence"
+  | "hotsite"
   | "edit"
   | "details"
   | "sectors"
