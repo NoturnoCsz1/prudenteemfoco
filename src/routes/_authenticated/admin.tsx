@@ -16,6 +16,7 @@ import {
   X,
   ArrowLeft,
   LogOut,
+  Users,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +32,7 @@ const NAV = [
   { to: "/admin/eventos", label: "Eventos", icon: CalendarDays },
   { to: "/admin/experiencias", label: "Experiências", icon: Sparkles },
   { to: "/admin/operacao", label: "Operação", icon: Activity },
+  { to: "/admin/equipe", label: "Equipe", icon: Users },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ] as const;
 
