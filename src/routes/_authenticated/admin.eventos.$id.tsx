@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { AdminPageHeader } from "@/components/admin/AdminPage";
+import { OperationsNav } from "@/components/admin/OperationsNav";
 import { EventForm, type EventFormRecord } from "@/components/admin/EventForm";
 import type { EventStatus } from "@/lib/events";
 
