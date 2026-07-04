@@ -107,7 +107,7 @@ function EventRow({ event }: { event: PublicEvent }) {
           <p className="date-block text-3xl text-primary md:text-4xl">
             {formatEventDateEditorial(event.starts_at, event.ends_at)}
           </p>
-          <h2 className="mt-3 poster text-3xl text-foreground transition-colors group-hover:text-primary md:text-6xl">
+          <h2 className="mt-3 poster text-[clamp(2rem,9vw,4rem)] leading-[0.9] text-foreground transition-colors group-hover:text-primary md:text-6xl">
             {event.title}
           </h2>
           {(event.venue_name || event.city) && (
