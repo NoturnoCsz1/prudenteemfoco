@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CalendarDays, ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { listPublishedEvents, type PublicEvent } from "@/lib/events.functions";
 import { formatEventDateEditorial, normalizeCoverUrl } from "@/lib/events";
@@ -58,25 +58,26 @@ function EventosPage() {
   return (
     <>
       <section>
-        <div className="container-page pb-8 pt-24 md:pb-12 md:pt-32">
+        <div className="container-page pb-6 pt-20 md:pb-12 md:pt-32">
           <p className="eyebrow-label text-primary">Agenda oficial</p>
-          <h1 className="mt-6 display-xl text-foreground">Programação.</h1>
-          <p className="mt-8 max-w-xl font-display text-lg leading-snug text-foreground/85 md:text-2xl">
+          <h1 className="mt-5 poster text-[clamp(3rem,13vw,9.5rem)] leading-[0.88] text-foreground md:mt-6">
+            Programação.
+          </h1>
+          <p className="mt-6 max-w-xl font-display text-base leading-snug text-foreground/85 md:mt-8 md:text-2xl">
             Cada evento aparece aqui quando confirmado. Sem especulação.
           </p>
         </div>
       </section>
 
       <section>
-        <div className="container-page pb-32">
+        <div className="container-page pb-20 md:pb-32">
           {upcoming.length === 0 ? (
-            <div className="border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)] py-24 text-center">
-              <CalendarDays className="mx-auto h-8 w-8 text-muted-foreground" />
-              <p className="mt-6 font-display text-sm font-bold uppercase tracking-[0.28em] text-foreground">
-                Nenhum evento publicado no momento
+            <div className="border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)] py-16 text-center md:py-24">
+              <p className="poster text-[clamp(2.4rem,10vw,4.5rem)] leading-[0.9] text-foreground">
+                EM BREVE.
               </p>
-              <p className="mt-3 text-sm text-muted-foreground">
-                Novas datas aparecem aqui assim que forem confirmadas.
+              <p className="mt-5 text-sm text-muted-foreground md:text-base">
+                Novos eventos serão publicados aqui.
               </p>
             </div>
           ) : (
@@ -88,6 +89,7 @@ function EventosPage() {
           )}
         </div>
       </section>
+
     </>
   );
 }
@@ -99,13 +101,13 @@ function EventRow({ event }: { event: PublicEvent }) {
       <Link
         to="/eventos/$slug"
         params={{ slug: event.slug }}
-        className="group grid gap-4 py-10 md:grid-cols-[minmax(0,1fr),1.6fr] md:items-center md:gap-12 md:py-16"
+        className="group grid gap-5 py-8 md:grid-cols-[minmax(0,1fr),1.6fr] md:items-center md:gap-12 md:py-16"
       >
         <div className="order-2 md:order-1">
           <p className="date-block text-3xl text-primary md:text-4xl">
             {formatEventDateEditorial(event.starts_at, event.ends_at)}
           </p>
-          <h2 className="mt-3 poster text-3xl text-foreground transition-colors group-hover:text-primary md:text-6xl">
+          <h2 className="mt-3 poster text-[clamp(2rem,9vw,4rem)] leading-[0.9] text-foreground transition-colors group-hover:text-primary md:text-6xl">
             {event.title}
           </h2>
           {(event.venue_name || event.city) && (
@@ -120,7 +122,8 @@ function EventRow({ event }: { event: PublicEvent }) {
         </div>
         <div className="order-1 md:order-2">
           {cover ? (
-            <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted md:aspect-[16/10]">
+
               <img
                 src={cover}
                 alt=""
@@ -130,7 +133,8 @@ function EventRow({ event }: { event: PublicEvent }) {
             </div>
           ) : (
             <div
-              className="flex aspect-[16/10] w-full flex-col justify-between p-6 md:p-10"
+              className="flex aspect-[4/3] w-full flex-col justify-between p-5 md:aspect-[16/10] md:p-10"
+
               style={{
                 background:
                   "radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--primary) 20%, transparent) 0%, transparent 55%), linear-gradient(180deg, color-mix(in oklab, var(--foreground) 4%, var(--background)) 0%, var(--background) 100%)",

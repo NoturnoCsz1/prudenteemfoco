@@ -54,10 +54,12 @@ function HomePage() {
     const bx = b.starts_at ? Date.parse(b.starts_at) : Infinity;
     return ax - bx;
   });
-  const festivals = upcoming.filter(isBigEvent);
-  const shows = upcoming.filter((ev) => !isBigEvent(ev));
   const featured = upcoming[0] ?? null;
   const featuredCover = featured ? normalizeCoverUrl(featured.cover_image_url) : null;
+  // Não repetir o evento em destaque nas seções seguintes.
+  const rest = featured ? upcoming.filter((ev) => ev.slug !== featured.slug) : upcoming;
+  const festivals = rest.filter(isBigEvent);
+  const shows = rest.filter((ev) => !isBigEvent(ev));
   const past = events.filter((ev) => !isUpcoming(ev));
 
   return (
@@ -68,15 +70,10 @@ function HomePage() {
         <InstitutionalHero />
       )}
 
-      {/* EM CARTAZ — faixa editorial que abre o corpo do site */}
-      {featured && (
-        <EditorialStrip event={featured} />
-      )}
-
       {/* GRANDES EVENTOS — poster row */}
       {festivals.length > 0 && (
         <Section eyebrow="Grandes eventos" title="Marcas próprias.">
-          <div className="mt-14 grid gap-14 md:mt-20 md:gap-16">
+          <div className="mt-10 grid gap-12 md:mt-20 md:gap-16">
             {festivals.map((ev, i) => (
               <FestivalPoster key={ev.slug} event={ev} index={i} />
             ))}
@@ -87,13 +84,14 @@ function HomePage() {
       {/* AGENDA CULTURAL — shows como lista editorial */}
       {shows.length > 0 && (
         <Section eyebrow="Próximos shows" title="Agenda cultural." dark>
-          <ul className="mt-10 divide-y divide-[color-mix(in_oklab,var(--foreground)_12%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)]">
+          <ul className="mt-8 divide-y divide-[color-mix(in_oklab,var(--foreground)_12%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)]">
             {shows.map((ev) => (
               <AgendaRow key={ev.slug} event={ev} />
             ))}
           </ul>
         </Section>
       )}
+
 
       {/* EXPERIÊNCIAS */}
       <Section eyebrow="Experiências" title="Viva o evento de outro jeito." compact>
@@ -121,7 +119,7 @@ function HomePage() {
       )}
 
       {/* CTA FINAL */}
-      <section className="py-16 md:py-28">
+      <section className="py-12 md:py-28">
         <div className="container-page">
           <div className="mx-auto max-w-3xl border-t border-[color-mix(in_oklab,var(--foreground)_15%,transparent)] pt-12 text-center md:pt-16">
             <p className="eyebrow-label text-primary">Agenda oficial</p>
@@ -165,35 +163,35 @@ function PosterHero({ event }: { event: PublicEvent }) {
           }}
         />
       </div>
-      <div className="container-page flex min-h-[78vh] flex-col justify-end pb-14 pt-24 md:min-h-[100vh] md:pb-24 md:pt-40">
+      <div className="container-page flex min-h-[82svh] flex-col justify-end pb-12 pt-20 md:min-h-[100vh] md:pb-24 md:pt-40">
         <p className="eyebrow-label text-primary">
           Em cartaz · Prudente em Foco
         </p>
-        <h1 className="mt-6 display-xl text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)]">
+        <h1 className="mt-5 poster text-[clamp(2.6rem,11vw,9.5rem)] leading-[0.9] text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)] md:mt-6">
           {event.title}
         </h1>
-        <div className="mt-6 flex flex-col gap-3 md:mt-8 md:flex-row md:flex-wrap md:items-baseline md:gap-x-8 md:gap-y-3">
-          <p className="date-block text-[2rem] text-foreground md:text-5xl">
+        <div className="mt-5 flex flex-col gap-2 md:mt-8 md:flex-row md:flex-wrap md:items-baseline md:gap-x-8 md:gap-y-3">
+          <p className="date-block text-[1.6rem] text-foreground md:text-5xl">
             {formatEventDateEditorial(event.starts_at, event.ends_at)}
           </p>
           {(event.venue_name || event.city) && (
-            <p className="flex items-center gap-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/85 md:text-base">
+            <p className="flex items-center gap-1.5 font-display text-[10px] font-semibold uppercase tracking-[0.24em] text-foreground/85 md:text-base">
               <MapPin className="h-4 w-4" />
               {[event.venue_name, event.city].filter(Boolean).join(" · ")}
             </p>
           )}
         </div>
-        <div className="mt-10 flex flex-wrap items-center gap-6">
+        <div className="mt-8 flex flex-col items-stretch gap-3 md:mt-10 md:flex-row md:flex-wrap md:items-center md:gap-6">
           <Link
             to="/eventos/$slug"
             params={{ slug: event.slug }}
-            className="inline-flex items-center gap-2 bg-foreground px-7 py-4 font-display text-xs font-bold uppercase tracking-[0.28em] text-background transition-opacity hover:opacity-90"
+            className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3.5 font-display text-[11px] font-bold uppercase tracking-[0.28em] text-background transition-opacity hover:opacity-90 md:px-7 md:py-4 md:text-xs"
           >
             Ver o evento <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             to="/eventos"
-            className="inline-flex items-center gap-2 border-b border-foreground/60 pb-1 font-display text-xs font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary"
+            className="inline-flex items-center justify-center gap-2 border border-foreground/40 px-6 py-3.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary md:border-0 md:border-b md:px-0 md:py-1 md:pb-1 md:text-xs"
           >
             Agenda completa
           </Link>
@@ -202,6 +200,7 @@ function PosterHero({ event }: { event: PublicEvent }) {
     </section>
   );
 }
+
 
 function InstitutionalHero() {
   return (
@@ -214,31 +213,32 @@ function InstitutionalHero() {
             "radial-gradient(70% 60% at 15% 100%, color-mix(in oklab, var(--primary) 18%, transparent) 0%, transparent 60%)",
         }}
       />
-      <div className="container-page flex min-h-[68vh] flex-col justify-end pb-16 pt-24 md:min-h-[80vh] md:pb-32 md:pt-40">
+      <div className="container-page flex min-h-[80svh] flex-col justify-end pb-14 pt-20 md:min-h-[80vh] md:pb-32 md:pt-40">
         <p className="eyebrow-label text-primary">Prudente em Foco</p>
-        <h1 className="mt-6 display-xl text-foreground">
+        <h1 className="mt-5 display-xl text-foreground md:mt-6">
           Onde a cidade
           <br />
           vira palco.
         </h1>
-        <p className="mt-8 max-w-xl text-base text-muted-foreground md:text-lg">
+        <p className="mt-6 max-w-xl text-base text-muted-foreground md:mt-8 md:text-lg">
           Produtora de festivais, shows, rodeios e experiências em Presidente Prudente.
         </p>
-        <div className="mt-10 flex flex-wrap items-center gap-6">
+        <div className="mt-8 flex flex-col items-stretch gap-3 md:mt-10 md:flex-row md:flex-wrap md:items-center md:gap-6">
           <Link
             to="/eventos"
-            className="inline-flex items-center gap-2 bg-foreground px-7 py-4 font-display text-xs font-bold uppercase tracking-[0.28em] text-background hover:opacity-90"
+            className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3.5 font-display text-[11px] font-bold uppercase tracking-[0.28em] text-background hover:opacity-90 md:px-7 md:py-4 md:text-xs"
           >
             Ver agenda <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             to="/contato"
-            className="inline-flex items-center gap-2 border-b border-foreground/60 pb-1 font-display text-xs font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary"
+            className="inline-flex items-center justify-center gap-2 border border-foreground/40 px-6 py-3.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary md:border-0 md:border-b md:border-foreground/60 md:px-0 md:py-1 md:pb-1 md:text-xs"
           >
             Fale com a produção
           </Link>
         </div>
       </div>
+
     </section>
   );
 }
@@ -287,7 +287,7 @@ function Section({
 }) {
   return (
     <section className={dark ? "bg-surface/30" : ""}>
-      <div className={compact ? "container-page py-14 md:py-22" : "container-page py-20 md:py-32"}>
+      <div className={compact ? "container-page py-12 md:py-22" : "container-page py-14 md:py-32"}>
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">{eyebrow}</p>
           <h2 className="mt-4 section-title text-foreground">{title}</h2>
