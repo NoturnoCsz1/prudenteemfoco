@@ -61,6 +61,56 @@ export type Database = {
           },
         ]
       }
+      event_sectors: {
+        Row: {
+          capacity: number | null
+          created_at: string
+          description: string | null
+          event_id: string
+          id: string
+          name: string
+          organization_id: string
+          slug: string
+          sort_order: number
+          status: Database["public"]["Enums"]["sector_status"]
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          event_id: string
+          id?: string
+          name: string
+          organization_id: string
+          slug: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["sector_status"]
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          event_id?: string
+          id?: string
+          name?: string
+          organization_id?: string
+          slug?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["sector_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_sectors_event_org_fk"
+            columns: ["event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id", "organization_id"]
+          },
+        ]
+      }
       events: {
         Row: {
           city: string | null
@@ -215,6 +265,132 @@ export type Database = {
         }
         Relationships: []
       }
+      reservable_space_types: {
+        Row: {
+          base_price: number | null
+          capacity_per_unit: number | null
+          created_at: string
+          currency: string
+          description: string | null
+          event_id: string
+          id: string
+          name: string
+          organization_id: string
+          sector_id: string | null
+          sort_order: number
+          status: Database["public"]["Enums"]["space_type_status"]
+          updated_at: string
+        }
+        Insert: {
+          base_price?: number | null
+          capacity_per_unit?: number | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          event_id: string
+          id?: string
+          name: string
+          organization_id: string
+          sector_id?: string | null
+          sort_order?: number
+          status?: Database["public"]["Enums"]["space_type_status"]
+          updated_at?: string
+        }
+        Update: {
+          base_price?: number | null
+          capacity_per_unit?: number | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          event_id?: string
+          id?: string
+          name?: string
+          organization_id?: string
+          sector_id?: string | null
+          sort_order?: number
+          status?: Database["public"]["Enums"]["space_type_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rst_event_org_fk"
+            columns: ["event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id", "organization_id"]
+          },
+          {
+            foreignKeyName: "rst_sector_same_event_fk"
+            columns: ["sector_id", "event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "event_sectors"
+            referencedColumns: ["id", "event_id", "organization_id"]
+          },
+        ]
+      }
+      reservable_spaces: {
+        Row: {
+          capacity: number | null
+          code: string
+          created_at: string
+          display_name: string | null
+          event_id: string
+          id: string
+          notes: string | null
+          operational_status: Database["public"]["Enums"]["space_operational_status"]
+          organization_id: string
+          sector_id: string | null
+          sort_order: number
+          space_type_id: string
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number | null
+          code: string
+          created_at?: string
+          display_name?: string | null
+          event_id: string
+          id?: string
+          notes?: string | null
+          operational_status?: Database["public"]["Enums"]["space_operational_status"]
+          organization_id: string
+          sector_id?: string | null
+          sort_order?: number
+          space_type_id: string
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number | null
+          code?: string
+          created_at?: string
+          display_name?: string | null
+          event_id?: string
+          id?: string
+          notes?: string | null
+          operational_status?: Database["public"]["Enums"]["space_operational_status"]
+          organization_id?: string
+          sector_id?: string | null
+          sort_order?: number
+          space_type_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rs_sector_same_event_fk"
+            columns: ["sector_id", "event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "event_sectors"
+            referencedColumns: ["id", "event_id", "organization_id"]
+          },
+          {
+            foreignKeyName: "rs_type_same_event_fk"
+            columns: ["space_type_id", "event_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "reservable_space_types"
+            referencedColumns: ["id", "event_id", "organization_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -228,6 +404,19 @@ export type Database = {
           organization_id: string
           role: Database["public"]["Enums"]["member_role"]
           status: Database["public"]["Enums"]["member_status"]
+        }[]
+      }
+      generate_reservable_spaces: {
+        Args: {
+          _pad?: number
+          _prefix: string
+          _quantity: number
+          _space_type_id: string
+          _start_number?: number
+        }
+        Returns: {
+          created_count: number
+          skipped_count: number
         }[]
       }
       get_published_event_by_slug: {
@@ -297,6 +486,13 @@ export type Database = {
       member_status: "active" | "invited" | "suspended" | "removed"
       org_status: "active" | "inactive" | "archived"
       org_type: "institutional" | "partner" | "other"
+      sector_status: "active" | "inactive" | "archived"
+      space_operational_status:
+        | "available"
+        | "blocked"
+        | "maintenance"
+        | "inactive"
+      space_type_status: "active" | "inactive" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -435,6 +631,14 @@ export const Constants = {
       member_status: ["active", "invited", "suspended", "removed"],
       org_status: ["active", "inactive", "archived"],
       org_type: ["institutional", "partner", "other"],
+      sector_status: ["active", "inactive", "archived"],
+      space_operational_status: [
+        "available",
+        "blocked",
+        "maintenance",
+        "inactive",
+      ],
+      space_type_status: ["active", "inactive", "archived"],
     },
   },
 } as const
