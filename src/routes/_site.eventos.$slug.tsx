@@ -1,14 +1,26 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { queryOptions, useSuspenseQuery, useQuery, useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { z } from "zod";
-import { ArrowLeft, CalendarDays, MapPin } from "lucide-react";
+import { ArrowLeft, CalendarDays, MapPin, Users, Check, Loader2 } from "lucide-react";
 import {
   getPublishedEventBySlug,
   type PublicEvent,
 } from "@/lib/events.functions";
+import {
+  listAvailableSpaceTypes,
+  createSpaceReservationRequest,
+  type PublicSpaceType,
+} from "@/lib/reservations.functions";
 import { formatEventDateRange } from "@/lib/events";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  SPACE_TYPE_CATEGORY_LABEL,
+  SPACE_TYPE_CATEGORY_PLURAL,
+  SPACE_TYPE_CATEGORIES,
+  formatCurrencyBRL,
+  type SpaceTypeCategory,
+} from "@/lib/operations";
 
 function eventQueryOptions(slug: string) {
   return queryOptions({
