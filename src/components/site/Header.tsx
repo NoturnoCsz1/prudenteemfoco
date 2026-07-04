@@ -92,6 +92,25 @@ export function SiteHeader() {
                 </Link>
               );
             })}
+            <div className="mt-2 border-t border-border pt-2">
+              {!loading && user ? (
+                <Link
+                  to="/admin"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-md px-3 py-3 text-base text-foreground"
+                >
+                  <ShieldCheck className="h-4 w-4" /> Admin
+                </Link>
+              ) : (
+                <Link
+                  to="/auth"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-md px-3 py-3 text-base text-foreground"
+                >
+                  Entrar
+                </Link>
+              )}
+            </div>
           </nav>
         </div>
       )}
