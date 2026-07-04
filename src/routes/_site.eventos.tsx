@@ -101,7 +101,7 @@ function EventRow({ event }: { event: PublicEvent }) {
       <Link
         to="/eventos/$slug"
         params={{ slug: event.slug }}
-        className="group grid gap-4 py-10 md:grid-cols-[minmax(0,1fr),1.6fr] md:items-center md:gap-12 md:py-16"
+        className="group grid gap-5 py-8 md:grid-cols-[minmax(0,1fr),1.6fr] md:items-center md:gap-12 md:py-16"
       >
         <div className="order-2 md:order-1">
           <p className="date-block text-3xl text-primary md:text-4xl">
