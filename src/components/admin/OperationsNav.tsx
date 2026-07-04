@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, KeyRound, LayoutGrid, MapPin, PencilLine } from "lucide-react";
+import { ArrowLeft, Gauge, KeyRound, LayoutGrid, MapPin, PencilLine } from "lucide-react";
 
 export function OperationsNav({
   eventId,
@@ -7,7 +7,7 @@ export function OperationsNav({
   eventTitle,
 }: {
   eventId: string;
-  active: "details" | "sectors" | "spaces" | "access";
+  active: "details" | "sectors" | "spaces" | "access" | "engine";
   eventTitle?: string | null;
 }) {
   const items: {
