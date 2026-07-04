@@ -113,7 +113,29 @@ export const Route = createFileRoute("/_site/eventos/$slug")({
 
 function EventDetailPage() {
   const { slug } = Route.useParams();
+  const { promoter } = Route.useSearch();
   const { data: event } = useSuspenseQuery(eventQueryOptions(slug));
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const key = `pf:lead:${slug}:${promoter ?? ""}`;
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, "1");
+    supabase
+      .rpc("track_public_lead", {
+        _event_slug: slug,
+        _promoter_code: promoter ?? null,
+        _source: promoter ? "promoter" : "direct",
+        _metadata: {
+          referrer: document.referrer || null,
+          ua: navigator.userAgent,
+        },
+      })
+      .then(({ error }) => {
+        if (error) console.warn("[track_public_lead]", error.message);
+      });
+  }, [slug, promoter]);
+
   if (!event) return null;
 
   return (
