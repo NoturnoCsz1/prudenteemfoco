@@ -1,11 +1,14 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { z } from "zod";
 import { ArrowLeft, CalendarDays, MapPin } from "lucide-react";
 import {
   getPublishedEventBySlug,
   type PublicEvent,
 } from "@/lib/events.functions";
 import { formatEventDateRange } from "@/lib/events";
+import { supabase } from "@/integrations/supabase/client";
 
 function eventQueryOptions(slug: string) {
   return queryOptions({
@@ -13,6 +16,10 @@ function eventQueryOptions(slug: string) {
     queryFn: () => getPublishedEventBySlug({ data: { slug } }),
   });
 }
+
+const searchSchema = z.object({
+  promoter: z.string().trim().min(1).max(64).optional(),
+});
 
 export const Route = createFileRoute("/_site/eventos/$slug")({
   loader: async ({ context, params }) => {
