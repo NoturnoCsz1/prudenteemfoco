@@ -1,13 +1,14 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Menu, X, ShieldCheck } from "lucide-react";
 import { useSession } from "@/hooks/use-session";
+import { useSiteMenu } from "@/hooks/use-site-menu";
 
-const NAV = [
-  { to: "/eventos", label: "Eventos" },
-  { to: "/experiencias", label: "Experiências" },
-  { to: "/sobre", label: "Nossa História" },
-  { to: "/contato", label: "Contato" },
+const ALL_NAV = [
+  { to: "/eventos", label: "Eventos", flag: "show_eventos" },
+  { to: "/experiencias", label: "Experiências", flag: "show_experiencias" },
+  { to: "/sobre", label: "Nossa História", flag: "show_sobre" },
+  { to: "/contato", label: "Contato", flag: "show_contato" },
 ] as const;
 
 export function SiteHeader() {
