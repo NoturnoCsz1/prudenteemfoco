@@ -142,9 +142,31 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Sincroniza rotas e cache com transições de sessão.
+    // Filtrado para não disparar em TOKEN_REFRESHED/INITIAL_SESSION.
+    import("../integrations/supabase/client").then(({ supabase }) => {
+      const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+        if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+        router.invalidate();
+        if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      });
+      // Guarda subscription no window para cleanup em HMR
+      (window as unknown as { __pfSub?: typeof sub.subscription }).__pfSub = sub.subscription;
+    });
+    return () => {
+      const w = window as unknown as { __pfSub?: { unsubscribe: () => void } };
+      w.__pfSub?.unsubscribe();
+      w.__pfSub = undefined;
+    };
+  }, [router, queryClient]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <Toaster position="top-right" theme="dark" richColors />
     </QueryClientProvider>
   );
 }
