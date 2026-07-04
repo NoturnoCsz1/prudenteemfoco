@@ -60,22 +60,25 @@ export function OperationsNav({
   ];
   return (
     <div className="border-b border-border pb-1">
-      <Link
-        to="/admin/eventos"
-        className="ops-font inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" /> Todos os eventos
-      </Link>
-      <h1 className="command-font mt-2 text-4xl leading-none text-foreground md:text-5xl">
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          to="/admin/eventos"
+          className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Todos os eventos
+        </Link>
+        <LogoPF size={26} showWordmark />
+      </div>
+      <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
         {eventTitle ?? "Operação do evento"}
       </h1>
-      <p className="eyebrow mt-2 text-primary">Centro de Controle</p>
-      <nav className="mt-4 -mb-px flex gap-1 overflow-x-auto">
+      <p className="eyebrow mt-1.5 text-primary">Centro de Controle</p>
+      <nav className="mt-5 -mb-px flex gap-1 overflow-x-auto">
         {items.map((it) => (
           <Link
             key={it.key}
             to={it.to}
-            className={`ops-font inline-flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2.5 text-sm font-medium uppercase tracking-wider transition-colors ${
+            className={`inline-flex shrink-0 items-center gap-1.5 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${
               active === it.key
                 ? "border-primary text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground"
