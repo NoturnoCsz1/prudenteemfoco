@@ -131,6 +131,11 @@ export function slugify(input: string): string {
     .slice(0, 120);
 }
 
+// Timezone fixo do evento (Presidente Prudente / São Paulo). Necessário para
+// garantir que SSR e client produzam a MESMA string — caso contrário a rota
+// pública sofre mismatch de hidratação, porque o servidor renderiza em UTC.
+const EVENT_TZ = "America/Sao_Paulo";
+
 export function formatEventDateRange(
   starts_at: string | null,
   ends_at: string | null,
@@ -143,24 +148,63 @@ export function formatEventDateRange(
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: EVENT_TZ,
   });
   if (!ends_at) return startStr;
   const end = new Date(ends_at);
-  const sameDay =
-    start.toDateString() === end.toDateString();
+  const dayKey = (d: Date) =>
+    d.toLocaleDateString("pt-BR", { timeZone: EVENT_TZ });
+  const sameDay = dayKey(start) === dayKey(end);
   const endStr = end.toLocaleString(
     "pt-BR",
     sameDay
-      ? { hour: "2-digit", minute: "2-digit" }
+      ? { hour: "2-digit", minute: "2-digit", timeZone: EVENT_TZ }
       : {
           day: "2-digit",
           month: "long",
           year: "numeric",
           hour: "2-digit",
           minute: "2-digit",
+          timeZone: EVENT_TZ,
         },
   );
   return `${startStr} — ${endStr}`;
+}
+
+/** Formato editorial curto (ex.: "10–14 SET · 2026") para heroes e cards de festival. */
+export function formatEventDateEditorial(
+  starts_at: string | null,
+  ends_at: string | null,
+): string {
+  if (!starts_at) return "Data a definir";
+  const start = new Date(starts_at);
+  const startDay = start.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    timeZone: EVENT_TZ,
+  });
+  const startMonth = start
+    .toLocaleDateString("pt-BR", { month: "short", timeZone: EVENT_TZ })
+    .replace(".", "")
+    .toUpperCase();
+  const year = start.toLocaleDateString("pt-BR", {
+    year: "numeric",
+    timeZone: EVENT_TZ,
+  });
+  if (!ends_at) return `${startDay} ${startMonth} · ${year}`;
+  const end = new Date(ends_at);
+  const endDay = end.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    timeZone: EVENT_TZ,
+  });
+  const endMonth = end
+    .toLocaleDateString("pt-BR", { month: "short", timeZone: EVENT_TZ })
+    .replace(".", "")
+    .toUpperCase();
+  const dayKey = (d: Date) =>
+    d.toLocaleDateString("pt-BR", { timeZone: EVENT_TZ });
+  if (dayKey(start) === dayKey(end)) return `${startDay} ${startMonth} · ${year}`;
+  if (startMonth === endMonth) return `${startDay}–${endDay} ${startMonth} · ${year}`;
+  return `${startDay} ${startMonth} – ${endDay} ${endMonth} · ${year}`;
 }
 
 /** Converte um ISO datetime string para o formato "YYYY-MM-DDTHH:mm" de <input type="datetime-local">. */
