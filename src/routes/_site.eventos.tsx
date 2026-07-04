@@ -61,8 +61,8 @@ function EventosPage() {
         <div className="container-page pb-8 pt-24 md:pb-12 md:pt-32">
           <p className="eyebrow-label text-primary">Agenda oficial</p>
           <h1 className="mt-6 display-xl text-foreground">Programação.</h1>
-          <p className="mt-8 max-w-xl text-base text-muted-foreground md:text-lg">
-            Cada evento é publicado aqui quando confirmado. Sem especulação.
+          <p className="mt-8 max-w-xl font-display text-lg leading-snug text-foreground/85 md:text-2xl">
+            Cada evento aparece aqui quando confirmado. Sem especulação.
           </p>
         </div>
       </section>
