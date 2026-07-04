@@ -44,52 +44,56 @@
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.625rem;
 
-  /* Base — preto/grafite institucional */
-  --background: oklch(0.14 0.005 260);
-  --foreground: oklch(0.98 0.005 260);
-  --surface: oklch(0.18 0.006 260);
-  --surface-elevated: oklch(0.22 0.007 260);
+  /* Base — Premium SaaS dark (#0A0F1C) */
+  --background: oklch(0.16 0.02 260);          /* #0A0F1C */
+  --foreground: oklch(0.98 0.005 240);         /* near white */
+  --surface: oklch(0.2 0.02 260);              /* elevated surface */
+  --surface-elevated: oklch(0.235 0.022 260);  /* card top */
 
-  --card: oklch(0.18 0.006 260);
-  --card-foreground: oklch(0.98 0.005 260);
-  --popover: oklch(0.18 0.006 260);
-  --popover-foreground: oklch(0.98 0.005 260);
+  --card: oklch(0.2 0.02 260);
+  --card-foreground: oklch(0.98 0.005 240);
+  --popover: oklch(0.2 0.02 260);
+  --popover-foreground: oklch(0.98 0.005 240);
 
-  /* Verde vibrante — usado com controle */
-  --primary: oklch(0.78 0.19 148);
-  --primary-foreground: oklch(0.14 0.005 260);
+  /* Success / brand primary — emerald #22C55E */
+  --primary: oklch(0.72 0.19 148);
+  --primary-foreground: oklch(0.14 0.01 260);
 
-  --secondary: oklch(0.24 0.008 260);
-  --secondary-foreground: oklch(0.98 0.005 260);
+  --secondary: oklch(0.26 0.02 260);
+  --secondary-foreground: oklch(0.98 0.005 240);
 
-  --muted: oklch(0.22 0.007 260);
-  --muted-foreground: oklch(0.68 0.01 260);
+  --muted: oklch(0.24 0.018 260);
+  --muted-foreground: oklch(0.72 0.03 256);    /* #94A3B8 neutral */
 
-  --accent: oklch(0.28 0.01 260);
-  --accent-foreground: oklch(0.98 0.005 260);
+  --accent: oklch(0.3 0.02 260);
+  --accent-foreground: oklch(0.98 0.005 240);
 
-  /* Dourado discreto */
   --gold: oklch(0.82 0.11 85);
 
-  --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.98 0.005 260);
+  /* Semantic — Stripe-like */
+  --success: oklch(0.72 0.19 148);             /* #22C55E */
+  --warning: oklch(0.78 0.17 75);              /* #F59E0B */
+  --danger: oklch(0.65 0.23 27);               /* #EF4444 */
+  --info: oklch(0.62 0.21 260);                /* #3B82F6 */
+  --neutral: oklch(0.72 0.03 256);             /* #94A3B8 */
+
+  --destructive: var(--danger);
+  --destructive-foreground: oklch(0.98 0.005 240);
 
   --border: oklch(1 0 0 / 8%);
-  --border-strong: oklch(1 0 0 / 16%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.78 0.19 148 / 60%);
+  --border-strong: oklch(1 0 0 / 14%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.62 0.21 260 / 55%);
 
-  /* Glass Aurora accents — command center */
   --violet: oklch(0.72 0.17 300);
-  --live: oklch(0.82 0.2 148);
+  --live: var(--success);
 }
 
 .dark {
-  /* Projeto é dark por padrão — mantido para compatibilidade shadcn */
-  --background: oklch(0.14 0.005 260);
-  --foreground: oklch(0.98 0.005 260);
+  --background: oklch(0.16 0.02 260);
+  --foreground: oklch(0.98 0.005 240);
 }
 
 @layer base {
