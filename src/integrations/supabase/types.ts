@@ -900,7 +900,6 @@ export type Database = {
     }
     Functions: {
       can_manage_event_cover: { Args: { _path: string }; Returns: boolean }
-      claim_first_owner: { Args: { _org_slug: string }; Returns: string }
       consume_access_session: {
         Args: { _session_id: string }
         Returns: undefined
@@ -962,6 +961,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      invite_org_member: {
+        Args: {
+          _email: string
+          _org_id: string
+          _role: Database["public"]["Enums"]["member_role"]
+        }
+        Returns: string
+      }
       is_active_org_member: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
@@ -1022,10 +1029,18 @@ export type Database = {
           status: Database["public"]["Enums"]["access_session_status"]
         }[]
       }
+      remove_org_member: { Args: { _member_id: string }; Returns: undefined }
       revoke_access_token: { Args: { _token_id: string }; Returns: undefined }
       role_rank: {
         Args: { _role: Database["public"]["Enums"]["member_role"] }
         Returns: number
+      }
+      update_member_role: {
+        Args: {
+          _member_id: string
+          _role: Database["public"]["Enums"]["member_role"]
+        }
+        Returns: undefined
       }
     }
     Enums: {
