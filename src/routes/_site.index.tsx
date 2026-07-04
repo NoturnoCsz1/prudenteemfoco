@@ -163,35 +163,35 @@ function PosterHero({ event }: { event: PublicEvent }) {
           }}
         />
       </div>
-      <div className="container-page flex min-h-[78vh] flex-col justify-end pb-14 pt-24 md:min-h-[100vh] md:pb-24 md:pt-40">
+      <div className="container-page flex min-h-[82svh] flex-col justify-end pb-12 pt-20 md:min-h-[100vh] md:pb-24 md:pt-40">
         <p className="eyebrow-label text-primary">
           Em cartaz · Prudente em Foco
         </p>
-        <h1 className="mt-6 display-xl text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)]">
+        <h1 className="mt-5 poster text-[clamp(2.6rem,11vw,9.5rem)] leading-[0.9] text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)] md:mt-6">
           {event.title}
         </h1>
-        <div className="mt-6 flex flex-col gap-3 md:mt-8 md:flex-row md:flex-wrap md:items-baseline md:gap-x-8 md:gap-y-3">
-          <p className="date-block text-[2rem] text-foreground md:text-5xl">
+        <div className="mt-5 flex flex-col gap-2 md:mt-8 md:flex-row md:flex-wrap md:items-baseline md:gap-x-8 md:gap-y-3">
+          <p className="date-block text-[1.6rem] text-foreground md:text-5xl">
             {formatEventDateEditorial(event.starts_at, event.ends_at)}
           </p>
           {(event.venue_name || event.city) && (
-            <p className="flex items-center gap-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/85 md:text-base">
+            <p className="flex items-center gap-1.5 font-display text-[10px] font-semibold uppercase tracking-[0.24em] text-foreground/85 md:text-base">
               <MapPin className="h-4 w-4" />
               {[event.venue_name, event.city].filter(Boolean).join(" · ")}
             </p>
           )}
         </div>
-        <div className="mt-10 flex flex-wrap items-center gap-6">
+        <div className="mt-8 flex flex-col items-stretch gap-3 md:mt-10 md:flex-row md:flex-wrap md:items-center md:gap-6">
           <Link
             to="/eventos/$slug"
             params={{ slug: event.slug }}
-            className="inline-flex items-center gap-2 bg-foreground px-7 py-4 font-display text-xs font-bold uppercase tracking-[0.28em] text-background transition-opacity hover:opacity-90"
+            className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3.5 font-display text-[11px] font-bold uppercase tracking-[0.28em] text-background transition-opacity hover:opacity-90 md:px-7 md:py-4 md:text-xs"
           >
             Ver o evento <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             to="/eventos"
-            className="inline-flex items-center gap-2 border-b border-foreground/60 pb-1 font-display text-xs font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary"
+            className="inline-flex items-center justify-center gap-2 border border-foreground/40 px-6 py-3.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary md:border-0 md:border-b md:px-0 md:py-1 md:pb-1 md:text-xs"
           >
             Agenda completa
           </Link>
@@ -200,6 +200,7 @@ function PosterHero({ event }: { event: PublicEvent }) {
     </section>
   );
 }
+
 
 function InstitutionalHero() {
   return (
