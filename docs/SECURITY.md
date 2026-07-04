@@ -211,3 +211,28 @@ Ações logadas: `event.create`, `event.update`, `event.status_change`, `event.a
 - URLs assinadas TTL 100 anos: quebram se a chave de assinatura do Supabase for rotacionada. Migrar para `getPublicUrl` quando buckets públicos forem liberados no workspace.
 - Restrições de MIME/tamanho no bucket não puderam ser aplicadas (`UPDATE storage.buckets` bloqueado); validação vive no cliente.
 - Possíveis arquivos órfãos ao trocar capa sem salvar o form. Sem garbage collection nesta fase.
+
+---
+
+## Fase 3 (delta)
+
+### Novas tabelas com RLS deny-by-default
+- `event_sectors`, `reservable_space_types`, `reservable_spaces`.
+- SELECT: `is_active_org_member`. INSERT/UPDATE: `manager+`. DELETE: `admin+`.
+- Nenhum `TO anon`. Nenhuma projeção pública nesta fase.
+
+### Integridade sem trigger
+- `events (id, organization_id)` unique + FK compostas em setores, tipos e espaços impedem cruzamento entre organizações/eventos.
+- `reservable_space_types → events` `ON DELETE CASCADE`.
+- `reservable_spaces → reservable_space_types` `ON DELETE RESTRICT` (bloqueia exclusão de tipo com unidades).
+- `sector_id` em tipos e unidades: `ON DELETE SET NULL`.
+
+### RPC `generate_reservable_spaces`
+- `SECURITY DEFINER`, `search_path=public`, `EXECUTE` restrito a `authenticated`.
+- Autoriza via `has_org_role_at_least(..., 'manager')` derivado do próprio tipo.
+- Limites hard: quantity 1..500, prefix 1..40, pad 1..6, start ≥ 0.
+- Idempotente via `ON CONFLICT (event_id, space_type_id, code) DO NOTHING`.
+- Sempre grava `space.bulk_created` em `audit_logs`.
+
+### Estados comerciais deliberadamente ausentes
+`reserved`, `pending_payment`, `paid`, `sold_out` NÃO existem em `space_operational_status`. Introduzir estes estados aqui misturaria estado físico e comercial — bloqueado por design.

@@ -133,3 +133,12 @@ Apenas o stack já presente no template:
 - Novo bucket privado `event-covers` para capas, com paths `{org_id}/{event_id}/{uuid}.{ext}`, RLS por role via helper `can_manage_event_cover`.
 - Capas consumidas via URL assinada (bucket privado por política do workspace).
 - Ver `docs/PHASE_2_1_PUBLIC_PROJECTION_STORAGE.md`.
+
+## Fase 3 (delta)
+
+- Modelo operacional do evento: `event_sectors`, `reservable_space_types`, `reservable_spaces` — integridade cruzada garantida por foreign keys compostas em `(id, event_id, organization_id)`.
+- Enums novos: `sector_status`, `space_type_status`, `space_operational_status`. Estados **comerciais** (reservado/pago) permanecem fora do inventário físico.
+- RPC `generate_reservable_spaces(_space_type_id, _quantity, _prefix, _pad, _start_number)` para geração idempotente de unidades (limite 500/chamada, `ON CONFLICT DO NOTHING`).
+- Admin contextual por evento: `/admin/eventos/$id`, `/admin/eventos/$id/setores`, `/admin/eventos/$id/espacos`.
+- **Decisão de arquitetura:** VIP, Front Stage e Open Bar são **setores** do evento. Bistrôs, Mesas e Camarotes são **inventário reservável** separado.
+- Ver `docs/PHASE_3_EVENT_OPERATIONS.md`.
