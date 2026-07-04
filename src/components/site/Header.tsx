@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShieldCheck } from "lucide-react";
+import { useSession } from "@/hooks/use-session";
 
 const NAV = [
   { to: "/", label: "Início" },
