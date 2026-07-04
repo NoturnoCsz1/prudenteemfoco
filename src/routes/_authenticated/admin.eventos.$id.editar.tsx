@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { OperationsNav } from "@/components/admin/OperationsNav";
 import { EventForm, type EventFormRecord } from "@/components/admin/EventForm";
-import type { EventStatus } from "@/lib/events";
+import type { EventStatus, EventKind, EventFormat } from "@/lib/events";
 
 export const Route = createFileRoute("/_authenticated/admin/eventos/$id/editar")({
   head: () => ({
