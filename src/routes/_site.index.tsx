@@ -185,7 +185,17 @@ function HeroWithLinks({
   return <HeroCarousel slides={slides} />;
 }
 
-function InstitutionalHero() {
+function InstitutionalHero({ cms }: { cms: SiteHome | null }) {
+  const eyebrow = cms?.hero_eyebrow || "Prudente em Foco";
+  const title = cms?.hero_title || "Onde a cidade\nvira palco.";
+  const subtitle =
+    cms?.hero_subtitle ||
+    "Produtora de festivais, shows, rodeios e experiências em Presidente Prudente.";
+  const primaryLabel = cms?.cta_primary_label || "Ver agenda";
+  const primaryUrl = cms?.cta_primary_url || "";
+  const secondaryLabel = cms?.cta_secondary_label || "Fale com a produção";
+  const secondaryUrl = cms?.cta_secondary_url || "";
+
   return (
     <section className="relative isolate overflow-hidden -mt-14 md:-mt-16">
       <div
@@ -197,27 +207,49 @@ function InstitutionalHero() {
         }}
       />
       <div className="container-page flex min-h-[80svh] flex-col justify-end pb-14 pt-20 md:min-h-[80vh] md:pb-24 md:pt-40">
-        <p className="eyebrow-label text-primary">Prudente em Foco</p>
-        <h1 className="mt-5 display-xl text-foreground md:mt-6">
-          Onde a cidade
-          <br />
-          vira palco.
+        <p className="eyebrow-label text-primary">{eyebrow}</p>
+        <h1 className="mt-5 display-xl whitespace-pre-line text-foreground md:mt-6">
+          {title}
         </h1>
         <p className="mt-6 max-w-xl text-base text-muted-foreground md:mt-8 md:text-lg">
-          Produtora de festivais, shows, rodeios e experiências em Presidente Prudente.
+          {subtitle}
         </p>
         <div className="mt-8 flex flex-col items-stretch gap-3 md:mt-10 md:flex-row md:flex-wrap md:items-center md:gap-6">
-          <Link
-            to="/eventos"
-            className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3.5 font-display text-[11px] font-bold uppercase tracking-[0.28em] text-background hover:opacity-90 md:px-7 md:py-4 md:text-xs"
-          >
-            Ver agenda <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            to="/contato"
-            className="inline-flex items-center justify-center gap-2 border border-foreground/40 px-6 py-3.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary md:border-0 md:border-b md:border-foreground/60 md:px-0 md:py-1 md:pb-1 md:text-xs"
-          >
-            Fale com a produção
+          {primaryUrl ? (
+            <a
+              href={primaryUrl}
+              className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3.5 font-display text-[11px] font-bold uppercase tracking-[0.28em] text-background hover:opacity-90 md:px-7 md:py-4 md:text-xs"
+            >
+              {primaryLabel} <ArrowRight className="h-4 w-4" />
+            </a>
+          ) : (
+            <Link
+              to="/eventos"
+              className="inline-flex items-center justify-center gap-2 bg-foreground px-6 py-3.5 font-display text-[11px] font-bold uppercase tracking-[0.28em] text-background hover:opacity-90 md:px-7 md:py-4 md:text-xs"
+            >
+              {primaryLabel} <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
+          {secondaryUrl ? (
+            <a
+              href={secondaryUrl}
+              className="inline-flex items-center justify-center gap-2 border border-foreground/40 px-6 py-3.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary md:border-0 md:border-b md:border-foreground/60 md:px-0 md:py-1 md:pb-1 md:text-xs"
+            >
+              {secondaryLabel}
+            </a>
+          ) : (
+            <Link
+              to="/contato"
+              className="inline-flex items-center justify-center gap-2 border border-foreground/40 px-6 py-3.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary md:border-0 md:border-b md:border-foreground/60 md:px-0 md:py-1 md:pb-1 md:text-xs"
+            >
+              {secondaryLabel}
+            </Link>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
           </Link>
         </div>
       </div>
