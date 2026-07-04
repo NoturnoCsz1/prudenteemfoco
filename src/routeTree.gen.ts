@@ -29,6 +29,7 @@ import { Route as AuthenticatedAdminEventosIdRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminEventosIdSetoresRouteImport } from './routes/_authenticated/admin.eventos.$id.setores'
 import { Route as AuthenticatedAdminEventosIdEspacosRouteImport } from './routes/_authenticated/admin.eventos.$id.espacos'
 import { Route as AuthenticatedAdminEventosIdEntradaRouteImport } from './routes/_authenticated/admin.eventos.$id.entrada'
+import { Route as AuthenticatedAdminEventosIdEditarRouteImport } from './routes/_authenticated/admin.eventos.$id.editar'
 import { Route as AuthenticatedAdminEventosIdAcessoRouteImport } from './routes/_authenticated/admin.eventos.$id.acesso'
 
 const AuthRoute = AuthRouteImport.update({
@@ -138,6 +139,12 @@ const AuthenticatedAdminEventosIdEntradaRoute =
     path: '/entrada',
     getParentRoute: () => AuthenticatedAdminEventosIdRoute,
   } as any)
+const AuthenticatedAdminEventosIdEditarRoute =
+  AuthenticatedAdminEventosIdEditarRouteImport.update({
+    id: '/editar',
+    path: '/editar',
+    getParentRoute: () => AuthenticatedAdminEventosIdRoute,
+  } as any)
 const AuthenticatedAdminEventosIdAcessoRoute =
   AuthenticatedAdminEventosIdAcessoRouteImport.update({
     id: '/acesso',
@@ -162,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
   '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
+  '/admin/eventos/$id/editar': typeof AuthenticatedAdminEventosIdEditarRoute
   '/admin/eventos/$id/entrada': typeof AuthenticatedAdminEventosIdEntradaRoute
   '/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
@@ -182,6 +190,7 @@ export interface FileRoutesByTo {
   '/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
   '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
+  '/admin/eventos/$id/editar': typeof AuthenticatedAdminEventosIdEditarRoute
   '/admin/eventos/$id/entrada': typeof AuthenticatedAdminEventosIdEntradaRoute
   '/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
@@ -206,6 +215,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/eventos/$id': typeof AuthenticatedAdminEventosIdRouteWithChildren
   '/_authenticated/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
   '/_authenticated/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
+  '/_authenticated/admin/eventos/$id/editar': typeof AuthenticatedAdminEventosIdEditarRoute
   '/_authenticated/admin/eventos/$id/entrada': typeof AuthenticatedAdminEventosIdEntradaRoute
   '/_authenticated/admin/eventos/$id/espacos': typeof AuthenticatedAdminEventosIdEspacosRoute
   '/_authenticated/admin/eventos/$id/setores': typeof AuthenticatedAdminEventosIdSetoresRoute
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/admin/eventos/$id'
     | '/admin/eventos/novo'
     | '/admin/eventos/$id/acesso'
+    | '/admin/eventos/$id/editar'
     | '/admin/eventos/$id/entrada'
     | '/admin/eventos/$id/espacos'
     | '/admin/eventos/$id/setores'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/admin/eventos/$id'
     | '/admin/eventos/novo'
     | '/admin/eventos/$id/acesso'
+    | '/admin/eventos/$id/editar'
     | '/admin/eventos/$id/entrada'
     | '/admin/eventos/$id/espacos'
     | '/admin/eventos/$id/setores'
@@ -272,6 +284,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/eventos/$id'
     | '/_authenticated/admin/eventos/novo'
     | '/_authenticated/admin/eventos/$id/acesso'
+    | '/_authenticated/admin/eventos/$id/editar'
     | '/_authenticated/admin/eventos/$id/entrada'
     | '/_authenticated/admin/eventos/$id/espacos'
     | '/_authenticated/admin/eventos/$id/setores'
@@ -425,6 +438,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminEventosIdEntradaRouteImport
       parentRoute: typeof AuthenticatedAdminEventosIdRoute
     }
+    '/_authenticated/admin/eventos/$id/editar': {
+      id: '/_authenticated/admin/eventos/$id/editar'
+      path: '/editar'
+      fullPath: '/admin/eventos/$id/editar'
+      preLoaderRoute: typeof AuthenticatedAdminEventosIdEditarRouteImport
+      parentRoute: typeof AuthenticatedAdminEventosIdRoute
+    }
     '/_authenticated/admin/eventos/$id/acesso': {
       id: '/_authenticated/admin/eventos/$id/acesso'
       path: '/acesso'
@@ -437,6 +457,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminEventosIdRouteChildren {
   AuthenticatedAdminEventosIdAcessoRoute: typeof AuthenticatedAdminEventosIdAcessoRoute
+  AuthenticatedAdminEventosIdEditarRoute: typeof AuthenticatedAdminEventosIdEditarRoute
   AuthenticatedAdminEventosIdEntradaRoute: typeof AuthenticatedAdminEventosIdEntradaRoute
   AuthenticatedAdminEventosIdEspacosRoute: typeof AuthenticatedAdminEventosIdEspacosRoute
   AuthenticatedAdminEventosIdSetoresRoute: typeof AuthenticatedAdminEventosIdSetoresRoute
@@ -446,6 +467,8 @@ const AuthenticatedAdminEventosIdRouteChildren: AuthenticatedAdminEventosIdRoute
   {
     AuthenticatedAdminEventosIdAcessoRoute:
       AuthenticatedAdminEventosIdAcessoRoute,
+    AuthenticatedAdminEventosIdEditarRoute:
+      AuthenticatedAdminEventosIdEditarRoute,
     AuthenticatedAdminEventosIdEntradaRoute:
       AuthenticatedAdminEventosIdEntradaRoute,
     AuthenticatedAdminEventosIdEspacosRoute:
