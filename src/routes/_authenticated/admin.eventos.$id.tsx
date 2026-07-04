@@ -48,10 +48,14 @@ function EditEventPage() {
 
   return (
     <div className="p-5 md:p-8">
-      <AdminPageHeader
-        title="Editar evento"
-        description="Atualize os dados. Publicar apenas quando estiver pronto."
+      <OperationsNav
+        eventId={eventId}
+        active="details"
+        eventTitle={query.data?.title}
       />
+      <p className="mt-4 text-sm text-muted-foreground">
+        Atualize os dados. Publicar apenas quando estiver pronto.
+      </p>
       <div className="mt-6 max-w-2xl">
         {query.isLoading ? (
           <div className="flex items-center justify-center py-16">
