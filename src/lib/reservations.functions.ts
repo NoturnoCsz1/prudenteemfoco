@@ -71,9 +71,9 @@ export const createSpaceReservationRequest = createServerFn({ method: "POST" })
         _space_type_id: data.space_type_id,
         _requester_name: data.requester_name,
         _requester_contact: data.requester_contact,
-        _promoter_code: data.promoter_code ?? null,
-        _party_size: data.party_size ?? null,
-        _message: data.message ?? null,
+        _promoter_code: data.promoter_code ?? undefined,
+        _party_size: data.party_size ?? undefined,
+        _message: data.message ?? undefined,
         _metadata: {},
       },
     );
