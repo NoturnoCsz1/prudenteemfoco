@@ -155,3 +155,30 @@ requisito da Data API. Nenhuma tabela tem `GRANT` para `anon` nesta fase.
 4. Server functions administrativas para CRUD de eventos e membros.
 5. Registro real de eventos de auditoria via `record_audit_event`.
 6. Suite de testes automatizados de RLS.
+
+---
+
+## Fase 2 (delta)
+
+### Leitura pública controlada
+- Nova policy `events_select_public_published` em `public.events`: `anon` e `authenticated` só veem linhas com `status = published`.
+- `GRANT SELECT ON public.events TO anon` habilita o Data API — filtragem pela policy acima.
+- Todos os outros status (`draft`, `scheduled`, `cancelled`, `archived`) permanecem invisíveis para o público.
+
+### Bootstrap seguro de owner
+- `public.claim_first_owner(_org_slug text)` (`SECURITY DEFINER`, `search_path=public`): concede `role=owner` ao `auth.uid()` chamador **apenas** quando a organização não tem nenhum owner ativo. Após a primeira reivindicação, sempre falha.
+- A ação é registrada em `audit_logs` (`action = org.claim_first_owner`).
+- Não existe caminho no frontend que crie/eleve owners fora dessa função.
+
+### Autorização em duas camadas no admin
+- Camada 1 (sessão): `_authenticated/route.tsx` (`ssr:false`, redirect para `/auth`).
+- Camada 2 (membership): `OrgGate` bloqueia usuários logados sem membership ativa.
+- Ações administrativas dependem de role no RLS (`has_org_role_at_least`); UI também esconde botões conforme role, mas o RLS é a fonte da verdade.
+
+### Auditoria de eventos
+Ações logadas: `event.create`, `event.update`, `event.status_change`, `event.archive`, `event.unarchive`, `event.delete`, `org.claim_first_owner`. Metadata inclui `title`, `slug` e, quando aplicável, `from`/`to` de status.
+
+### O que continua fora do escopo
+- Storage de capas (fica para 2.1) — hoje é apenas URL https validada por Zod.
+- Nenhum endpoint público expõe rascunhos.
+- Service role e secrets permanecem exclusivamente server-side.

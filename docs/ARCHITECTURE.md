@@ -115,3 +115,13 @@ Apenas o stack já presente no template:
 - `lucide-react` — ícones institucionais leves.
 
 **Nenhuma dependência nova foi adicionada nesta fase.**
+
+---
+
+## Fase 2 (delta)
+
+- Eventos passa a ser a primeira unidade real: CRUD administrativo em `/admin/eventos/*` + páginas públicas em `/eventos` e `/eventos/$slug`.
+- Leituras públicas via `createServerFn` em `src/lib/events.functions.ts` (server publishable client, RLS como `anon`).
+- `OrgGate` (`src/components/admin/OrgGate.tsx`) adiciona segunda camada no admin: sessão + membership ativa. Sem membership → "Acesso em análise" com ação de reivindicação de owner.
+- Formulário de evento com React Hook Form + Zod. Auditoria em todas as mutações via `record_audit_event`.
+- Detalhe: ver `docs/PHASE_2_EVENTS.md`.
