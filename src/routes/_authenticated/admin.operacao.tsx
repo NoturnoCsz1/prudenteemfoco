@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AdminPageHeader, AdminPlaceholder } from "@/components/admin/AdminPage";
 
-export const Route = createFileRoute("/admin/operacao")({
+export const Route = createFileRoute("/_authenticated/admin/operacao")({
   head: () => ({ meta: [{ title: "Admin — Operação · Prudente em Foco" }, { name: "robots", content: "noindex" }] }),
   component: () => (
     <div className="p-5 md:p-8">

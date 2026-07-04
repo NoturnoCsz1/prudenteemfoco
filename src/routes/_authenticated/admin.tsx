@@ -1,4 +1,10 @@
-import { Outlet, createFileRoute, Link, useRouterState } from "@tanstack/react-router";
+import {
+  Outlet,
+  createFileRoute,
+  Link,
+  useRouterState,
+  useNavigate,
+} from "@tanstack/react-router";
 import { useState } from "react";
 import {
   LayoutDashboard,
@@ -9,9 +15,13 @@ import {
   Menu,
   X,
   ArrowLeft,
+  LogOut,
 } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/hooks/use-session";
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
@@ -25,7 +35,24 @@ const NAV = [
 
 function AdminLayout() {
   const [open, setOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const { user } = useSession();
+
+  async function handleSignOut() {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await supabase.auth.signOut();
+      toast.success("Sessão encerrada.");
+      navigate({ to: "/auth", replace: true });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Não foi possível sair.";
+      toast.error(message);
+      setSigningOut(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -51,12 +78,29 @@ function AdminLayout() {
               </span>
             </Link>
           </div>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> Site público
-          </Link>
+          <div className="flex items-center gap-2">
+            {user?.email && (
+              <span className="hidden max-w-[200px] truncate text-xs text-muted-foreground md:inline">
+                {user.email}
+              </span>
+            )}
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Site público</span>
+            </Link>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-60"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Sair</span>
+            </button>
+          </div>
         </div>
 
         {open && (

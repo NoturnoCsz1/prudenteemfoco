@@ -9,57 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SiteRouteImport } from './routes/_site'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as SiteIndexRouteImport } from './routes/_site.index'
-import { Route as AdminOperacaoRouteImport } from './routes/admin.operacao'
-import { Route as AdminExperienciasRouteImport } from './routes/admin.experiencias'
-import { Route as AdminEventosRouteImport } from './routes/admin.eventos'
-import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
 import { Route as SiteSobreRouteImport } from './routes/_site.sobre'
 import { Route as SiteExperienciasRouteImport } from './routes/_site.experiencias'
 import { Route as SiteEventosRouteImport } from './routes/_site.eventos'
 import { Route as SiteContatoRouteImport } from './routes/_site.contato'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminOperacaoRouteImport } from './routes/_authenticated/admin.operacao'
+import { Route as AuthenticatedAdminExperienciasRouteImport } from './routes/_authenticated/admin.experiencias'
+import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
+import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
 
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SiteRoute = SiteRouteImport.update({
   id: '/_site',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminRoute,
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SiteIndexRoute = SiteIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SiteRoute,
-} as any)
-const AdminOperacaoRoute = AdminOperacaoRouteImport.update({
-  id: '/operacao',
-  path: '/operacao',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminExperienciasRoute = AdminExperienciasRouteImport.update({
-  id: '/experiencias',
-  path: '/experiencias',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminEventosRoute = AdminEventosRouteImport.update({
-  id: '/eventos',
-  path: '/eventos',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
-  id: '/configuracoes',
-  path: '/configuracoes',
-  getParentRoute: () => AdminRoute,
 } as any)
 const SiteSobreRoute = SiteSobreRouteImport.update({
   id: '/sobre',
@@ -81,51 +62,90 @@ const SiteContatoRoute = SiteContatoRouteImport.update({
   path: '/contato',
   getParentRoute: () => SiteRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminOperacaoRoute =
+  AuthenticatedAdminOperacaoRouteImport.update({
+    id: '/operacao',
+    path: '/operacao',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminExperienciasRoute =
+  AuthenticatedAdminExperienciasRouteImport.update({
+    id: '/experiencias',
+    path: '/experiencias',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminEventosRoute =
+  AuthenticatedAdminEventosRouteImport.update({
+    id: '/eventos',
+    path: '/eventos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminConfiguracoesRoute =
+  AuthenticatedAdminConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof SiteIndexRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/contato': typeof SiteContatoRoute
   '/eventos': typeof SiteEventosRoute
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
-  '/admin/configuracoes': typeof AdminConfiguracoesRoute
-  '/admin/eventos': typeof AdminEventosRoute
-  '/admin/experiencias': typeof AdminExperienciasRoute
-  '/admin/operacao': typeof AdminOperacaoRoute
-  '/admin/': typeof AdminIndexRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
+  '/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof SiteIndexRoute
+  '/auth': typeof AuthRoute
   '/contato': typeof SiteContatoRoute
   '/eventos': typeof SiteEventosRoute
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
-  '/admin/configuracoes': typeof AdminConfiguracoesRoute
-  '/admin/eventos': typeof AdminEventosRoute
-  '/admin/experiencias': typeof AdminExperienciasRoute
-  '/admin/operacao': typeof AdminOperacaoRoute
-  '/': typeof SiteIndexRoute
-  '/admin': typeof AdminIndexRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
+  '/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_site': typeof SiteRouteWithChildren
-  '/admin': typeof AdminRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_site/contato': typeof SiteContatoRoute
   '/_site/eventos': typeof SiteEventosRoute
   '/_site/experiencias': typeof SiteExperienciasRoute
   '/_site/sobre': typeof SiteSobreRoute
-  '/admin/configuracoes': typeof AdminConfiguracoesRoute
-  '/admin/eventos': typeof AdminEventosRoute
-  '/admin/experiencias': typeof AdminExperienciasRoute
-  '/admin/operacao': typeof AdminOperacaoRoute
   '/_site/': typeof SiteIndexRoute
-  '/admin/': typeof AdminIndexRoute
+  '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/_authenticated/admin/experiencias': typeof AuthenticatedAdminExperienciasRoute
+  '/_authenticated/admin/operacao': typeof AuthenticatedAdminOperacaoRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/admin'
     | '/contato'
     | '/eventos'
@@ -138,6 +158,8 @@ export interface FileRouteTypes {
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
+    | '/auth'
     | '/contato'
     | '/eventos'
     | '/experiencias'
@@ -146,36 +168,38 @@ export interface FileRouteTypes {
     | '/admin/eventos'
     | '/admin/experiencias'
     | '/admin/operacao'
-    | '/'
     | '/admin'
   id:
     | '__root__'
+    | '/_authenticated'
     | '/_site'
-    | '/admin'
+    | '/auth'
+    | '/_authenticated/admin'
     | '/_site/contato'
     | '/_site/eventos'
     | '/_site/experiencias'
     | '/_site/sobre'
-    | '/admin/configuracoes'
-    | '/admin/eventos'
-    | '/admin/experiencias'
-    | '/admin/operacao'
     | '/_site/'
-    | '/admin/'
+    | '/_authenticated/admin/configuracoes'
+    | '/_authenticated/admin/eventos'
+    | '/_authenticated/admin/experiencias'
+    | '/_authenticated/admin/operacao'
+    | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   SiteRoute: typeof SiteRouteWithChildren
-  AdminRoute: typeof AdminRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_site': {
@@ -185,12 +209,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_site/': {
       id: '/_site/'
@@ -198,34 +222,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof SiteIndexRouteImport
       parentRoute: typeof SiteRoute
-    }
-    '/admin/operacao': {
-      id: '/admin/operacao'
-      path: '/operacao'
-      fullPath: '/admin/operacao'
-      preLoaderRoute: typeof AdminOperacaoRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/experiencias': {
-      id: '/admin/experiencias'
-      path: '/experiencias'
-      fullPath: '/admin/experiencias'
-      preLoaderRoute: typeof AdminExperienciasRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/eventos': {
-      id: '/admin/eventos'
-      path: '/eventos'
-      fullPath: '/admin/eventos'
-      preLoaderRoute: typeof AdminEventosRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/configuracoes': {
-      id: '/admin/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/admin/configuracoes'
-      preLoaderRoute: typeof AdminConfiguracoesRouteImport
-      parentRoute: typeof AdminRoute
     }
     '/_site/sobre': {
       id: '/_site/sobre'
@@ -255,8 +251,80 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SiteContatoRouteImport
       parentRoute: typeof SiteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/operacao': {
+      id: '/_authenticated/admin/operacao'
+      path: '/operacao'
+      fullPath: '/admin/operacao'
+      preLoaderRoute: typeof AuthenticatedAdminOperacaoRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/experiencias': {
+      id: '/_authenticated/admin/experiencias'
+      path: '/experiencias'
+      fullPath: '/admin/experiencias'
+      preLoaderRoute: typeof AuthenticatedAdminExperienciasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/eventos': {
+      id: '/_authenticated/admin/eventos'
+      path: '/eventos'
+      fullPath: '/admin/eventos'
+      preLoaderRoute: typeof AuthenticatedAdminEventosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/configuracoes': {
+      id: '/_authenticated/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
+  AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
+  AuthenticatedAdminExperienciasRoute: typeof AuthenticatedAdminExperienciasRoute
+  AuthenticatedAdminOperacaoRoute: typeof AuthenticatedAdminOperacaoRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
+  AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
+  AuthenticatedAdminExperienciasRoute: AuthenticatedAdminExperienciasRoute,
+  AuthenticatedAdminOperacaoRoute: AuthenticatedAdminOperacaoRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface SiteRouteChildren {
   SiteContatoRoute: typeof SiteContatoRoute
@@ -276,38 +344,11 @@ const SiteRouteChildren: SiteRouteChildren = {
 
 const SiteRouteWithChildren = SiteRoute._addFileChildren(SiteRouteChildren)
 
-interface AdminRouteChildren {
-  AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
-  AdminEventosRoute: typeof AdminEventosRoute
-  AdminExperienciasRoute: typeof AdminExperienciasRoute
-  AdminOperacaoRoute: typeof AdminOperacaoRoute
-  AdminIndexRoute: typeof AdminIndexRoute
-}
-
-const AdminRouteChildren: AdminRouteChildren = {
-  AdminConfiguracoesRoute: AdminConfiguracoesRoute,
-  AdminEventosRoute: AdminEventosRoute,
-  AdminExperienciasRoute: AdminExperienciasRoute,
-  AdminOperacaoRoute: AdminOperacaoRoute,
-  AdminIndexRoute: AdminIndexRoute,
-}
-
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   SiteRoute: SiteRouteWithChildren,
-  AdminRoute: AdminRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

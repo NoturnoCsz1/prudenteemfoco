@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShieldCheck } from "lucide-react";
+import { useSession } from "@/hooks/use-session";
 
 const NAV = [
   { to: "/", label: "Início" },
@@ -12,6 +13,7 @@ const NAV = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { user, loading } = useSession();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
@@ -43,13 +45,22 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="hidden md:block">
-          <Link
-            to="/contato"
-            className="inline-flex items-center rounded-md border border-border-strong px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Fale conosco
-          </Link>
+        <div className="hidden items-center gap-2 md:flex">
+          {!loading && user ? (
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-1.5 rounded-md border border-border-strong px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              <ShieldCheck className="h-4 w-4" /> Admin
+            </Link>
+          ) : (
+            <Link
+              to="/auth"
+              className="inline-flex items-center rounded-md border border-border-strong px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              Entrar
+            </Link>
+          )}
         </div>
 
         <button
@@ -81,6 +92,25 @@ export function SiteHeader() {
                 </Link>
               );
             })}
+            <div className="mt-2 border-t border-border pt-2">
+              {!loading && user ? (
+                <Link
+                  to="/admin"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-md px-3 py-3 text-base text-foreground"
+                >
+                  <ShieldCheck className="h-4 w-4" /> Admin
+                </Link>
+              ) : (
+                <Link
+                  to="/auth"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-md px-3 py-3 text-base text-foreground"
+                >
+                  Entrar
+                </Link>
+              )}
+            </div>
           </nav>
         </div>
       )}
