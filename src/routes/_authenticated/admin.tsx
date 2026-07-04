@@ -16,6 +16,7 @@ import {
   X,
   ArrowLeft,
   LogOut,
+  Users,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
