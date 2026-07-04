@@ -132,7 +132,7 @@ function AdminLayout() {
           </nav>
         </aside>
 
-        <main className="min-w-0 flex-1">
+        <main className="min-w-0 w-full flex-1 overflow-x-hidden">
           <OrgGate>
             <Outlet />
           </OrgGate>
