@@ -2,6 +2,8 @@ import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 
 export type EventStatus = Database["public"]["Enums"]["event_status"];
+export type EventKind = Database["public"]["Enums"]["event_kind"];
+export type EventFormat = Database["public"]["Enums"]["event_format"];
 
 export const EVENT_STATUSES: readonly EventStatus[] = [
   "draft",
@@ -26,6 +28,38 @@ export const EVENT_STATUS_TONE: Record<EventStatus, string> = {
   cancelled: "bg-destructive/15 text-destructive",
   archived: "bg-muted/60 text-muted-foreground",
 };
+
+export const EVENT_KINDS: readonly EventKind[] = [
+  "festival",
+  "show",
+  "special_event",
+  "other",
+] as const;
+
+export const EVENT_KIND_LABEL: Record<EventKind, string> = {
+  festival: "Festival",
+  show: "Show",
+  special_event: "Evento especial",
+  other: "Outro",
+};
+
+export const EVENT_FORMATS: readonly EventFormat[] = ["recurring", "one_off"] as const;
+
+export const EVENT_FORMAT_LABEL: Record<EventFormat, string> = {
+  recurring: "Recorrente",
+  one_off: "Evento único",
+};
+
+/**
+ * Normaliza o valor de `cover_image_url` recebido do banco.
+ * `null`, `undefined`, string vazia ou apenas espaços viram `null`.
+ * Evita renderizar `<img src="">`.
+ */
+export function normalizeCoverUrl(v: string | null | undefined): string | null {
+  if (v == null) return null;
+  const trimmed = String(v).trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
 
 const nullableIso = z
   .string()
