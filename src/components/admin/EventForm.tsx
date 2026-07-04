@@ -29,6 +29,8 @@ export type EventFormRecord = {
   title: string;
   slug: string;
   status: EventStatus;
+  kind: EventKind;
+  format: EventFormat;
   starts_at: string | null;
   ends_at: string | null;
   venue_name: string | null;
@@ -39,6 +41,15 @@ export type EventFormRecord = {
   instagram_url: string | null;
   external_ticket_url: string | null;
 };
+
+
+export function EventForm({
+  mode,
+  initial,
+}: {
+  mode: "create" | "edit";
+  initial?: EventFormRecord;
+}) {
 
 
 export function EventForm({
