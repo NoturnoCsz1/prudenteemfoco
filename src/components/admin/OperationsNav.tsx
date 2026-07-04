@@ -40,6 +40,12 @@ export function OperationsNav({
       to: `/admin/eventos/${eventId}/acesso`,
       icon: <KeyRound className="h-3.5 w-3.5" />,
     },
+    {
+      key: "engine",
+      label: "Engine",
+      to: `/admin/eventos/${eventId}/access-engine`,
+      icon: <Gauge className="h-3.5 w-3.5" />,
+    },
   ];
   return (
     <div className="border-b border-border">
