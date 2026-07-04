@@ -40,7 +40,7 @@ function SobrePage() {
         <div className="rule-line" />
       </div>
 
-      <section className="container-page py-14 md:py-20">
+      <section className="container-page py-10 md:py-20">
         <div className="grid gap-8 md:grid-cols-12 md:gap-12">
           <div className="md:col-span-4">
             <p className="eyebrow-label text-muted-foreground">Origem</p>
@@ -63,7 +63,7 @@ function SobrePage() {
         <div className="rule-line" />
       </div>
 
-      <section className="container-page py-14 md:py-20">
+      <section className="container-page py-10 md:py-20">
         <div className="grid gap-8 md:grid-cols-12 md:gap-12">
           <div className="md:col-span-4">
             <p className="eyebrow-label text-muted-foreground">Hoje</p>
@@ -87,7 +87,7 @@ function SobrePage() {
         <div className="rule-line" />
       </div>
 
-      <section className="container-page py-14 md:py-20">
+      <section className="container-page py-10 md:py-20">
         <div className="grid gap-8 md:grid-cols-12 md:gap-12">
           <div className="md:col-span-4">
             <p className="eyebrow-label text-muted-foreground">Memória</p>
