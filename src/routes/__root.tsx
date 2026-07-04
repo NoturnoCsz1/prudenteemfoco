@@ -91,7 +91,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Plataforma institucional da Prudente em Foco: eventos, experiências, produção e operação profissional. Uma nova fase, construída com tecnologia e memória.",
       },
       { name: "author", content: "Prudente em Foco" },
-      { property: "og:title", content: "Prudente em Foco — Eventos e experiências" },
+      { property: "og:title", content: "Prudente em Foco — Eventos, experiências e produção" },
       {
         property: "og:description",
         content:
@@ -100,11 +100,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Prudente em Foco" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Prudente em Foco" },
+      { name: "twitter:title", content: "Prudente em Foco — Eventos, experiências e produção" },
       {
         name: "twitter:description",
         content: "Plataforma institucional de eventos e experiências.",
       },
+      { name: "description", content: "Plataforma institucional da Prudente em Foco: eventos, experiências, produção e operação profissional. Uma nova fase, construída com tecnologia e memória." },
+      { property: "og:description", content: "Plataforma institucional da Prudente em Foco: eventos, experiências, produção e operação profissional. Uma nova fase, construída com tecnologia e memória." },
+      { name: "twitter:description", content: "Plataforma institucional da Prudente em Foco: eventos, experiências, produção e operação profissional. Uma nova fase, construída com tecnologia e memória." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9b3548b4-d3cc-4b3a-aee6-76e566678ea8/id-preview-883861b2--ba325010-9cf7-4950-8a26-4620486464b7.lovable.app-1783175577907.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9b3548b4-d3cc-4b3a-aee6-76e566678ea8/id-preview-883861b2--ba325010-9cf7-4950-8a26-4620486464b7.lovable.app-1783175577907.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
