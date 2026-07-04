@@ -121,8 +121,12 @@ export type PublicHotsiteSettings = {
   info_parking: string | null;
   info_map_url: string | null;
   info_rules: string | null;
-  info_faq: unknown;
+  info_faq: unknown | null;
 };
+
+// Faq item shape used in serialization
+export type PublicFaqItem = { q: string; a: string };
+
 
 export type PublicSponsor = {
   id: string;
