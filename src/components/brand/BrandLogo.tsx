@@ -6,10 +6,10 @@ type Variant = "horizontal" | "compact" | "mark";
 type Size = "sm" | "md" | "lg" | "xl";
 
 const HEIGHT: Record<Size, string> = {
-  sm: "h-8 md:h-10",
+  sm: "h-9 md:h-11",
   md: "h-11 md:h-14",
-  lg: "h-16 md:h-24",
-  xl: "h-20 md:h-28",
+  lg: "h-20 md:h-24",
+  xl: "h-24 md:h-32",
 };
 
 const ASSET: Record<Variant, { url: string; alt: string }> = {
