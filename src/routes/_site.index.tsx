@@ -278,6 +278,9 @@ function NextEventsSection({ events }: { events: PublicEvent[] }) {
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">Próximos eventos</p>
           <h2 className="mt-4 section-title text-foreground">Agenda oficial.</h2>
+          <p className="mt-4 max-w-xl text-sm text-muted-foreground md:mt-6 md:text-base">
+            Shows, festivais e experiências confirmados em Presidente Prudente.
+          </p>
         </div>
         <div className="mt-6 flex flex-wrap gap-2 md:mt-10">
           {CATEGORIES.filter((c) => c === "all" || available.has(c as EventKind)).map(

@@ -230,21 +230,29 @@ function HeroSlideView({
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, color-mix(in oklab, var(--background) 30%, transparent) 0%, color-mix(in oklab, var(--background) 5%, transparent) 40%, color-mix(in oklab, var(--background) 88%, transparent) 88%, var(--background) 100%)",
+              "linear-gradient(180deg, color-mix(in oklab, var(--background) 55%, transparent) 0%, color-mix(in oklab, var(--background) 30%, transparent) 35%, color-mix(in oklab, var(--background) 75%, transparent) 75%, var(--background) 100%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(0deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0.35) 100%)",
           }}
         />
       </div>
       <div className="container-page flex min-h-[82svh] w-full flex-col justify-end pb-12 pt-20 md:min-h-[92vh] md:pb-24 md:pt-40">
-        <p className="eyebrow-label text-primary">Em cartaz · Prudente em Foco</p>
-        <h1 className="mt-5 poster text-[clamp(2.4rem,10vw,8.5rem)] leading-[0.9] text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)] md:mt-6">
+        <p className="eyebrow-label text-primary">Evento oficial</p>
+        <h1 className="mt-5 poster text-[clamp(2.4rem,10vw,8.5rem)] leading-[0.9] text-foreground [text-shadow:0_2px_24px_rgba(0,0,0,0.75),0_1px_2px_rgba(0,0,0,0.6)] md:mt-6">
           {event.title}
         </h1>
         <div className="mt-5 flex flex-col gap-2 md:mt-8 md:flex-row md:flex-wrap md:items-baseline md:gap-x-8 md:gap-y-3">
-          <p className="date-block text-[1.6rem] text-foreground md:text-5xl">
+          <p className="date-block text-[1.6rem] text-foreground [text-shadow:0_1px_12px_rgba(0,0,0,0.7)] md:text-5xl">
             {formatEventDateEditorial(event.starts_at, event.ends_at)}
           </p>
           {(event.venue_name || event.city) && (
-            <p className="flex items-center gap-1.5 font-display text-[10px] font-semibold uppercase tracking-[0.24em] text-foreground/85 md:text-base">
+            <p className="flex items-center gap-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground [text-shadow:0_1px_8px_rgba(0,0,0,0.7)] md:text-base">
               <MapPin className="h-4 w-4" />
               {[event.venue_name, event.city].filter(Boolean).join(" · ")}
             </p>
