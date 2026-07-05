@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   Globe,
   ExternalLink,
+  MoreHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +24,23 @@ import {
   type EventStatus,
 } from "@/lib/events";
 import { AdminPageHeader } from "@/components/admin/AdminPage";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/eventos/")({
   head: () => ({
@@ -58,6 +76,8 @@ function EventosAdminPage() {
 
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<EventStatus | "all">("all");
+  const [confirmDelete, setConfirmDelete] = useState<Row | null>(null);
+
 
   const qc = useQueryClient();
 
@@ -252,11 +272,11 @@ function EventosAdminPage() {
                       )}
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-2 md:flex-wrap">
                     <Link
                       to="/admin/eventos/$id"
                       params={{ id: row.id }}
-                      className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                      className="inline-flex flex-1 min-h-[40px] items-center justify-center gap-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/15 md:flex-none"
                     >
                       <LayoutDashboard className="h-3.5 w-3.5" />
                       Gerenciar
@@ -264,15 +284,17 @@ function EventosAdminPage() {
                     <Link
                       to="/admin/eventos/$id/editar"
                       params={{ id: row.id }}
-                      className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                      className="inline-flex flex-1 min-h-[40px] items-center justify-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent md:flex-none"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                       Editar
                     </Link>
+
+                    {/* Desktop: mostra tudo em linha */}
                     <Link
                       to="/admin/eventos/$id/hotsite"
                       params={{ id: row.id }}
-                      className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                      className="hidden md:inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
                     >
                       <Globe className="h-3.5 w-3.5" />
                       Hotsite
@@ -282,7 +304,7 @@ function EventosAdminPage() {
                         href={`/eventos/${row.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
+                        className="hidden md:inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                         Visualizar
@@ -290,7 +312,7 @@ function EventosAdminPage() {
                     ) : (
                       <span
                         title="Publique o evento para visualizar a página pública"
-                        className="inline-flex min-h-[36px] cursor-not-allowed items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground/60"
+                        className="hidden md:inline-flex min-h-[36px] cursor-not-allowed items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground/60"
                       >
                         <ExternalLink className="h-3.5 w-3.5" />
                         Visualizar
@@ -301,7 +323,7 @@ function EventosAdminPage() {
                         type="button"
                         onClick={() => archiveMut.mutate(row)}
                         disabled={archiveMut.isPending}
-                        className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent disabled:opacity-60"
+                        className="hidden md:inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-xs font-medium hover:bg-accent disabled:opacity-60"
                       >
                         <Archive className="h-3.5 w-3.5" />
                         {row.status === "archived" ? "Desarquivar" : "Arquivar"}
@@ -310,29 +332,104 @@ function EventosAdminPage() {
                     {canDelete && (
                       <button
                         type="button"
-                        onClick={() => {
-                          if (
-                            !confirm(
-                              `Excluir "${row.title}"? Essa ação não pode ser desfeita.`,
-                            )
-                          )
-                            return;
-                          deleteMut.mutate(row);
-                        }}
+                        onClick={() => setConfirmDelete(row)}
                         disabled={deleteMut.isPending}
-                        className="inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/20 disabled:opacity-60"
+                        className="hidden md:inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/20 disabled:opacity-60"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         Excluir
                       </button>
                     )}
+
+                    {/* Mobile: menu de ações secundárias */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        className="inline-flex min-h-[40px] min-w-[40px] items-center justify-center rounded-md border border-border-strong text-muted-foreground hover:bg-accent md:hidden"
+                        aria-label="Mais ações"
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin/eventos/$id/hotsite" params={{ id: row.id }}>
+                            <Globe className="mr-2 h-4 w-4" />
+                            Hotsite
+                          </Link>
+                        </DropdownMenuItem>
+                        {row.status === "published" ? (
+                          <DropdownMenuItem asChild>
+                            <a href={`/eventos/${row.slug}`} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="mr-2 h-4 w-4" />
+                              Visualizar
+                            </a>
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem disabled>
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            Visualizar
+                          </DropdownMenuItem>
+                        )}
+                        {canManage && (
+                          <DropdownMenuItem
+                            onSelect={() => archiveMut.mutate(row)}
+                            disabled={archiveMut.isPending}
+                          >
+                            <Archive className="mr-2 h-4 w-4" />
+                            {row.status === "archived" ? "Desarquivar" : "Arquivar"}
+                          </DropdownMenuItem>
+                        )}
+                        {canDelete && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onSelect={() => setConfirmDelete(row)}
+                              className="text-destructive focus:text-destructive"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Excluir
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
+
                 </div>
               </li>
             ))}
           </ul>
         )}
       </div>
+
+      <AlertDialog
+        open={!!confirmDelete}
+        onOpenChange={(open) => !open && setConfirmDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir evento?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmDelete
+                ? `"${confirmDelete.title}" será removido permanentemente. Essa ação não pode ser desfeita.`
+                : ""}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (confirmDelete) {
+                  deleteMut.mutate(confirmDelete);
+                  setConfirmDelete(null);
+                }
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
