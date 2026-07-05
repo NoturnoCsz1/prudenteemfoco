@@ -159,37 +159,6 @@ function AdminAnalytics() {
           icon={<Sparkles className="h-4 w-4" />}
           loading={q.isLoading}
         />
-
-        <MetricCard
-          label="Home · Ver evento"
-          value={totals?.home_cta_clicks}
-          icon={<MousePointerClick className="h-4 w-4" />}
-          loading={q.isLoading}
-        />
-        <MetricCard
-          label="Página do evento · views"
-          value={totals?.event_page_views}
-          icon={<BarChart3 className="h-4 w-4" />}
-          loading={q.isLoading}
-        />
-        <MetricCard
-          label="Ingressos · cliques"
-          value={totals?.ticket_clicks}
-          icon={<Ticket className="h-4 w-4" />}
-          loading={q.isLoading}
-        />
-        <MetricCard
-          label="Notícias · cliques"
-          value={totals?.news_clicks}
-          icon={<Newspaper className="h-4 w-4" />}
-          loading={q.isLoading}
-        />
-        <MetricCard
-          label="Experiências · cliques"
-          value={totals?.experience_clicks}
-          icon={<Sparkles className="h-4 w-4" />}
-          loading={q.isLoading}
-        />
       </section>
 
       <section className="mt-8">
