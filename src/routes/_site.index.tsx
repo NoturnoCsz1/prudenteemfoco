@@ -343,7 +343,7 @@ function EventCardRow({ event }: { event: PublicEvent }) {
         params={{ slug: event.slug }}
         search={search}
         onClick={() => trackHomeEvent(event.slug, "home_event_card_click", attribution)}
-        className="group grid grid-cols-[auto,1fr,auto] items-center gap-4 py-6 md:grid-cols-[6rem,1fr,auto] md:gap-8 md:py-8"
+        className="group grid grid-cols-[auto,1fr,auto] items-center gap-4 py-5 md:grid-cols-[6rem,1fr,auto] md:gap-8 md:py-8"
       >
         <div className="flex flex-col items-start leading-none">
           <span className="date-block text-4xl text-foreground md:text-6xl">{day}</span>
@@ -366,8 +366,14 @@ function EventCardRow({ event }: { event: PublicEvent }) {
               </span>
             </p>
           )}
+          <span className="mt-3 inline-flex items-center gap-1.5 font-display text-[10px] font-bold uppercase tracking-[0.28em] text-primary transition-opacity group-hover:opacity-80 md:hidden">
+            Ver evento <ArrowRight className="h-3.5 w-3.5" />
+          </span>
         </div>
-        <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
+        <ArrowRight
+          aria-hidden
+          className="hidden h-5 w-5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary md:block"
+        />
       </Link>
     </li>
   );
