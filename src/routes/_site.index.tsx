@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery, useQuery, useQueries } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, MapPin } from "lucide-react";
 import {
   listPublishedEvents,
@@ -27,7 +27,7 @@ import {
   type HeroSlide,
 } from "@/components/site/HeroCarousel";
 import { useAttribution, buildSearch } from "@/lib/attribution";
-import { trackHomeEvent } from "@/lib/home-tracking";
+import { trackHomeEvent, trackSiteEvent } from "@/lib/home-tracking";
 import { getSiteHome, listSiteMemoryItems, type SiteHome, type SiteMemoryItem } from "@/lib/site.functions";
 
 const eventsQO = queryOptions({
@@ -97,6 +97,15 @@ function HomePage() {
   const { data: experiences = [] } = useQuery(experiencesQO);
   const { data: siteHome } = useQuery(siteHomeQO);
   const { data: memoryItems = [] } = useQuery(siteMemoryQO);
+
+  const attribution = useAttribution();
+  const trackedRef = useRef(false);
+  useEffect(() => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+    trackSiteEvent("home_page_view", attribution);
+  }, [attribution]);
+
 
   const upcoming = useMemo(
     () =>

@@ -35,3 +35,26 @@ export function trackHomeEvent(
       if (error) console.warn("[trackHomeEvent]", error.message);
     });
 }
+
+/**
+ * Tracking site-wide (sem event_id). Whitelist: home_page_view, eventos_list_view.
+ */
+export function trackSiteEvent(
+  kind: "home_page_view" | "eventos_list_view",
+  attribution: Attribution,
+) {
+  if (typeof window === "undefined") return;
+  supabase
+    .rpc("track_site_event", {
+      _kind: kind,
+      _utm_source: attribution.utm_source ?? undefined,
+      _utm_medium: attribution.utm_medium ?? undefined,
+      _utm_campaign: attribution.utm_campaign ?? undefined,
+      _utm_content: attribution.utm_content ?? undefined,
+      _utm_term: attribution.utm_term ?? undefined,
+      _referrer: typeof document !== "undefined" ? document.referrer || undefined : undefined,
+    })
+    .then(({ error }) => {
+      if (error) console.warn("[trackSiteEvent]", error.message);
+    });
+}

@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { ArrowRight, MapPin } from "lucide-react";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { listPublishedEvents, type PublicEvent } from "@/lib/events.functions";
 import { formatEventDateEditorial, normalizeCoverUrl } from "@/lib/events";
+import { useAttribution } from "@/lib/attribution";
+import { trackSiteEvent } from "@/lib/home-tracking";
 
 const eventsQueryOptions = queryOptions({
   queryKey: ["public", "events", "list"],
@@ -48,12 +51,21 @@ function isUpcoming(ev: PublicEvent): boolean {
 
 function EventosPage() {
   const { data: events } = useSuspenseQuery(eventsQueryOptions);
+  const attribution = useAttribution();
+  const trackedRef = useRef(false);
+  useEffect(() => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+    trackSiteEvent("eventos_list_view", attribution);
+  }, [attribution]);
+
   const upcoming = events
     .filter(isUpcoming)
     .sort((a, b) =>
       (a.starts_at ? Date.parse(a.starts_at) : Infinity) -
       (b.starts_at ? Date.parse(b.starts_at) : Infinity),
     );
+
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3, Eye, MousePointerClick, Ticket, Newspaper, Sparkles, Loader2 } from "lucide-react";
+import { BarChart3, Eye, MousePointerClick, Ticket, Newspaper, Sparkles, Loader2, Home, CalendarDays } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPage";
 
@@ -16,6 +16,8 @@ export const Route = createFileRoute("/_authenticated/admin/analytics")({
 });
 
 type Totals = {
+  site_visits: number;
+  eventos_list_views: number;
   home_views: number;
   home_cta_clicks: number;
   news_clicks: number;
@@ -108,17 +110,17 @@ function AdminAnalytics() {
         </div>
       ) : null}
 
-      <section className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+      <section className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-4">
         <MetricCard
-          label="Home · visualizações"
-          value={totals?.home_views}
-          icon={<Eye className="h-4 w-4" />}
+          label="Visitas à Home"
+          value={totals?.site_visits}
+          icon={<Home className="h-4 w-4" />}
           loading={q.isLoading}
         />
         <MetricCard
-          label="Home · Ver evento"
-          value={totals?.home_cta_clicks}
-          icon={<MousePointerClick className="h-4 w-4" />}
+          label="Visitas à /eventos"
+          value={totals?.eventos_list_views}
+          icon={<CalendarDays className="h-4 w-4" />}
           loading={q.isLoading}
         />
         <MetricCard
@@ -128,9 +130,21 @@ function AdminAnalytics() {
           loading={q.isLoading}
         />
         <MetricCard
+          label="Home · Ver evento"
+          value={totals?.home_cta_clicks}
+          icon={<MousePointerClick className="h-4 w-4" />}
+          loading={q.isLoading}
+        />
+        <MetricCard
           label="Ingressos · cliques"
           value={totals?.ticket_clicks}
           icon={<Ticket className="h-4 w-4" />}
+          loading={q.isLoading}
+        />
+        <MetricCard
+          label="Hero · impressões"
+          value={totals?.home_views}
+          icon={<Eye className="h-4 w-4" />}
           loading={q.isLoading}
         />
         <MetricCard
