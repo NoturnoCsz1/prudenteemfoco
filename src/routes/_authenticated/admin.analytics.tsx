@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BarChart3, Eye, MousePointerClick, Ticket, Newspaper, Sparkles, Loader2 } from "lucide-react";
+import { BarChart3, Eye, MousePointerClick, Ticket, Newspaper, Sparkles, Loader2, Home, CalendarDays } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPage";
 
