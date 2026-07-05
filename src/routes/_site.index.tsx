@@ -98,6 +98,15 @@ function HomePage() {
   const { data: siteHome } = useQuery(siteHomeQO);
   const { data: memoryItems = [] } = useQuery(siteMemoryQO);
 
+  const attribution = useAttribution();
+  const trackedRef = useRef(false);
+  useEffect(() => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+    trackSiteEvent("home_page_view", attribution);
+  }, [attribution]);
+
+
   const upcoming = useMemo(
     () =>
       events.filter(isUpcoming).sort((a, b) => {
