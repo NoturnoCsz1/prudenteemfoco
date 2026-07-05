@@ -76,6 +76,8 @@ function EventosAdminPage() {
 
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<EventStatus | "all">("all");
+  const [confirmDelete, setConfirmDelete] = useState<Row | null>(null);
+
 
   const qc = useQueryClient();
 
