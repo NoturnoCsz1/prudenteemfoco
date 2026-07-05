@@ -4,7 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { LogIn, Loader2, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import logoHorizontal from "@/assets/prudente-em-foco-logo-horizontal.png.asset.json";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const searchSchema = z.object({
   redirect: z.string().optional(),
