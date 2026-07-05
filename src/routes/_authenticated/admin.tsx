@@ -6,7 +6,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { useState } from "react";
-import adminLogo from "@/assets/prudente-em-foco-logo-horizontal.png.asset.json";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import {
   LayoutDashboard,
   CalendarDays,
