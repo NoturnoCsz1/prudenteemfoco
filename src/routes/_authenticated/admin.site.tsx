@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/admin/site")({
 });
 
 const TABS = [
-  { id: "home", label: "Home" },
+  { id: "home", label: "Início (Home)" },
   { id: "sobre", label: "Nossa História" },
   { id: "memoria", label: "Memória" },
   { id: "contato", label: "Contato" },
