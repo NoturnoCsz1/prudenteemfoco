@@ -973,10 +973,10 @@ export type Database = {
         Row: {
           commercial_link_id: string | null
           created_at: string
-          event_id: string
+          event_id: string | null
           id: string
           kind: Database["public"]["Enums"]["hotsite_click_kind"]
-          organization_id: string
+          organization_id: string | null
           promoter_id: string | null
           referrer: string | null
           utm_campaign: string | null
@@ -988,10 +988,10 @@ export type Database = {
         Insert: {
           commercial_link_id?: string | null
           created_at?: string
-          event_id: string
+          event_id?: string | null
           id?: string
           kind: Database["public"]["Enums"]["hotsite_click_kind"]
-          organization_id: string
+          organization_id?: string | null
           promoter_id?: string | null
           referrer?: string | null
           utm_campaign?: string | null
@@ -1003,10 +1003,10 @@ export type Database = {
         Update: {
           commercial_link_id?: string | null
           created_at?: string
-          event_id?: string
+          event_id?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["hotsite_click_kind"]
-          organization_id?: string
+          organization_id?: string | null
           promoter_id?: string | null
           referrer?: string | null
           utm_campaign?: string | null
@@ -2434,6 +2434,8 @@ export type Database = {
         | "home_experience_click"
         | "home_agenda_click"
         | "home_ticket_click"
+        | "home_page_view"
+        | "eventos_list_view"
       invite_status: "active" | "revoked" | "used" | "expired"
       invite_type:
         | "guest"
@@ -2667,6 +2669,8 @@ export const Constants = {
         "home_experience_click",
         "home_agenda_click",
         "home_ticket_click",
+        "home_page_view",
+        "eventos_list_view",
       ],
       invite_status: ["active", "revoked", "used", "expired"],
       invite_type: [
