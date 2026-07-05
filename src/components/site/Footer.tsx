@@ -18,7 +18,7 @@ export function SiteFooter() {
       <div className="container-page py-10 md:py-24">
         <div className="grid gap-10 md:grid-cols-12 md:gap-10">
           <div className="md:col-span-7">
-            <BrandLogo variant="horizontal" size="lg" />
+            <BrandLogo variant="horizontal" size="xl" />
 
             <p className="poster mt-6 text-[clamp(1rem,3.2vw,1.6rem)] leading-tight text-foreground/85 md:mt-8">
               EVENTOS QUE MARCAM.
