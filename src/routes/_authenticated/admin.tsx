@@ -72,7 +72,7 @@ function AdminLayout() {
               {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
             <Link to="/admin" className="flex items-center gap-2" aria-label="Prudente em Foco — Admin">
-              <BrandLogo variant="compact" size="sm" priority className="h-9 md:h-11" />
+              <BrandLogo variant="compact" size="sm" priority />
               <span className="hidden text-xs uppercase tracking-[0.25em] text-muted-foreground md:inline">
                 · Admin
               </span>
