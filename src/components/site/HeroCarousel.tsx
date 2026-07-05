@@ -230,12 +230,20 @@ function HeroSlideView({
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, color-mix(in oklab, var(--background) 30%, transparent) 0%, color-mix(in oklab, var(--background) 5%, transparent) 40%, color-mix(in oklab, var(--background) 88%, transparent) 88%, var(--background) 100%)",
+              "linear-gradient(180deg, color-mix(in oklab, var(--background) 55%, transparent) 0%, color-mix(in oklab, var(--background) 30%, transparent) 35%, color-mix(in oklab, var(--background) 75%, transparent) 75%, var(--background) 100%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(0deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0.35) 100%)",
           }}
         />
       </div>
       <div className="container-page flex min-h-[82svh] w-full flex-col justify-end pb-12 pt-20 md:min-h-[92vh] md:pb-24 md:pt-40">
-        <p className="eyebrow-label text-primary">Em cartaz · Prudente em Foco</p>
+        <p className="eyebrow-label text-primary">Evento oficial</p>
         <h1 className="mt-5 poster text-[clamp(2.4rem,10vw,8.5rem)] leading-[0.9] text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)] md:mt-6">
           {event.title}
         </h1>
