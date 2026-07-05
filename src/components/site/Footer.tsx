@@ -18,12 +18,16 @@ export function SiteFooter() {
       <div className="container-page py-10 md:py-24">
         <div className="grid gap-10 md:grid-cols-12 md:gap-10">
           <div className="md:col-span-7">
-            <h2 className="poster text-[clamp(2rem,10vw,7rem)] leading-[0.88] text-foreground">
-              PRUDENTE
-              <br />
-              <span className="text-primary">EM FOCO</span>
-            </h2>
-            <p className="poster mt-5 text-[clamp(1rem,3.2vw,1.6rem)] leading-tight text-foreground/85 md:mt-6">
+            <img
+              src={logoHorizontal.url}
+              alt="Prudente em Foco"
+              className="h-16 w-auto object-contain md:h-24"
+              width={480}
+              height={140}
+              loading="lazy"
+              decoding="async"
+            />
+            <p className="poster mt-6 text-[clamp(1rem,3.2vw,1.6rem)] leading-tight text-foreground/85 md:mt-8">
               EVENTOS QUE MARCAM.
               <br />
               HISTÓRIAS QUE FICAM.
