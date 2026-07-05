@@ -64,7 +64,7 @@ function EventosPage() {
             Programação.
           </h1>
           <p className="mt-6 max-w-xl font-display text-base leading-snug text-foreground/85 md:mt-8 md:text-2xl">
-            Cada evento aparece aqui quando confirmado. Sem especulação.
+            Agenda oficial de eventos, shows e experiências em Presidente Prudente.
           </p>
         </div>
       </section>
