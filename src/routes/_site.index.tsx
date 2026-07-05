@@ -274,12 +274,12 @@ function NextEventsSection({ events }: { events: PublicEvent[] }) {
   const available = new Set(events.map((e) => e.kind));
   return (
     <section>
-      <div className="container-page py-12 md:py-24">
+      <div className="container-page py-10 md:py-24">
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">Próximos eventos</p>
           <h2 className="mt-4 section-title text-foreground">Agenda oficial.</h2>
         </div>
-        <div className="mt-8 flex flex-wrap gap-2 md:mt-10">
+        <div className="mt-6 flex flex-wrap gap-2 md:mt-10">
           {CATEGORIES.filter((c) => c === "all" || available.has(c as EventKind)).map(
             (c) => (
               <button
@@ -298,11 +298,20 @@ function NextEventsSection({ events }: { events: PublicEvent[] }) {
           )}
         </div>
         {filtered.length === 0 ? (
-          <p className="mt-10 text-sm text-muted-foreground">
-            Nenhum evento nesta categoria por enquanto.
-          </p>
+          <div className="mt-8 flex flex-col items-start gap-3">
+            <p className="text-sm text-muted-foreground">
+              Nenhum evento nesta categoria por enquanto.
+            </p>
+            <button
+              type="button"
+              onClick={() => setCat("all")}
+              className="inline-flex items-center gap-2 border-b border-primary pb-0.5 font-display text-[10px] font-bold uppercase tracking-[0.28em] text-primary hover:opacity-80"
+            >
+              Ver todos os eventos <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
         ) : (
-          <ul className="mt-8 divide-y divide-[color-mix(in_oklab,var(--foreground)_12%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)]">
+          <ul className="mt-6 divide-y divide-[color-mix(in_oklab,var(--foreground)_12%,transparent)] border-y border-[color-mix(in_oklab,var(--foreground)_12%,transparent)] md:mt-8">
             {filtered.map((ev) => (
               <EventCardRow key={ev.slug} event={ev} />
             ))}
