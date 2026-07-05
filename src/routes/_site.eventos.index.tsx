@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { ArrowRight, MapPin } from "lucide-react";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { listPublishedEvents, type PublicEvent } from "@/lib/events.functions";
 import { formatEventDateEditorial, normalizeCoverUrl } from "@/lib/events";
+import { useAttribution } from "@/lib/attribution";
+import { trackSiteEvent } from "@/lib/home-tracking";
 
 const eventsQueryOptions = queryOptions({
   queryKey: ["public", "events", "list"],
