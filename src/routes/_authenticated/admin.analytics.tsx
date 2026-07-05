@@ -110,13 +110,56 @@ function AdminAnalytics() {
         </div>
       ) : null}
 
-      <section className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+      <section className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-4">
         <MetricCard
-          label="Home · visualizações"
+          label="Visitas à Home"
+          value={totals?.site_visits}
+          icon={<Home className="h-4 w-4" />}
+          loading={q.isLoading}
+        />
+        <MetricCard
+          label="Visitas à /eventos"
+          value={totals?.eventos_list_views}
+          icon={<CalendarDays className="h-4 w-4" />}
+          loading={q.isLoading}
+        />
+        <MetricCard
+          label="Página do evento · views"
+          value={totals?.event_page_views}
+          icon={<BarChart3 className="h-4 w-4" />}
+          loading={q.isLoading}
+        />
+        <MetricCard
+          label="Home · Ver evento"
+          value={totals?.home_cta_clicks}
+          icon={<MousePointerClick className="h-4 w-4" />}
+          loading={q.isLoading}
+        />
+        <MetricCard
+          label="Ingressos · cliques"
+          value={totals?.ticket_clicks}
+          icon={<Ticket className="h-4 w-4" />}
+          loading={q.isLoading}
+        />
+        <MetricCard
+          label="Hero · impressões"
           value={totals?.home_views}
           icon={<Eye className="h-4 w-4" />}
           loading={q.isLoading}
         />
+        <MetricCard
+          label="Notícias · cliques"
+          value={totals?.news_clicks}
+          icon={<Newspaper className="h-4 w-4" />}
+          loading={q.isLoading}
+        />
+        <MetricCard
+          label="Experiências · cliques"
+          value={totals?.experience_clicks}
+          icon={<Sparkles className="h-4 w-4" />}
+          loading={q.isLoading}
+        />
+
         <MetricCard
           label="Home · Ver evento"
           value={totals?.home_cta_clicks}
