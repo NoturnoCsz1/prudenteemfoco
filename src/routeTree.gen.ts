@@ -18,6 +18,7 @@ import { Route as SiteExperienciasRouteImport } from './routes/_site.experiencia
 import { Route as SiteEventosRouteImport } from './routes/_site.eventos'
 import { Route as SiteContatoRouteImport } from './routes/_site.contato'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as SiteEventosIndexRouteImport } from './routes/_site.eventos.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as SiteEventosSlugRouteImport } from './routes/_site.eventos.$slug'
 import { Route as AuthenticatedAdminSiteRouteImport } from './routes/_authenticated/admin.site'
@@ -84,6 +85,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const SiteEventosIndexRoute = SiteEventosIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SiteEventosRoute,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
@@ -233,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/admin/site': typeof AuthenticatedAdminSiteRoute
   '/eventos/$slug': typeof SiteEventosSlugRouteWithChildren
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/eventos/': typeof SiteEventosIndexRoute
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
   '/admin/eventos/': typeof AuthenticatedAdminEventosIndexRoute
   '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
@@ -257,13 +264,13 @@ export interface FileRoutesByTo {
   '/': typeof SiteIndexRoute
   '/auth': typeof AuthRoute
   '/contato': typeof SiteContatoRoute
-  '/eventos': typeof SiteEventosRouteWithChildren
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/admin/site': typeof AuthenticatedAdminSiteRoute
   '/eventos/$slug': typeof SiteEventosSlugRouteWithChildren
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/eventos': typeof SiteEventosIndexRoute
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosIndexRoute
   '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
@@ -299,6 +306,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/site': typeof AuthenticatedAdminSiteRoute
   '/_site/eventos/$slug': typeof SiteEventosSlugRouteWithChildren
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_site/eventos/': typeof SiteEventosIndexRoute
   '/_authenticated/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
   '/_authenticated/admin/eventos/': typeof AuthenticatedAdminEventosIndexRoute
   '/_authenticated/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
@@ -333,6 +341,7 @@ export interface FileRouteTypes {
     | '/admin/site'
     | '/eventos/$slug'
     | '/admin/'
+    | '/eventos/'
     | '/admin/eventos/novo'
     | '/admin/eventos/'
     | '/admin/eventos/$id/acesso'
@@ -357,13 +366,13 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/contato'
-    | '/eventos'
     | '/experiencias'
     | '/sobre'
     | '/admin/equipe'
     | '/admin/site'
     | '/eventos/$slug'
     | '/admin'
+    | '/eventos'
     | '/admin/eventos/novo'
     | '/admin/eventos'
     | '/admin/eventos/$id/acesso'
@@ -398,6 +407,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/site'
     | '/_site/eventos/$slug'
     | '/_authenticated/admin/'
+    | '/_site/eventos/'
     | '/_authenticated/admin/eventos/novo'
     | '/_authenticated/admin/eventos/'
     | '/_authenticated/admin/eventos/$id/acesso'
@@ -489,6 +499,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_site/eventos/': {
+      id: '/_site/eventos/'
+      path: '/'
+      fullPath: '/eventos/'
+      preLoaderRoute: typeof SiteEventosIndexRouteImport
+      parentRoute: typeof SiteEventosRoute
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -744,10 +761,12 @@ const SiteEventosSlugRouteWithChildren = SiteEventosSlugRoute._addFileChildren(
 
 interface SiteEventosRouteChildren {
   SiteEventosSlugRoute: typeof SiteEventosSlugRouteWithChildren
+  SiteEventosIndexRoute: typeof SiteEventosIndexRoute
 }
 
 const SiteEventosRouteChildren: SiteEventosRouteChildren = {
   SiteEventosSlugRoute: SiteEventosSlugRouteWithChildren,
+  SiteEventosIndexRoute: SiteEventosIndexRoute,
 }
 
 const SiteEventosRouteWithChildren = SiteEventosRoute._addFileChildren(
@@ -780,3 +799,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
