@@ -95,15 +95,7 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-5 py-16">
       <div className="w-full max-w-md">
         <Link to="/" className="mb-10 flex items-center justify-center" aria-label="Prudente em Foco — Início">
-          <img
-            src={logoHorizontal.url}
-            alt="Prudente em Foco"
-            className="h-12 w-auto object-contain md:h-14"
-            width={480}
-            height={140}
-            loading="eager"
-            decoding="async"
-          />
+          <BrandLogo variant="horizontal" size="lg" priority />
         </Link>
 
         <div className="rounded-2xl border border-border bg-surface p-6 md:p-8">
