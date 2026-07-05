@@ -1885,6 +1885,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_site_analytics: {
+        Args: { _from: string; _to: string }
+        Returns: Json
+      }
       can_manage_event_cover: { Args: { _path: string }; Returns: boolean }
       consume_access_session: {
         Args: { _session_id: string }
