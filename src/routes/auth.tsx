@@ -94,9 +94,16 @@ function AuthPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-5 py-16">
       <div className="w-full max-w-md">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-          <span className="inline-block h-2 w-2 rounded-full bg-primary" />
-          <span className="font-display font-semibold text-foreground">Prudente em Foco</span>
+        <Link to="/" className="mb-10 flex items-center justify-center" aria-label="Prudente em Foco — Início">
+          <img
+            src={logoHorizontal.url}
+            alt="Prudente em Foco"
+            className="h-12 w-auto object-contain md:h-14"
+            width={480}
+            height={140}
+            loading="eager"
+            decoding="async"
+          />
         </Link>
 
         <div className="rounded-2xl border border-border bg-surface p-6 md:p-8">
