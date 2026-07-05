@@ -386,7 +386,7 @@ function NewsSection({ items }: { items: HomeNewsItem[] }) {
   const search = buildSearch(attribution);
   return (
     <section className="bg-surface/30">
-      <div className="container-page py-12 md:py-24">
+      <div className="container-page py-10 md:py-24">
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">Notícias</p>
           <h2 className="mt-4 section-title text-foreground">Últimas do universo Prudente em Foco.</h2>
@@ -464,7 +464,7 @@ function ExperiencesSection({
     "Camarotes, bistrôs, mesas e áreas especiais com solicitação direta na página de cada evento.";
   return (
     <section>
-      <div className="container-page py-12 md:py-24">
+      <div className="container-page py-10 md:py-24">
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">Experiências</p>
           <h2 className="mt-4 section-title text-foreground">{headline}</h2>
@@ -533,7 +533,7 @@ function MemorySection({ events }: { events: PublicEvent[] }) {
   const search = buildSearch(attribution);
   return (
     <section className="bg-surface/30">
-      <div className="container-page py-12 md:py-24">
+      <div className="container-page py-10 md:py-24">
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">Memória em foco</p>
           <h2 className="mt-4 section-title text-foreground">Arquivo Prudente em Foco.</h2>
@@ -580,7 +580,7 @@ function CmsMemorySection({ items }: { items: SiteMemoryItem[] }) {
   const search = buildSearch(attribution);
   return (
     <section className="bg-surface/30">
-      <div className="container-page py-12 md:py-24">
+      <div className="container-page py-10 md:py-24">
         <div className="max-w-4xl">
           <p className="eyebrow-label text-primary">Memória em foco</p>
           <h2 className="mt-4 section-title text-foreground">Arquivo Prudente em Foco.</h2>
