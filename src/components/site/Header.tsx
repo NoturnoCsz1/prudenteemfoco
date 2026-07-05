@@ -69,15 +69,8 @@ export function SiteHeader() {
           onClick={() => setOpen(false)}
           aria-label="Prudente em Foco — Início"
         >
-          <img
-            src={logoHorizontal.url}
-            alt="Prudente em Foco"
-            className="h-8 w-auto object-contain md:h-10"
-            width={480}
-            height={140}
-            loading="eager"
-            decoding="async"
-          />
+          <BrandLogo variant="compact" size="md" priority />
+
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
