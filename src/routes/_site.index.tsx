@@ -27,7 +27,7 @@ import {
   type HeroSlide,
 } from "@/components/site/HeroCarousel";
 import { useAttribution, buildSearch } from "@/lib/attribution";
-import { trackHomeEvent } from "@/lib/home-tracking";
+import { trackHomeEvent, trackSiteEvent } from "@/lib/home-tracking";
 import { getSiteHome, listSiteMemoryItems, type SiteHome, type SiteMemoryItem } from "@/lib/site.functions";
 
 const eventsQO = queryOptions({
