@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Menu, X, ShieldCheck } from "lucide-react";
 import { useSession } from "@/hooks/use-session";
 import { useSiteMenu } from "@/hooks/use-site-menu";
-import logoHorizontal from "@/assets/prudente-em-foco-logo-horizontal.png.asset.json";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const ALL_NAV = [
   { to: "/eventos", label: "Eventos", flag: "show_eventos" },
@@ -69,15 +69,8 @@ export function SiteHeader() {
           onClick={() => setOpen(false)}
           aria-label="Prudente em Foco — Início"
         >
-          <img
-            src={logoHorizontal.url}
-            alt="Prudente em Foco"
-            className="h-8 w-auto object-contain md:h-10"
-            width={480}
-            height={140}
-            loading="eager"
-            decoding="async"
-          />
+          <BrandLogo variant="compact" size="md" priority />
+
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">

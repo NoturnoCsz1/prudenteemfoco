@@ -4,7 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { LogIn, Loader2, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import logoHorizontal from "@/assets/prudente-em-foco-logo-horizontal.png.asset.json";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const searchSchema = z.object({
   redirect: z.string().optional(),
@@ -95,15 +95,7 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-5 py-16">
       <div className="w-full max-w-md">
         <Link to="/" className="mb-10 flex items-center justify-center" aria-label="Prudente em Foco — Início">
-          <img
-            src={logoHorizontal.url}
-            alt="Prudente em Foco"
-            className="h-12 w-auto object-contain md:h-14"
-            width={480}
-            height={140}
-            loading="eager"
-            decoding="async"
-          />
+          <BrandLogo variant="horizontal" size="lg" priority />
         </Link>
 
         <div className="rounded-2xl border border-border bg-surface p-6 md:p-8">

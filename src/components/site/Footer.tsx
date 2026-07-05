@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useSiteMenu } from "@/hooks/use-site-menu";
-import logoHorizontal from "@/assets/prudente-em-foco-logo-horizontal.png.asset.json";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const ALL_NAV = [
   { to: "/eventos", label: "Eventos", flag: "show_eventos" },
@@ -18,15 +18,8 @@ export function SiteFooter() {
       <div className="container-page py-10 md:py-24">
         <div className="grid gap-10 md:grid-cols-12 md:gap-10">
           <div className="md:col-span-7">
-            <img
-              src={logoHorizontal.url}
-              alt="Prudente em Foco"
-              className="h-16 w-auto object-contain md:h-24"
-              width={480}
-              height={140}
-              loading="lazy"
-              decoding="async"
-            />
+            <BrandLogo variant="horizontal" size="xl" />
+
             <p className="poster mt-6 text-[clamp(1rem,3.2vw,1.6rem)] leading-tight text-foreground/85 md:mt-8">
               EVENTOS QUE MARCAM.
               <br />

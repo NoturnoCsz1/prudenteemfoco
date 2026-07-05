@@ -6,7 +6,7 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { useState } from "react";
-import adminLogo from "@/assets/prudente-em-foco-logo-horizontal.png.asset.json";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -72,15 +72,7 @@ function AdminLayout() {
               {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
             <Link to="/admin" className="flex items-center gap-2" aria-label="Prudente em Foco — Admin">
-              <img
-                src={adminLogo.url}
-                alt="Prudente em Foco"
-                className="h-7 w-auto object-contain md:h-8"
-                width={480}
-                height={140}
-                loading="eager"
-                decoding="async"
-              />
+              <BrandLogo variant="compact" size="sm" priority />
               <span className="hidden text-xs uppercase tracking-[0.25em] text-muted-foreground md:inline">
                 · Admin
               </span>
