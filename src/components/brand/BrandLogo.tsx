@@ -1,7 +1,3 @@
-import logoHorizontal from "@/assets/prudente-em-foco-logo-horizontal.png.asset.json";
-import logoCompact from "@/assets/prudente-em-foco-logo-compact.png.asset.json";
-import logoMark from "@/assets/prudente-em-foco-mark.png.asset.json";
-
 type Variant = "horizontal" | "compact" | "mark";
 type Size = "sm" | "md" | "lg" | "xl";
 
@@ -13,9 +9,9 @@ const HEIGHT: Record<Size, string> = {
 };
 
 const ASSET: Record<Variant, { url: string; alt: string }> = {
-  horizontal: { url: logoHorizontal.url, alt: "Prudente em Foco — Eventos que marcam" },
-  compact: { url: logoCompact.url, alt: "Prudente em Foco" },
-  mark: { url: logoMark.url, alt: "Prudente em Foco" },
+  horizontal: { url: "/brand/logo-horizontal.png", alt: "Prudente em Foco — Eventos que marcam" },
+  compact: { url: "/brand/logo-compact.png", alt: "Prudente em Foco" },
+  mark: { url: "/brand/mark.png", alt: "Prudente em Foco" },
 };
 
 export function BrandLogo({
