@@ -51,12 +51,21 @@ function isUpcoming(ev: PublicEvent): boolean {
 
 function EventosPage() {
   const { data: events } = useSuspenseQuery(eventsQueryOptions);
+  const attribution = useAttribution();
+  const trackedRef = useRef(false);
+  useEffect(() => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+    trackSiteEvent("eventos_list_view", attribution);
+  }, [attribution]);
+
   const upcoming = events
     .filter(isUpcoming)
     .sort((a, b) =>
       (a.starts_at ? Date.parse(a.starts_at) : Infinity) -
       (b.starts_at ? Date.parse(b.starts_at) : Infinity),
     );
+
 
   return (
     <>
