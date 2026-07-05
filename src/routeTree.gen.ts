@@ -23,6 +23,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as SiteEventosSlugRouteImport } from './routes/_site.eventos.$slug'
 import { Route as AuthenticatedAdminSiteRouteImport } from './routes/_authenticated/admin.site'
 import { Route as AuthenticatedAdminEquipeRouteImport } from './routes/_authenticated/admin.equipe'
+import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
 import { Route as AuthenticatedAdminEventosIndexRouteImport } from './routes/_authenticated/admin.eventos.index'
 import { Route as AuthenticatedAdminEventosNovoRouteImport } from './routes/_authenticated/admin.eventos.novo'
 import { Route as AuthenticatedAdminEventosIdIndexRouteImport } from './routes/_authenticated/admin.eventos.$id.index'
@@ -110,6 +111,12 @@ const AuthenticatedAdminEquipeRoute =
   AuthenticatedAdminEquipeRouteImport.update({
     id: '/equipe',
     path: '/equipe',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAnalyticsRoute =
+  AuthenticatedAdminAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosIndexRoute =
@@ -235,6 +242,7 @@ export interface FileRoutesByFullPath {
   '/eventos': typeof SiteEventosRouteWithChildren
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/admin/site': typeof AuthenticatedAdminSiteRoute
   '/eventos/$slug': typeof SiteEventosSlugRouteWithChildren
@@ -266,6 +274,7 @@ export interface FileRoutesByTo {
   '/contato': typeof SiteContatoRoute
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/admin/site': typeof AuthenticatedAdminSiteRoute
   '/eventos/$slug': typeof SiteEventosSlugRouteWithChildren
@@ -302,6 +311,7 @@ export interface FileRoutesById {
   '/_site/experiencias': typeof SiteExperienciasRoute
   '/_site/sobre': typeof SiteSobreRoute
   '/_site/': typeof SiteIndexRoute
+  '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/_authenticated/admin/site': typeof AuthenticatedAdminSiteRoute
   '/_site/eventos/$slug': typeof SiteEventosSlugRouteWithChildren
@@ -337,6 +347,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/experiencias'
     | '/sobre'
+    | '/admin/analytics'
     | '/admin/equipe'
     | '/admin/site'
     | '/eventos/$slug'
@@ -368,6 +379,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/experiencias'
     | '/sobre'
+    | '/admin/analytics'
     | '/admin/equipe'
     | '/admin/site'
     | '/eventos/$slug'
@@ -403,6 +415,7 @@ export interface FileRouteTypes {
     | '/_site/experiencias'
     | '/_site/sobre'
     | '/_site/'
+    | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/equipe'
     | '/_authenticated/admin/site'
     | '/_site/eventos/$slug'
@@ -533,6 +546,13 @@ declare module '@tanstack/react-router' {
       path: '/equipe'
       fullPath: '/admin/equipe'
       preLoaderRoute: typeof AuthenticatedAdminEquipeRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/analytics': {
+      id: '/_authenticated/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/': {
@@ -672,6 +692,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
   AuthenticatedAdminEquipeRoute: typeof AuthenticatedAdminEquipeRoute
   AuthenticatedAdminSiteRoute: typeof AuthenticatedAdminSiteRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -696,6 +717,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
   AuthenticatedAdminEquipeRoute: AuthenticatedAdminEquipeRoute,
   AuthenticatedAdminSiteRoute: AuthenticatedAdminSiteRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
