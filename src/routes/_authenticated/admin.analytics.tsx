@@ -16,6 +16,8 @@ export const Route = createFileRoute("/_authenticated/admin/analytics")({
 });
 
 type Totals = {
+  site_visits: number;
+  eventos_list_views: number;
   home_views: number;
   home_cta_clicks: number;
   news_clicks: number;
