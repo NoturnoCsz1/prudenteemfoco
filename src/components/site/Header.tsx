@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Menu, X, ShieldCheck } from "lucide-react";
 import { useSession } from "@/hooks/use-session";
 import { useSiteMenu } from "@/hooks/use-site-menu";
+import logoHorizontal from "@/assets/prudente-em-foco-logo-horizontal.png.asset.json";
 
 const ALL_NAV = [
   { to: "/eventos", label: "Eventos", flag: "show_eventos" },
@@ -64,12 +65,19 @@ export function SiteHeader() {
       <div className="container-page flex h-14 items-center justify-between md:h-16">
         <Link
           to="/"
-          className="flex items-center gap-2"
+          className="flex items-center"
           onClick={() => setOpen(false)}
+          aria-label="Prudente em Foco — Início"
         >
-          <span className="poster text-base leading-none tracking-tight text-foreground md:text-lg">
-            PRUDENTE <span className="text-primary">EM FOCO</span>
-          </span>
+          <img
+            src={logoHorizontal.url}
+            alt="Prudente em Foco"
+            className="h-8 w-auto object-contain md:h-10"
+            width={480}
+            height={140}
+            loading="eager"
+            decoding="async"
+          />
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
