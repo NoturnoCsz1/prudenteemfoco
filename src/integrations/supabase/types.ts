@@ -2368,6 +2368,18 @@ export type Database = {
         }
         Returns: string
       }
+      track_site_event: {
+        Args: {
+          _kind: Database["public"]["Enums"]["hotsite_click_kind"]
+          _referrer?: string
+          _utm_campaign?: string
+          _utm_content?: string
+          _utm_medium?: string
+          _utm_source?: string
+          _utm_term?: string
+        }
+        Returns: string
+      }
       update_member_role: {
         Args: {
           _member_id: string
