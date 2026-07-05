@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Menu, X, ShieldCheck } from "lucide-react";
 import { useSession } from "@/hooks/use-session";
 import { useSiteMenu } from "@/hooks/use-site-menu";
-import logoHorizontal from "@/assets/prudente-em-foco-logo-horizontal.png.asset.json";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const ALL_NAV = [
   { to: "/eventos", label: "Eventos", flag: "show_eventos" },
