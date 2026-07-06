@@ -177,13 +177,30 @@ function CredentialsPage() {
                         {c.document_id || "—"}
                       </td>
                       <td className="px-3 py-2 text-right">
-                        <button
-                          type="button"
-                          onClick={() => toggle(c)}
-                          className="rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
-                        >
-                          {st === "active" ? "Desativar" : "Ativar"}
-                        </button>
+                        <div className="flex justify-end gap-1">
+                          {st === "active" ? (
+                            <button
+                              type="button"
+                              onClick={() => emitQr(c)}
+                              disabled={emitting === c.id}
+                              className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted disabled:opacity-50"
+                            >
+                              {emitting === c.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <QrCode className="h-3 w-3" />
+                              )}
+                              Emitir QR
+                            </button>
+                          ) : null}
+                          <button
+                            type="button"
+                            onClick={() => toggle(c)}
+                            className="rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                          >
+                            {st === "active" ? "Desativar" : "Ativar"}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
