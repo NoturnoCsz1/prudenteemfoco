@@ -8,25 +8,22 @@ type Props = {
   onClose?: () => void;
 };
 
-/**
- * Camera-based QR scanner using html5-qrcode.
- * - Prefers rear camera.
- * - Debounces identical reads.
- * - Pauses on decode; parent controls when to resume via `paused`.
- * - Exposes torch/switch camera when the device/browser supports it.
- */
 export function QrScanner({ onDecoded, paused, onClose }: Props) {
   const containerId = "qr-scanner-region";
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const lastDecodedRef = useRef<{ text: string; at: number } | null>(null);
   const runningRef = useRef(false);
+  const pausedRef = useRef<boolean>(!!paused);
   const [cameras, setCameras] = useState<{ id: string; label: string }[]>([]);
   const [cameraIdx, setCameraIdx] = useState(0);
   const [torchOn, setTorchOn] = useState(false);
   const [torchSupported, setTorchSupported] = useState(false);
   const [permError, setPermError] = useState<string | null>(null);
 
-  // Initial camera discovery
+  useEffect(() => {
+    pausedRef.current = !!paused;
+  }, [paused]);
+
   useEffect(() => {
     let mounted = true;
     Html5Qrcode.getCameras()
@@ -36,7 +33,6 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
           setPermError("Nenhuma câmera detectada");
           return;
         }
-        // Prefer back / environment / traseira
         const sorted = [...devices].sort((a, b) => {
           const score = (l: string) =>
             /back|rear|traseira|environment/i.test(l) ? -1 : /front|frontal|user/i.test(l) ? 1 : 0;
@@ -52,12 +48,10 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
     };
   }, []);
 
-  // Start / stop scanning
   useEffect(() => {
     if (cameras.length === 0) return;
     const cam = cameras[cameraIdx];
     if (!cam) return;
-
     let cancelled = false;
 
     const start = async () => {
@@ -80,20 +74,18 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
           },
           (decodedText) => {
             if (cancelled) return;
+            // Ignore reads while paused (result showing / validating).
+            if (pausedRef.current) return;
             const now = Date.now();
             const last = lastDecodedRef.current;
-            // Debounce: ignore same code within 2s
-            if (last && last.text === decodedText && now - last.at < 2000) return;
+            if (last && last.text === decodedText && now - last.at < 1500) return;
             lastDecodedRef.current = { text: decodedText, at: now };
             onDecoded(decodedText);
           },
-          () => {
-            /* onErr — noisy per-frame; ignore */
-          },
+          () => {},
         );
         runningRef.current = true;
 
-        // Torch support probing
         try {
           const capsUnknown = (scanner as unknown as { getRunningTrackCapabilities?: () => unknown }).getRunningTrackCapabilities?.();
           const caps = capsUnknown as { torch?: boolean } | undefined;
@@ -111,9 +103,7 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
       scannerRef.current = null;
       if (!s) return;
       try {
-        if (runningRef.current) {
-          await s.stop();
-        }
+        if (runningRef.current) await s.stop();
       } catch {
         // ignore
       } finally {
@@ -134,20 +124,11 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cameras, cameraIdx]);
 
-  // Pause/resume — pause simply resets the debounce clock so re-emissions ignore identical scans;
-  // library stays running so the operator sees the camera preview under the result banner.
-  useEffect(() => {
-    if (paused) {
-      lastDecodedRef.current = { text: "__paused__", at: Date.now() };
-    }
-  }, [paused]);
-
   const toggleTorch = async () => {
     const s = scannerRef.current;
     if (!s) return;
     try {
       const constraints = { advanced: [{ torch: !torchOn } as unknown as MediaTrackConstraintSet] } as MediaTrackConstraints;
-      // applyVideoConstraints is available on the running scanner
       await (s as unknown as { applyVideoConstraints: (c: MediaTrackConstraints) => Promise<void> }).applyVideoConstraints(constraints);
       setTorchOn((v) => !v);
     } catch {
@@ -161,18 +142,24 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative isolate w-full">
+      {/* Camera viewport — fixed responsive height, clips video overflow */}
       <div
-        id={containerId}
-        className="mx-auto aspect-square w-full max-w-md overflow-hidden rounded-lg bg-black"
-      />
-      {/* Overlay guide */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="h-[72%] w-[72%] rounded-lg border-2 border-white/60 shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]" />
+        className="relative w-full overflow-hidden bg-black"
+        style={{ height: "min(70vh, 420px)" }}
+      >
+        <div
+          id={containerId}
+          className="absolute inset-0 [&_video]:!absolute [&_video]:!inset-0 [&_video]:!h-full [&_video]:!w-full [&_video]:!object-cover"
+        />
+        {/* Guide overlay */}
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+          <div className="aspect-square w-[70%] max-w-[280px] rounded-lg border-2 border-white/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]" />
+        </div>
       </div>
 
-      {/* Controls */}
-      <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+      {/* Controls below the camera, never over the video */}
+      <div className="relative z-20 mt-3 flex flex-wrap items-center justify-center gap-2 px-2 pb-2">
         {torchSupported ? (
           <button
             type="button"
@@ -204,7 +191,7 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
       </div>
 
       {permError ? (
-        <div className="mt-3 flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive">
+        <div className="relative z-20 m-2 flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-xs text-destructive">
           <Camera className="mt-0.5 h-4 w-4 shrink-0" />
           <div>
             <div className="font-semibold">Não foi possível acessar a câmera</div>
