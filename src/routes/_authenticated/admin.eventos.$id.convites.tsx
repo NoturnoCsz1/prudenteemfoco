@@ -238,11 +238,3 @@ function InvitesPage() {
     </div>
   );
 }
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
