@@ -115,40 +115,40 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
           {description ? <DialogDescription>{description}</DialogDescription> : null}
         </DialogHeader>
 
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex w-full min-w-0 flex-col items-center gap-3">
           {busy || !dataUrl ? (
-            <div className="flex h-64 w-64 items-center justify-center rounded-md border border-dashed border-border">
+            <div className="flex aspect-square w-full max-w-[280px] items-center justify-center rounded-md border border-dashed border-border">
               <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
           ) : (
             <img
               src={dataUrl}
               alt="QR Code"
-              className="h-64 w-64 rounded-md border border-border bg-white p-2"
+              className="aspect-square w-full max-w-[280px] rounded-md border border-border bg-white p-2"
             />
           )}
 
           {meta && meta.length > 0 ? (
-            <dl className="w-full space-y-1 text-xs">
+            <dl className="w-full min-w-0 space-y-1 text-xs">
               {meta.map((m) => (
-                <div key={m.label} className="flex justify-between gap-2">
-                  <dt className="text-muted-foreground">{m.label}</dt>
-                  <dd className="text-right font-medium">{m.value}</dd>
+                <div key={m.label} className="flex min-w-0 justify-between gap-2">
+                  <dt className="shrink-0 text-muted-foreground">{m.label}</dt>
+                  <dd className="min-w-0 truncate text-right font-medium">{m.value}</dd>
                 </div>
               ))}
             </dl>
           ) : null}
 
           {token ? (
-            <div className="w-full">
+            <div className="w-full min-w-0">
               <p className="mb-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
                 Token (não será exibido novamente)
               </p>
-              <div className="flex items-center gap-1">
+              <div className="flex min-w-0 items-center gap-1">
                 <code className="min-w-0 flex-1 truncate rounded bg-muted/60 px-2 py-1 font-mono text-[11px]">
                   {token}
                 </code>
-                <Button size="sm" variant="outline" onClick={copy}>
+                <Button size="sm" variant="outline" onClick={copy} className="shrink-0">
                   <Copy className="h-3.5 w-3.5" />
                 </Button>
               </div>
@@ -157,10 +157,15 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
         </div>
 
         <DialogFooter className="flex-col gap-2 sm:flex-row">
-          <Button variant="outline" onClick={download} disabled={!dataUrl} className="w-full sm:w-auto">
+          <Button variant="outline" onClick={download} disabled={!dataUrl} className="min-h-[48px] w-full sm:w-auto">
             Baixar PNG
           </Button>
-          <Button onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
+          {canShare ? (
+            <Button variant="outline" onClick={share} disabled={!dataUrl} className="min-h-[48px] w-full sm:w-auto">
+              Compartilhar
+            </Button>
+          ) : null}
+          <Button onClick={() => onOpenChange(false)} className="min-h-[48px] w-full sm:w-auto">
             Fechar
           </Button>
         </DialogFooter>
