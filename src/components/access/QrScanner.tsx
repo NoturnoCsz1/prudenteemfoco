@@ -146,7 +146,7 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
     const s = scannerRef.current;
     if (!s) return;
     try {
-      const constraints = { advanced: [{ torch: !torchOn }] } as MediaTrackConstraints;
+      const constraints = { advanced: [{ torch: !torchOn } as unknown as MediaTrackConstraintSet] } as MediaTrackConstraints;
       // applyVideoConstraints is available on the running scanner
       await (s as unknown as { applyVideoConstraints: (c: MediaTrackConstraints) => Promise<void> }).applyVideoConstraints(constraints);
       setTorchOn((v) => !v);
