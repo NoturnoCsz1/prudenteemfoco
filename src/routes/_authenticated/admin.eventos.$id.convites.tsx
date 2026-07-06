@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Ticket } from "lucide-react";
+import { Loader2, QrCode, Ticket } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { OperationsNav } from "@/components/admin/OperationsNav";
+import { QrCodeModal } from "@/components/access/QrCodeModal";
 import {
   INVITE_STATUS_LABEL,
   INVITE_TYPE_LABEL,
@@ -90,6 +92,38 @@ function InvitesPage() {
     qc.invalidateQueries({ queryKey: ["admin", "invites", eventId] });
   }
 
+  const [qrToken, setQrToken] = useState<string | null>(null);
+  const [qrInvite, setQrInvite] = useState<Invite | null>(null);
+  const [qrOpen, setQrOpen] = useState(false);
+  const [emitting, setEmitting] = useState<string | null>(null);
+
+  async function emitQr(inv: Invite) {
+    setEmitting(inv.id);
+    try {
+      const { data, error } = await (supabase as unknown as {
+        rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>;
+      }).rpc("create_access_token", {
+        _event_id: eventId,
+        _target_type: "event",
+        _target_id: eventId,
+        _subject_type: "invite",
+        _subject_id: inv.id,
+        _capacity_limit: 1,
+        _label: `Convite · ${inv.name}`,
+      });
+      if (error) throw error as Error;
+      const row = (Array.isArray(data) ? data[0] : data) as { token_plain?: string } | null;
+      if (!row?.token_plain) throw new Error("Falha ao gerar token");
+      setQrToken(row.token_plain);
+      setQrInvite(inv);
+      setQrOpen(true);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setEmitting(null);
+    }
+  }
+
   return (
     <div className="p-5 md:p-8">
       <OperationsNav
@@ -145,13 +179,28 @@ function InvitesPage() {
                       </td>
                       <td className="px-3 py-2 text-right">
                         {st === "active" ? (
-                          <button
-                            type="button"
-                            onClick={() => revoke(inv)}
-                            className="rounded-md border border-border px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
-                          >
-                            Revogar
-                          </button>
+                          <div className="flex justify-end gap-1">
+                            <button
+                              type="button"
+                              onClick={() => emitQr(inv)}
+                              disabled={emitting === inv.id}
+                              className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted disabled:opacity-50"
+                            >
+                              {emitting === inv.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <QrCode className="h-3 w-3" />
+                              )}
+                              Emitir QR
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => revoke(inv)}
+                              className="rounded-md border border-border px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
+                            >
+                              Revogar
+                            </button>
+                          </div>
                         ) : (
                           <span className="text-xs text-muted-foreground">—</span>
                         )}
@@ -164,6 +213,28 @@ function InvitesPage() {
           </div>
         )}
       </div>
+
+      <QrCodeModal
+        open={qrOpen}
+        onOpenChange={(v) => {
+          setQrOpen(v);
+          if (!v) {
+            setQrToken(null);
+            setQrInvite(null);
+          }
+        }}
+        token={qrToken}
+        title={qrInvite ? `QR do convite · ${qrInvite.name}` : "QR do convite"}
+        description="Uso único (1 entrada). Guarde ou envie ao convidado agora — o token não voltará a ser exibido."
+        meta={
+          qrInvite
+            ? [
+                { label: "Tipo", value: INVITE_TYPE_LABEL[qrInvite.type as InviteType] },
+                { label: "Uso", value: "1 entrada" },
+              ]
+            : undefined
+        }
+      />
     </div>
   );
 }

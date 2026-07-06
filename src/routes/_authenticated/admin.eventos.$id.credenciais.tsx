@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Loader2, QrCode, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { OperationsNav } from "@/components/admin/OperationsNav";
+import { QrCodeModal } from "@/components/access/QrCodeModal";
 import {
   CREDENTIAL_ROLE_LABEL,
   CREDENTIAL_STATUS_LABEL,
@@ -89,6 +91,38 @@ function CredentialsPage() {
     qc.invalidateQueries({ queryKey: ["admin", "credentials", eventId] });
   }
 
+  const [qrToken, setQrToken] = useState<string | null>(null);
+  const [qrCred, setQrCred] = useState<Credential | null>(null);
+  const [qrOpen, setQrOpen] = useState(false);
+  const [emitting, setEmitting] = useState<string | null>(null);
+
+  async function emitQr(c: Credential) {
+    setEmitting(c.id);
+    try {
+      const { data, error } = await (supabase as unknown as {
+        rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>;
+      }).rpc("create_access_token", {
+        _event_id: eventId,
+        _target_type: "event",
+        _target_id: eventId,
+        _subject_type: "credential",
+        _subject_id: c.id,
+        _capacity_limit: null,
+        _label: `Credencial · ${c.holder_name}`,
+      });
+      if (error) throw error as Error;
+      const row = (Array.isArray(data) ? data[0] : data) as { token_plain?: string } | null;
+      if (!row?.token_plain) throw new Error("Falha ao gerar token");
+      setQrToken(row.token_plain);
+      setQrCred(c);
+      setQrOpen(true);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setEmitting(null);
+    }
+  }
+
   return (
     <div className="p-5 md:p-8">
       <OperationsNav
@@ -143,13 +177,30 @@ function CredentialsPage() {
                         {c.document_id || "—"}
                       </td>
                       <td className="px-3 py-2 text-right">
-                        <button
-                          type="button"
-                          onClick={() => toggle(c)}
-                          className="rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
-                        >
-                          {st === "active" ? "Desativar" : "Ativar"}
-                        </button>
+                        <div className="flex justify-end gap-1">
+                          {st === "active" ? (
+                            <button
+                              type="button"
+                              onClick={() => emitQr(c)}
+                              disabled={emitting === c.id}
+                              className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted disabled:opacity-50"
+                            >
+                              {emitting === c.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <QrCode className="h-3 w-3" />
+                              )}
+                              Emitir QR
+                            </button>
+                          ) : null}
+                          <button
+                            type="button"
+                            onClick={() => toggle(c)}
+                            className="rounded-md border border-border px-2 py-1 text-xs hover:bg-muted"
+                          >
+                            {st === "active" ? "Desativar" : "Ativar"}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -159,6 +210,28 @@ function CredentialsPage() {
           </div>
         )}
       </div>
+
+      <QrCodeModal
+        open={qrOpen}
+        onOpenChange={(v) => {
+          setQrOpen(v);
+          if (!v) {
+            setQrToken(null);
+            setQrCred(null);
+          }
+        }}
+        token={qrToken}
+        title={qrCred ? `QR de credencial · ${qrCred.holder_name}` : "QR de credencial"}
+        description="Uso ilimitado durante o evento. Guarde ou imprima agora — o token não voltará a ser exibido."
+        meta={
+          qrCred
+            ? [
+                { label: "Papel", value: CREDENTIAL_ROLE_LABEL[qrCred.role_type as CredentialRoleType] },
+                { label: "Uso", value: "Ilimitado" },
+              ]
+            : undefined
+        }
+      />
     </div>
   );
 }

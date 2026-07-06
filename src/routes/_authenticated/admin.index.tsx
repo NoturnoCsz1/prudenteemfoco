@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarDays, CircleDot, Loader2 } from "lucide-react";
+import { CalendarDays, CircleDot, Loader2, ScanLine } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPageHeader } from "@/components/admin/AdminPage";
 
@@ -101,6 +101,15 @@ function AdminDashboard() {
         title="Painel operacional"
         description="Visão consolidada dos eventos, entradas e ocupação em tempo real."
       />
+
+      <div className="mt-4">
+        <Link
+          to="/admin/portaria"
+          className="inline-flex items-center gap-2 rounded-md border border-primary/40 bg-primary/10 px-3 py-2 text-sm font-medium text-primary hover:bg-primary/20"
+        >
+          <ScanLine className="h-4 w-4" /> Abrir Portaria (validador global)
+        </Link>
+      </div>
 
       <section className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
         <StatCard label="Entradas hoje" value={statsQ.data?.allowedToday} tone="allow" />
