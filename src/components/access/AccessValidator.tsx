@@ -82,6 +82,9 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
   const [manual, setManual] = useState("");
   const cooldownRef = useRef<number | null>(null);
 
+  const lockRef = useRef(false);
+  const lastTokenRef = useRef<{ token: string; at: number } | null>(null);
+
   useEffect(() => {
     return () => {
       if (cooldownRef.current) window.clearTimeout(cooldownRef.current);
@@ -89,7 +92,13 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
   }, []);
 
   const submit = async (token: string) => {
-    if (busy) return;
+    if (lockRef.current || busy) return;
+    // Debounce identical token within cooldown window
+    const now = Date.now();
+    const last = lastTokenRef.current;
+    if (last && last.token === token && now - last.at < COOLDOWN_MS + 800) return;
+    lockRef.current = true;
+    lastTokenRef.current = { token, at: now };
     setBusy(true);
     const r = await validateAccessToken(token, expectedEventId ?? null);
     setBusy(false);
@@ -98,11 +107,11 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
     feedbackFor(r.status);
     onValidated?.(r);
 
-    // Cooldown before allowing next scan
     if (cooldownRef.current) window.clearTimeout(cooldownRef.current);
     cooldownRef.current = window.setTimeout(() => {
       setResult(null);
-    }, COOLDOWN_MS);
+      lockRef.current = false;
+    }, r.status === "allowed" ? COOLDOWN_MS : COOLDOWN_MS + 800);
   };
 
   const runManual = async () => {
