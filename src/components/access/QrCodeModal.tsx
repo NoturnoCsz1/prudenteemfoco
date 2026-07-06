@@ -53,17 +53,63 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
     toast.success("Token copiado");
   };
 
-  const download = () => {
-    if (!dataUrl) return;
-    const a = document.createElement("a");
-    a.href = dataUrl;
-    a.download = `qr-${(token ?? "token").slice(0, 8)}.png`;
-    a.click();
+  const dataUrlToBlob = async (): Promise<Blob | null> => {
+    if (!dataUrl) return null;
+    try {
+      const res = await fetch(dataUrl);
+      return await res.blob();
+    } catch {
+      return null;
+    }
   };
+
+  const download = async () => {
+    const blob = await dataUrlToBlob();
+    if (!blob) {
+      toast.error("Não foi possível gerar o PNG");
+      return;
+    }
+    const filename = `qr-${(token ?? "token").slice(0, 8)}.png`;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  };
+
+  const share = async () => {
+    const blob = await dataUrlToBlob();
+    if (!blob) {
+      toast.error("Não foi possível gerar o PNG");
+      return;
+    }
+    const filename = `qr-${(token ?? "token").slice(0, 8)}.png`;
+    const file = new File([blob], filename, { type: "image/png" });
+    const nav = navigator as Navigator & {
+      canShare?: (data: { files?: File[] }) => boolean;
+      share?: (data: { files?: File[]; title?: string; text?: string }) => Promise<void>;
+    };
+    if (nav.canShare && nav.canShare({ files: [file] }) && nav.share) {
+      try {
+        await nav.share({ files: [file], title: "QR emitido" });
+      } catch {
+        // user cancelled
+      }
+    } else {
+      await download();
+    }
+  };
+
+  const canShare = typeof navigator !== "undefined"
+    && !!(navigator as Navigator & { canShare?: (d: { files?: File[] }) => boolean }).canShare;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="w-[calc(100vw-24px)] max-w-md max-h-[calc(100dvh-24px)] overflow-x-hidden overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description ? <DialogDescription>{description}</DialogDescription> : null}
