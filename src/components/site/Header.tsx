@@ -62,7 +62,7 @@ export function SiteHeader() {
       }`}
     >
 
-      <div className="container-page flex h-14 items-center justify-between md:h-16">
+      <div className="container-page flex h-16 items-center justify-between md:h-16">
         <Link
           to="/"
           className="flex shrink-0 items-center py-1 pr-4"
@@ -134,7 +134,7 @@ export function SiteHeader() {
 
     {/* Full-viewport editorial mobile menu — sibling of <header> to escape backdrop-filter containing block */}
     <div
-      className={`fixed inset-x-0 bottom-0 top-14 z-50 overflow-y-auto overscroll-contain bg-background md:hidden ${
+      className={`fixed inset-x-0 bottom-0 top-16 z-50 overflow-y-auto overscroll-contain bg-background md:hidden ${
         open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
       } transition-opacity duration-200 motion-reduce:transition-none`}
       aria-hidden={!open}
