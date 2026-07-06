@@ -338,15 +338,42 @@ function EventCardRow({ event }: { event: PublicEvent }) {
   const attribution = useAttribution();
   const search = buildSearch(attribution);
   const iso = event.starts_at;
+  const isoEnd = event.ends_at;
+  const TZ = "America/Sao_Paulo";
   let day = "—";
   let month = "";
+  let isRange = false;
+  let crossMonth = false;
   if (iso) {
     const d = new Date(iso);
-    day = d.toLocaleDateString("pt-BR", { day: "2-digit", timeZone: "America/Sao_Paulo" });
-    month = d
-      .toLocaleDateString("pt-BR", { month: "short", timeZone: "America/Sao_Paulo" })
+    const startDay = d.toLocaleDateString("pt-BR", { day: "2-digit", timeZone: TZ });
+    const startMonth = d
+      .toLocaleDateString("pt-BR", { month: "short", timeZone: TZ })
       .replace(".", "")
       .toUpperCase();
+    day = startDay;
+    month = startMonth;
+    if (isoEnd) {
+      const e = new Date(isoEnd);
+      const endDay = e.toLocaleDateString("pt-BR", { day: "2-digit", timeZone: TZ });
+      const endMonth = e
+        .toLocaleDateString("pt-BR", { month: "short", timeZone: TZ })
+        .replace(".", "")
+        .toUpperCase();
+      const sameDay =
+        d.toLocaleDateString("pt-BR", { timeZone: TZ }) ===
+        e.toLocaleDateString("pt-BR", { timeZone: TZ });
+      if (!sameDay) {
+        isRange = true;
+        if (startMonth === endMonth) {
+          day = `${startDay}–${endDay}`;
+        } else {
+          crossMonth = true;
+          day = `${startDay}${startMonth}–${endDay}${endMonth}`;
+          month = "";
+        }
+      }
+    }
   }
   return (
     <li>
@@ -358,10 +385,22 @@ function EventCardRow({ event }: { event: PublicEvent }) {
         className="group grid grid-cols-[auto,1fr,auto] items-center gap-4 py-5 md:grid-cols-[6rem,1fr,auto] md:gap-8 md:py-8"
       >
         <div className="flex flex-col items-start leading-none">
-          <span className="date-block text-4xl text-foreground md:text-6xl">{day}</span>
-          <span className="mt-1 font-display text-[10px] font-bold uppercase tracking-[0.3em] text-primary md:mt-2 md:text-xs">
-            {month}
+          <span
+            className={`date-block text-foreground ${
+              crossMonth
+                ? "text-lg md:text-2xl"
+                : isRange
+                  ? "text-2xl md:text-4xl"
+                  : "text-4xl md:text-6xl"
+            }`}
+          >
+            {day}
           </span>
+          {month && (
+            <span className="mt-1 font-display text-[10px] font-bold uppercase tracking-[0.3em] text-primary md:mt-2 md:text-xs">
+              {month}
+            </span>
+          )}
         </div>
         <div className="min-w-0">
           <h3 className="poster text-xl text-foreground transition-colors group-hover:text-primary md:text-3xl">
