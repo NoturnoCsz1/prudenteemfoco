@@ -92,6 +92,38 @@ function InvitesPage() {
     qc.invalidateQueries({ queryKey: ["admin", "invites", eventId] });
   }
 
+  const [qrToken, setQrToken] = useState<string | null>(null);
+  const [qrInvite, setQrInvite] = useState<Invite | null>(null);
+  const [qrOpen, setQrOpen] = useState(false);
+  const [emitting, setEmitting] = useState<string | null>(null);
+
+  async function emitQr(inv: Invite) {
+    setEmitting(inv.id);
+    try {
+      const { data, error } = await (supabase as unknown as {
+        rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>;
+      }).rpc("create_access_token", {
+        _event_id: eventId,
+        _target_type: "event",
+        _target_id: eventId,
+        _subject_type: "invite",
+        _subject_id: inv.id,
+        _capacity_limit: 1,
+        _label: `Convite · ${inv.name}`,
+      });
+      if (error) throw error as Error;
+      const row = (Array.isArray(data) ? data[0] : data) as { token_plain?: string } | null;
+      if (!row?.token_plain) throw new Error("Falha ao gerar token");
+      setQrToken(row.token_plain);
+      setQrInvite(inv);
+      setQrOpen(true);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setEmitting(null);
+    }
+  }
+
   return (
     <div className="p-5 md:p-8">
       <OperationsNav
