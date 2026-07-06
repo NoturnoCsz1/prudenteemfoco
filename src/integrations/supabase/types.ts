@@ -2229,6 +2229,14 @@ export type Database = {
           year_label: string
         }[]
       }
+      peek_access_token_event: {
+        Args: { _token_plain: string }
+        Returns: {
+          event_id: string
+          organization_id: string
+          status: Database["public"]["Enums"]["access_token_status"]
+        }[]
+      }
       primary_site_org_id: { Args: never; Returns: string }
       process_access_attempt: {
         Args: {
