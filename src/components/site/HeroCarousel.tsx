@@ -116,23 +116,44 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
     if (i !== index && i >= 0 && i < slides.length) setIndex(i);
   };
 
-  const pauseInteraction = () => setPaused(true);
+  // Pausa temporária que volta a autoplay depois de 12s (evita travar o carrossel
+  // após qualquer interação — hover no desktop, swipe/tap no mobile).
+  const resumeTimer = useRef<number | null>(null);
+  const pauseFor = (ms = 12000) => {
+    setPaused(true);
+    if (resumeTimer.current) window.clearTimeout(resumeTimer.current);
+    resumeTimer.current = window.setTimeout(() => setPaused(false), ms);
+  };
+  const resumeNow = () => {
+    if (resumeTimer.current) {
+      window.clearTimeout(resumeTimer.current);
+      resumeTimer.current = null;
+    }
+    if (typeof document !== "undefined" && document.hidden) return;
+    setPaused(false);
+  };
+  useEffect(() => () => {
+    if (resumeTimer.current) window.clearTimeout(resumeTimer.current);
+  }, []);
 
   const go = (i: number) => {
-    setPaused(true);
+    pauseFor();
     setIndex(((i % slides.length) + slides.length) % slides.length);
   };
 
   return (
     <section
       className="relative isolate -mt-14 md:-mt-16"
-      onMouseEnter={hasMany ? pauseInteraction : undefined}
-      onFocus={hasMany ? pauseInteraction : undefined}
+      onMouseEnter={hasMany ? () => pauseFor(60000) : undefined}
+      onMouseLeave={hasMany ? resumeNow : undefined}
+      onFocus={hasMany ? () => pauseFor(60000) : undefined}
+      onBlur={hasMany ? resumeNow : undefined}
     >
       <div
         ref={containerRef}
         onScroll={hasMany ? onScroll : undefined}
-        onTouchStart={hasMany ? pauseInteraction : undefined}
+        onTouchStart={hasMany ? () => pauseFor() : undefined}
+        onTouchEnd={hasMany ? () => pauseFor() : undefined}
         className={
           hasMany
             ? "flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
