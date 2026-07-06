@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { AlertTriangle, CheckCircle2, Loader2, QrCode, ScanLine, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Loader2, QrCode, RefreshCw, ScanLine, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 import { QrScanner } from "./QrScanner";
 import {
   feedbackFor,
