@@ -55,17 +55,17 @@ export function SiteHeader() {
   return (
     <>
     <header
-      className={`sticky top-0 z-40 transition-colors duration-300 ${
+      className={`sticky top-0 z-40 overflow-visible transition-colors duration-300 ${
         transparent
           ? "bg-transparent"
           : "bg-background/90 backdrop-blur-md"
       }`}
     >
 
-      <div className="container-page flex h-16 items-center justify-between md:h-16">
+      <div className="container-page flex h-16 items-center justify-between overflow-visible md:h-16">
         <Link
           to="/"
-          className="flex shrink-0 items-center py-1 pr-4"
+          className="flex shrink-0 items-center overflow-visible py-1 pr-4"
           onClick={() => setOpen(false)}
           aria-label="Prudente em Foco — Início"
         >

@@ -31,7 +31,7 @@ export function BrandLogo({
       src={url}
       alt={alt}
       className={`${HEIGHT[size]} block w-auto max-w-full shrink-0 object-contain ${className}`}
-      style={{ aspectRatio: variant === "horizontal" ? "415 / 125" : variant === "compact" ? "431 / 124" : "158 / 157" }}
+      style={{ aspectRatio: variant === "horizontal" ? "415 / 125" : variant === "compact" ? "439 / 138" : "158 / 157" }}
       loading={priority ? "eager" : "lazy"}
       decoding="async"
     />
