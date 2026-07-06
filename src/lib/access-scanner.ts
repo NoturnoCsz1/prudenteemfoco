@@ -60,13 +60,7 @@ const REASON_LABEL: Record<string, string> = {
   explicit_deny_rule: "Regra de bloqueio aplicada",
 };
 
-  credential_inactive: "Credencial inativa",
-  invite_not_active: "Convite não está ativo",
-  invite_scope_restricted: "Convite fora do escopo",
-  insufficient_role: "Perfil sem permissão",
-  not_a_member: "Não é membro da organização",
-  explicit_deny_rule: "Regra de bloqueio aplicada",
-};
+
 
 export function reasonLabel(reason: string | null | undefined): string | null {
   if (!reason) return null;
