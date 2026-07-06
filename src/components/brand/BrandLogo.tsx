@@ -2,8 +2,8 @@ type Variant = "horizontal" | "compact" | "mark";
 type Size = "sm" | "md" | "lg" | "xl";
 
 const HEIGHT: Record<Size, string> = {
-  sm: "h-9 md:h-11",
-  md: "h-11 md:h-14",
+  sm: "h-8 md:h-10",
+  md: "h-9 md:h-12",
   lg: "h-20 md:h-24",
   xl: "h-24 md:h-32",
 };
@@ -30,7 +30,8 @@ export function BrandLogo({
     <img
       src={url}
       alt={alt}
-      className={`${HEIGHT[size]} w-auto object-contain ${className}`}
+      className={`${HEIGHT[size]} block w-auto max-w-full shrink-0 object-contain ${className}`}
+      style={{ aspectRatio: variant === "horizontal" ? "415 / 125" : variant === "compact" ? "415 / 108" : "158 / 157" }}
       loading={priority ? "eager" : "lazy"}
       decoding="async"
     />

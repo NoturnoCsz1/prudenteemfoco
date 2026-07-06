@@ -65,7 +65,7 @@ export function SiteHeader() {
       <div className="container-page flex h-14 items-center justify-between md:h-16">
         <Link
           to="/"
-          className="flex items-center"
+          className="flex shrink-0 items-center py-1 pr-4"
           onClick={() => setOpen(false)}
           aria-label="Prudente em Foco — Início"
         >
