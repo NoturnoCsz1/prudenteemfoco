@@ -81,10 +81,11 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
   const [result, setResult] = useState<ValidationResult | null>(null);
   const [history, setHistory] = useState<ValidationResult[]>([]);
   const [manual, setManual] = useState("");
+  const [lockedToken, setLockedToken] = useState<string | null>(null);
   const cooldownRef = useRef<number | null>(null);
 
   const lockRef = useRef(false);
-  const lastTokenRef = useRef<{ token: string; at: number } | null>(null);
+  const lockedTokenRef = useRef<string | null>(null);
 
   useEffect(() => {
     return () => {
@@ -94,12 +95,10 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
 
   const submit = async (token: string) => {
     if (lockRef.current || busy) return;
-    // Debounce identical token within cooldown window
-    const now = Date.now();
-    const last = lastTokenRef.current;
-    if (last && last.token === token && now - last.at < COOLDOWN_MS + 800) return;
+    // Persistent same-QR lock: after any result, ignore the exact same token
+    // until the operator taps "Validar novamente" or a different QR is scanned.
+    if (lockedTokenRef.current && lockedTokenRef.current === token) return;
     lockRef.current = true;
-    lastTokenRef.current = { token, at: now };
     setBusy(true);
     const r = await validateAccessToken(token, expectedEventId ?? null);
     setBusy(false);
@@ -108,6 +107,10 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
     feedbackFor(r.status);
     onValidated?.(r);
 
+    // Lock this token content so the same QR still in frame doesn't re-trigger.
+    lockedTokenRef.current = token;
+    setLockedToken(token);
+
     if (cooldownRef.current) window.clearTimeout(cooldownRef.current);
     cooldownRef.current = window.setTimeout(() => {
       setResult(null);
@@ -115,10 +118,27 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
     }, r.status === "allowed" ? COOLDOWN_MS : COOLDOWN_MS + 800);
   };
 
+  const revalidateSame = async () => {
+    const t = lockedTokenRef.current;
+    if (!t) return;
+    lockedTokenRef.current = null;
+    setLockedToken(null);
+    setResult(null);
+    lockRef.current = false;
+    await submit(t);
+  };
+
+  const clearLock = () => {
+    lockedTokenRef.current = null;
+    setLockedToken(null);
+  };
+
   const runManual = async () => {
     const v = manual.trim();
     if (!v) return;
     setManual("");
+    // Manual re-entry should always attempt again, even if it's the same content.
+    if (lockedTokenRef.current === v) clearLock();
     await submit(v);
   };
 
@@ -146,7 +166,7 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
           <div className="relative">
             <QrScanner
               onDecoded={submit}
-              paused={busy || result !== null}
+              paused={busy || result !== null || lockedToken !== null}
               onClose={() => setScanning(false)}
             />
             {/* Result overlay */}
@@ -156,8 +176,17 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
                 <Loader2 className="h-3.5 w-3.5 animate-spin" /> Validando…
               </div>
             ) : null}
+            {!result && !busy && lockedToken ? (
+              <div className="absolute inset-x-0 bottom-2 mx-auto flex w-fit max-w-[92%] items-center gap-2 rounded-full bg-background/90 px-3 py-1 text-xs shadow">
+                <span className="opacity-80">QR já lido. Afaste ou toque em validar novamente.</span>
+                <Button size="sm" variant="outline" className="h-7 gap-1 px-2 text-[11px]" onClick={revalidateSame}>
+                  <RefreshCw className="h-3 w-3" /> Validar novamente
+                </Button>
+              </div>
+            ) : null}
           </div>
         )}
+
       </div>
 
       {/* Manual fallback */}
