@@ -91,6 +91,38 @@ function CredentialsPage() {
     qc.invalidateQueries({ queryKey: ["admin", "credentials", eventId] });
   }
 
+  const [qrToken, setQrToken] = useState<string | null>(null);
+  const [qrCred, setQrCred] = useState<Credential | null>(null);
+  const [qrOpen, setQrOpen] = useState(false);
+  const [emitting, setEmitting] = useState<string | null>(null);
+
+  async function emitQr(c: Credential) {
+    setEmitting(c.id);
+    try {
+      const { data, error } = await (supabase as unknown as {
+        rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>;
+      }).rpc("create_access_token", {
+        _event_id: eventId,
+        _target_type: "event",
+        _target_id: eventId,
+        _subject_type: "credential",
+        _subject_id: c.id,
+        _capacity_limit: null,
+        _label: `Credencial · ${c.holder_name}`,
+      });
+      if (error) throw error as Error;
+      const row = (Array.isArray(data) ? data[0] : data) as { token_plain?: string } | null;
+      if (!row?.token_plain) throw new Error("Falha ao gerar token");
+      setQrToken(row.token_plain);
+      setQrCred(c);
+      setQrOpen(true);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setEmitting(null);
+    }
+  }
+
   return (
     <div className="p-5 md:p-8">
       <OperationsNav
