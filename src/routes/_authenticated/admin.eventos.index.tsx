@@ -272,7 +272,7 @@ function EventosAdminPage() {
                       )}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 md:flex-wrap">
+                  <div className="flex items-center gap-2 md:flex-wrap overflow-hidden">
                     <Link
                       to="/admin/eventos/$id"
                       params={{ id: row.id }}
