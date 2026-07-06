@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AlertTriangle, CheckCircle2, Loader2, QrCode, RefreshCw, ScanLine, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Loader2, QrCode, ScanLine, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { QrScanner } from "./QrScanner";
@@ -12,7 +12,6 @@ import {
 } from "@/lib/access-scanner";
 
 type Props = {
-  /** If set, tokens whose event_id doesn't match are refused without consuming. */
   expectedEventId?: string | null;
   eventTitle?: string | null;
   onValidated?: (r: ValidationResult) => void;
@@ -21,59 +20,67 @@ type Props = {
 
 const STATUS_STYLE: Record<
   ValidationStatus,
-  { border: string; bg: string; text: string; icon: React.ReactNode }
+  { border: string; bg: string; text: string; icon: React.ReactNode; overlayBg: string }
 > = {
   allowed: {
-    border: "border-emerald-500/60",
+    border: "border-emerald-500",
     bg: "bg-emerald-500/15",
-    text: "text-emerald-400",
-    icon: <CheckCircle2 className="h-8 w-8" />,
+    overlayBg: "bg-emerald-600/95",
+    text: "text-emerald-50",
+    icon: <CheckCircle2 className="h-16 w-16" />,
   },
   already_used: {
-    border: "border-amber-500/60",
+    border: "border-amber-500",
     bg: "bg-amber-500/15",
-    text: "text-amber-400",
-    icon: <AlertTriangle className="h-8 w-8" />,
+    overlayBg: "bg-amber-500/95",
+    text: "text-amber-50",
+    icon: <AlertTriangle className="h-16 w-16" />,
   },
   wrong_event: {
-    border: "border-amber-500/60",
+    border: "border-amber-500",
     bg: "bg-amber-500/15",
-    text: "text-amber-400",
-    icon: <AlertTriangle className="h-8 w-8" />,
-  },
-  revoked: {
-    border: "border-destructive/60",
-    bg: "bg-destructive/15",
-    text: "text-destructive",
-    icon: <XCircle className="h-8 w-8" />,
-  },
-  expired: {
-    border: "border-destructive/60",
-    bg: "bg-destructive/15",
-    text: "text-destructive",
-    icon: <XCircle className="h-8 w-8" />,
+    overlayBg: "bg-amber-500/95",
+    text: "text-amber-50",
+    icon: <AlertTriangle className="h-16 w-16" />,
   },
   capacity: {
-    border: "border-destructive/60",
-    bg: "bg-destructive/15",
-    text: "text-destructive",
-    icon: <XCircle className="h-8 w-8" />,
+    border: "border-amber-500",
+    bg: "bg-amber-500/15",
+    overlayBg: "bg-amber-500/95",
+    text: "text-amber-50",
+    icon: <AlertTriangle className="h-16 w-16" />,
+  },
+  revoked: {
+    border: "border-red-600",
+    bg: "bg-red-600/15",
+    overlayBg: "bg-red-600/95",
+    text: "text-red-50",
+    icon: <XCircle className="h-16 w-16" />,
+  },
+  expired: {
+    border: "border-red-600",
+    bg: "bg-red-600/15",
+    overlayBg: "bg-red-600/95",
+    text: "text-red-50",
+    icon: <XCircle className="h-16 w-16" />,
   },
   invalid: {
-    border: "border-destructive/60",
-    bg: "bg-destructive/15",
-    text: "text-destructive",
-    icon: <XCircle className="h-8 w-8" />,
+    border: "border-red-600",
+    bg: "bg-red-600/15",
+    overlayBg: "bg-red-600/95",
+    text: "text-red-50",
+    icon: <XCircle className="h-16 w-16" />,
   },
   network_error: {
-    border: "border-amber-500/60",
+    border: "border-amber-500",
     bg: "bg-amber-500/15",
-    text: "text-amber-400",
-    icon: <AlertTriangle className="h-8 w-8" />,
+    overlayBg: "bg-amber-500/95",
+    text: "text-amber-50",
+    icon: <AlertTriangle className="h-16 w-16" />,
   },
 };
 
-const COOLDOWN_MS = 1600;
+const AUTO_CLEAR_MS = 2200;
 
 export function AccessValidator({ expectedEventId, eventTitle, onValidated, autoStart = false }: Props) {
   const [scanning, setScanning] = useState(autoStart);
@@ -81,64 +88,59 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
   const [result, setResult] = useState<ValidationResult | null>(null);
   const [history, setHistory] = useState<ValidationResult[]>([]);
   const [manual, setManual] = useState("");
-  const [lockedToken, setLockedToken] = useState<string | null>(null);
-  const cooldownRef = useRef<number | null>(null);
+  const clearTimerRef = useRef<number | null>(null);
 
   const lockRef = useRef(false);
-  const lockedTokenRef = useRef<string | null>(null);
+  const lastTokenRef = useRef<{ token: string; at: number } | null>(null);
 
   useEffect(() => {
     return () => {
-      if (cooldownRef.current) window.clearTimeout(cooldownRef.current);
+      if (clearTimerRef.current) window.clearTimeout(clearTimerRef.current);
     };
   }, []);
 
   const submit = async (token: string) => {
     if (lockRef.current || busy) return;
-    // Persistent same-QR lock: after any result, ignore the exact same token
-    // until the operator taps "Validar novamente" or a different QR is scanned.
-    if (lockedTokenRef.current && lockedTokenRef.current === token) return;
+    // Multi-frame dedupe: same token within 3s is ignored silently.
+    const now = Date.now();
+    const last = lastTokenRef.current;
+    if (last && last.token === token && now - last.at < 3000) return;
+    lastTokenRef.current = { token, at: now };
+
     lockRef.current = true;
     setBusy(true);
-    const r = await validateAccessToken(token, expectedEventId ?? null);
-    setBusy(false);
-    setResult(r);
-    setHistory((prev) => [r, ...prev].slice(0, 20));
-    feedbackFor(r.status);
-    onValidated?.(r);
-
-    // Lock this token content so the same QR still in frame doesn't re-trigger.
-    lockedTokenRef.current = token;
-    setLockedToken(token);
-
-    if (cooldownRef.current) window.clearTimeout(cooldownRef.current);
-    cooldownRef.current = window.setTimeout(() => {
-      setResult(null);
-      lockRef.current = false;
-    }, r.status === "allowed" ? COOLDOWN_MS : COOLDOWN_MS + 800);
+    setResult(null);
+    try {
+      const r = await validateAccessToken(token, expectedEventId ?? null);
+      setResult(r);
+      setHistory((prev) => [r, ...prev].slice(0, 20));
+      feedbackFor(r.status);
+      onValidated?.(r);
+    } finally {
+      setBusy(false);
+      if (clearTimerRef.current) window.clearTimeout(clearTimerRef.current);
+      clearTimerRef.current = window.setTimeout(() => {
+        setResult(null);
+        lockRef.current = false;
+        // Also release last token so the operator can rescan the same QR fresh.
+        lastTokenRef.current = null;
+      }, AUTO_CLEAR_MS);
+    }
   };
 
-  const revalidateSame = async () => {
-    const t = lockedTokenRef.current;
-    if (!t) return;
-    lockedTokenRef.current = null;
-    setLockedToken(null);
+  const dismissResult = () => {
+    if (clearTimerRef.current) window.clearTimeout(clearTimerRef.current);
     setResult(null);
     lockRef.current = false;
-    await submit(t);
-  };
-
-  const clearLock = () => {
-    lockedTokenRef.current = null;
-    setLockedToken(null);
+    lastTokenRef.current = null;
   };
 
   const runManual = async () => {
     const v = manual.trim();
     if (!v) return;
     setManual("");
-    // Manual re-entry should always attempt again, even if it's the same content.
-    if (lockedTokenRef.current === v) clearLock();
+    lastTokenRef.current = null;
+    lockRef.current = false;
     await submit(v);
   };
 
@@ -151,45 +153,34 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
         </div>
       ) : null}
 
-      {/* Scanner */}
       <div className="rounded-lg border border-border bg-card p-3">
         {!scanning ? (
-          <Button
-            onClick={() => setScanning(true)}
-            className="h-14 w-full text-base"
-            size="lg"
-          >
+          <Button onClick={() => setScanning(true)} className="h-14 w-full text-base" size="lg">
             <ScanLine className="mr-2 h-5 w-5" />
             Abrir scanner
           </Button>
         ) : (
-          <div className="relative">
+          <div className="relative isolate overflow-hidden rounded-lg bg-black">
             <QrScanner
               onDecoded={submit}
-              paused={busy || result !== null || lockedToken !== null}
-              onClose={() => setScanning(false)}
+              paused={busy || result !== null}
+              onClose={() => {
+                setScanning(false);
+                dismissResult();
+              }}
             />
-            {/* Result overlay */}
-            {result ? <ResultOverlay r={result} /> : null}
+
             {busy ? (
-              <div className="absolute inset-x-0 top-2 mx-auto flex w-fit items-center gap-2 rounded-full bg-background/90 px-3 py-1 text-xs shadow">
+              <div className="pointer-events-none absolute inset-x-0 top-2 z-30 mx-auto flex w-fit items-center gap-2 rounded-full bg-background/90 px-3 py-1 text-xs shadow">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" /> Validando…
               </div>
             ) : null}
-            {!result && !busy && lockedToken ? (
-              <div className="absolute inset-x-0 bottom-2 mx-auto flex w-fit max-w-[92%] items-center gap-2 rounded-full bg-background/90 px-3 py-1 text-xs shadow">
-                <span className="opacity-80">QR já lido. Afaste ou toque em validar novamente.</span>
-                <Button size="sm" variant="outline" className="h-7 gap-1 px-2 text-[11px]" onClick={revalidateSame}>
-                  <RefreshCw className="h-3 w-3" /> Validar novamente
-                </Button>
-              </div>
-            ) : null}
+
+            {result ? <ResultOverlay r={result} onDismiss={dismissResult} /> : null}
           </div>
         )}
-
       </div>
 
-      {/* Manual fallback */}
       <details className="rounded-lg border border-border bg-card">
         <summary className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm">
           <QrCode className="h-4 w-4 text-muted-foreground" />
@@ -213,7 +204,6 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
         </div>
       </details>
 
-      {/* Local history */}
       {history.length > 0 ? (
         <div className="rounded-lg border border-border bg-card p-3">
           <div className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -227,7 +217,7 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
                   key={i}
                   className={`flex items-center justify-between rounded-md border ${s.border} ${s.bg} px-2 py-1.5`}
                 >
-                  <span className={`font-semibold ${s.text}`}>{h.title}</span>
+                  <span className="font-semibold">{h.title}</span>
                   <span className="text-[10px] text-muted-foreground">
                     {h.detail ?? reasonLabel(h.reason) ?? ""}
                   </span>
@@ -241,22 +231,24 @@ export function AccessValidator({ expectedEventId, eventTitle, onValidated, auto
   );
 }
 
-function ResultOverlay({ r }: { r: ValidationResult }) {
+function ResultOverlay({ r, onDismiss }: { r: ValidationResult; onDismiss: () => void }) {
   const s = STATUS_STYLE[r.status];
   return (
-    <div
-      className={`pointer-events-none absolute inset-0 flex items-center justify-center rounded-lg border-4 ${s.border} ${s.bg} backdrop-blur-sm`}
+    <button
+      type="button"
+      onClick={onDismiss}
+      className={`absolute inset-0 z-40 flex flex-col items-center justify-center gap-3 px-4 text-center ${s.overlayBg} ${s.text}`}
+      aria-label="Fechar resultado"
     >
-      <div className={`flex flex-col items-center gap-2 px-4 text-center ${s.text}`}>
-        {s.icon}
-        <div className="text-lg font-bold uppercase tracking-widest">{r.title}</div>
-        {r.detail ? <div className="text-xs opacity-80">{r.detail}</div> : null}
-        {r.remaining_capacity !== null && r.remaining_capacity !== undefined ? (
-          <div className="text-[11px] opacity-80">
-            Capacidade restante: {r.remaining_capacity}
-          </div>
-        ) : null}
+      {s.icon}
+      <div className="text-2xl font-black uppercase tracking-widest">{r.title}</div>
+      {r.detail ? <div className="text-sm opacity-95">{r.detail}</div> : null}
+      {r.remaining_capacity !== null && r.remaining_capacity !== undefined ? (
+        <div className="text-xs opacity-90">Capacidade restante: {r.remaining_capacity}</div>
+      ) : null}
+      <div className="mt-2 text-[11px] uppercase tracking-widest opacity-80">
+        Toque para continuar
       </div>
-    </div>
+    </button>
   );
 }
