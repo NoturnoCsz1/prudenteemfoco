@@ -276,7 +276,7 @@ function EventosAdminPage() {
                     <Link
                       to="/admin/eventos/$id"
                       params={{ id: row.id }}
-                      className="inline-flex flex-1 min-h-[40px] items-center justify-center gap-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/15 md:flex-none"
+                      className="inline-flex flex-1 min-h-[44px] items-center justify-center gap-1.5 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/15 md:flex-none whitespace-nowrap"
                     >
                       <LayoutDashboard className="h-3.5 w-3.5" />
                       Gerenciar
