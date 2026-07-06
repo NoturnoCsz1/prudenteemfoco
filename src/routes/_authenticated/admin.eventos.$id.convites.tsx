@@ -179,13 +179,28 @@ function InvitesPage() {
                       </td>
                       <td className="px-3 py-2 text-right">
                         {st === "active" ? (
-                          <button
-                            type="button"
-                            onClick={() => revoke(inv)}
-                            className="rounded-md border border-border px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
-                          >
-                            Revogar
-                          </button>
+                          <div className="flex justify-end gap-1">
+                            <button
+                              type="button"
+                              onClick={() => emitQr(inv)}
+                              disabled={emitting === inv.id}
+                              className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-muted disabled:opacity-50"
+                            >
+                              {emitting === inv.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <QrCode className="h-3 w-3" />
+                              )}
+                              Emitir QR
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => revoke(inv)}
+                              className="rounded-md border border-border px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
+                            >
+                              Revogar
+                            </button>
+                          </div>
                         ) : (
                           <span className="text-xs text-muted-foreground">—</span>
                         )}
@@ -193,6 +208,36 @@ function InvitesPage() {
                     </tr>
                   );
                 })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <QrCodeModal
+        open={qrOpen}
+        onOpenChange={(v) => {
+          setQrOpen(v);
+          if (!v) {
+            setQrToken(null);
+            setQrInvite(null);
+          }
+        }}
+        token={qrToken}
+        title={qrInvite ? `QR do convite · ${qrInvite.name}` : "QR do convite"}
+        description="Uso único (1 entrada). Guarde ou envie ao convidado agora — o token não voltará a ser exibido."
+        meta={
+          qrInvite
+            ? [
+                { label: "Tipo", value: INVITE_TYPE_LABEL[qrInvite.type as InviteType] },
+                { label: "Uso", value: "1 entrada" },
+              ]
+            : undefined
+        }
+      />
+    </div>
+  );
+}
               </tbody>
             </table>
           </div>
