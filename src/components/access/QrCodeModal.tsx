@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { Copy, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -19,22 +19,54 @@ type Props = {
   title: string;
   description?: string;
   meta?: { label: string; value: string }[];
+  /** Optional slug used in the downloaded filename (e.g. event slug). */
+  fileSlug?: string;
 };
 
-export function QrCodeModal({ open, onOpenChange, token, title, description, meta }: Props) {
+function slugify(input: string | undefined | null): string {
+  if (!input) return "qr";
+  return input
+    .toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 40) || "qr";
+}
+
+export function QrCodeModal({ open, onOpenChange, token, title, description, meta, fileSlug }: Props) {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const blobRef = useRef<Blob | null>(null);
+
+  const filename = useMemo(() => {
+    const base = slugify(fileSlug ?? title);
+    const suffix = token ? token.slice(0, 8) : Date.now().toString(36);
+    return `qr-${base}-${suffix}.png`;
+  }, [fileSlug, title, token]);
 
   useEffect(() => {
     let cancelled = false;
+    blobRef.current = null;
     if (!open || !token) {
       setDataUrl(null);
       return;
     }
     setBusy(true);
-    QRCode.toDataURL(token, { width: 512, margin: 2, errorCorrectionLevel: "M" })
-      .then((url) => {
-        if (!cancelled) setDataUrl(url);
+    // Render into a canvas so we can grab a Blob directly (mobile-friendly)
+    // and also expose a data URL for the <img> preview.
+    const canvas = document.createElement("canvas");
+    QRCode.toCanvas(canvas, token, { width: 512, margin: 2, errorCorrectionLevel: "M" })
+      .then(() => {
+        if (cancelled) return;
+        setDataUrl(canvas.toDataURL("image/png"));
+        return new Promise<void>((resolve) => {
+          canvas.toBlob((b) => {
+            if (!cancelled && b) blobRef.current = b;
+            resolve();
+          }, "image/png");
+        });
       })
       .catch(() => {
         if (!cancelled) setDataUrl(null);
@@ -53,41 +85,56 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
     toast.success("Token copiado");
   };
 
-  const dataUrlToBlob = async (): Promise<Blob | null> => {
+  const ensureBlob = async (): Promise<Blob | null> => {
+    if (blobRef.current) return blobRef.current;
     if (!dataUrl) return null;
     try {
       const res = await fetch(dataUrl);
-      return await res.blob();
+      const b = await res.blob();
+      blobRef.current = b;
+      return b;
     } catch {
       return null;
     }
   };
 
   const download = async () => {
-    const blob = await dataUrlToBlob();
+    const blob = await ensureBlob();
     if (!blob) {
       toast.error("Não foi possível gerar o PNG");
       return;
     }
-    const filename = `qr-${(token ?? "token").slice(0, 8)}.png`;
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.rel = "noopener";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    let downloaded = false;
+    try {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.rel = "noopener";
+      a.target = "_self";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      downloaded = true;
+    } catch {
+      downloaded = false;
+    }
+    if (!downloaded) {
+      // Fallback: open image so the user can long-press → Save
+      const w = window.open(url, "_blank", "noopener");
+      if (!w) {
+        toast.error("Não foi possível baixar. Use Compartilhar ou mantenha o dedo sobre a imagem para salvar.");
+      }
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
   };
 
   const share = async () => {
-    const blob = await dataUrlToBlob();
+    const blob = await ensureBlob();
     if (!blob) {
       toast.error("Não foi possível gerar o PNG");
       return;
     }
-    const filename = `qr-${(token ?? "token").slice(0, 8)}.png`;
     const file = new File([blob], filename, { type: "image/png" });
     const nav = navigator as Navigator & {
       canShare?: (data: { files?: File[] }) => boolean;
@@ -103,6 +150,7 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
       await download();
     }
   };
+
 
   const canShare = typeof navigator !== "undefined"
     && !!(navigator as Navigator & { canShare?: (d: { files?: File[] }) => boolean }).canShare;

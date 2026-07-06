@@ -10,6 +10,7 @@ export type ValidationStatus =
   | "invalid"
   | "network_error";
 
+
 export type ValidationResult = {
   status: ValidationStatus;
   title: string;
@@ -28,9 +29,9 @@ const sb = supabase as unknown as {
 
 function classifyReason(reason: string | null | undefined): ValidationStatus {
   if (!reason) return "invalid";
+  if (reason === "capacity_reached") return "already_used";
   if (reason.startsWith("token_revoked")) return "revoked";
   if (reason.startsWith("token_expired")) return "expired";
-  if (reason === "capacity_reached") return "capacity";
   if (reason === "target_event_mismatch" || reason === "subject_event_mismatch")
     return "wrong_event";
   if (
@@ -48,7 +49,7 @@ function classifyReason(reason: string | null | undefined): ValidationStatus {
 const REASON_LABEL: Record<string, string> = {
   token_revoked: "Token revogado",
   token_expired: "Token expirado",
-  capacity_reached: "Capacidade esgotada",
+  capacity_reached: "Limite de utilizações atingido",
   target_event_mismatch: "QR pertence a outro evento",
   subject_event_mismatch: "Sujeito de outro evento",
   credential_inactive: "Credencial inativa",
@@ -58,6 +59,8 @@ const REASON_LABEL: Record<string, string> = {
   not_a_member: "Não é membro da organização",
   explicit_deny_rule: "Regra de bloqueio aplicada",
 };
+
+
 
 export function reasonLabel(reason: string | null | undefined): string | null {
   if (!reason) return null;
