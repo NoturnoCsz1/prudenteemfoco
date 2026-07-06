@@ -10,6 +10,7 @@ export type ValidationStatus =
   | "invalid"
   | "network_error";
 
+
 export type ValidationResult = {
   status: ValidationStatus;
   title: string;
