@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import QRCode from "qrcode";
-import { Copy, Loader2 } from "lucide-react";
+import { Copy, Download, ExternalLink, Loader2, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -73,8 +73,12 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
 
   const copy = async () => {
     if (!token) return;
-    await navigator.clipboard.writeText(token);
-    toast.success("Token copiado");
+    try {
+      await navigator.clipboard.writeText(token);
+      toast.success("Token copiado");
+    } catch {
+      toast.error("Falha ao copiar");
+    }
   };
 
   const makeBlob = (): Promise<Blob | null> =>
@@ -88,15 +92,28 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
       }
     });
 
+  const openInNewTab = () => {
+    if (!dataUrl) {
+      toast.error("QR ainda não gerado");
+      return;
+    }
+    const w = window.open();
+    if (w) {
+      w.document.write(
+        `<title>${filename}</title><body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="${dataUrl}" style="max-width:100%;height:auto" alt="QR"/></body>`,
+      );
+      w.document.close();
+      toast.message("Mantenha pressionado sobre a imagem para salvar");
+    } else {
+      // Popup blocked — replace current page
+      window.location.href = dataUrl;
+    }
+  };
+
   const download = async () => {
     const blob = await makeBlob();
     if (!blob) {
-      // Absolute last resort — open the dataUrl in a new tab so user can save.
-      if (dataUrl) {
-        window.open(dataUrl, "_blank", "noopener");
-        return;
-      }
-      toast.error("Não foi possível gerar o PNG");
+      openInNewTab();
       return;
     }
     const url = URL.createObjectURL(blob);
@@ -108,8 +125,9 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
       document.body.appendChild(a);
       a.click();
       a.remove();
+      toast.success("Download iniciado");
     } catch {
-      window.open(url, "_blank", "noopener");
+      openInNewTab();
     }
     setTimeout(() => URL.revokeObjectURL(url), 4000);
   };
@@ -117,7 +135,7 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
   const share = async () => {
     const blob = await makeBlob();
     if (!blob) {
-      toast.error("Não foi possível gerar o PNG");
+      openInNewTab();
       return;
     }
     const file = new File([blob], filename, { type: "image/png" });
@@ -130,15 +148,16 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
         await nav.share({ files: [file], title: "QR emitido" });
         return;
       } catch {
-        // fall through to download
+        // user cancelled or share failed → try download
       }
     }
     await download();
   };
 
-  const canShare =
+  const canShareFiles =
     typeof navigator !== "undefined" &&
-    !!(navigator as Navigator & { canShare?: (d: { files?: File[] }) => boolean }).canShare;
+    !!(navigator as Navigator & { canShare?: (d: { files?: File[] }) => boolean }).canShare &&
+    typeof (navigator as Navigator & { share?: unknown }).share === "function";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -190,15 +209,31 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
         </div>
 
         <DialogFooter className="flex-col gap-2 sm:flex-row">
-          <Button variant="outline" onClick={download} disabled={!dataUrl} className="min-h-[48px] w-full sm:w-auto">
-            Baixar PNG
-          </Button>
-          {canShare ? (
-            <Button variant="outline" onClick={share} disabled={!dataUrl} className="min-h-[48px] w-full sm:w-auto">
-              Compartilhar
+          {canShareFiles ? (
+            <Button onClick={share} disabled={!dataUrl} className="min-h-[48px] w-full sm:w-auto">
+              <Share2 className="mr-2 h-4 w-4" />
+              Compartilhar / Salvar
             </Button>
           ) : null}
-          <Button onClick={() => onOpenChange(false)} className="min-h-[48px] w-full sm:w-auto">
+          <Button
+            variant={canShareFiles ? "outline" : "default"}
+            onClick={download}
+            disabled={!dataUrl}
+            className="min-h-[48px] w-full sm:w-auto"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Baixar PNG
+          </Button>
+          <Button
+            variant="outline"
+            onClick={openInNewTab}
+            disabled={!dataUrl}
+            className="min-h-[48px] w-full sm:w-auto"
+          >
+            <ExternalLink className="mr-2 h-4 w-4" />
+            Abrir imagem
+          </Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)} className="min-h-[48px] w-full sm:w-auto">
             Fechar
           </Button>
         </DialogFooter>
