@@ -210,6 +210,28 @@ function CredentialsPage() {
           </div>
         )}
       </div>
+
+      <QrCodeModal
+        open={qrOpen}
+        onOpenChange={(v) => {
+          setQrOpen(v);
+          if (!v) {
+            setQrToken(null);
+            setQrCred(null);
+          }
+        }}
+        token={qrToken}
+        title={qrCred ? `QR de credencial · ${qrCred.holder_name}` : "QR de credencial"}
+        description="Uso ilimitado durante o evento. Guarde ou imprima agora — o token não voltará a ser exibido."
+        meta={
+          qrCred
+            ? [
+                { label: "Papel", value: CREDENTIAL_ROLE_LABEL[qrCred.role_type as CredentialRoleType] },
+                { label: "Uso", value: "Ilimitado" },
+              ]
+            : undefined
+        }
+      />
     </div>
   );
 }
