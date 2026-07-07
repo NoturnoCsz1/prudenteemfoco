@@ -6,6 +6,51 @@ export type VenueMapAnalysisStatus =
   Database["public"]["Enums"]["venue_map_analysis_status"];
 export type VenueUnitType = Database["public"]["Enums"]["venue_unit_type"];
 export type VenueUnitStatus = Database["public"]["Enums"]["venue_unit_status"];
+export type VenueUnitSaleMode =
+  Database["public"]["Enums"]["venue_unit_sale_mode"];
+
+export const VENUE_UNIT_SALE_MODES: readonly VenueUnitSaleMode[] = [
+  "disabled",
+  "external_link",
+  "pix_manual",
+] as const;
+
+export const VENUE_UNIT_SALE_MODE_LABEL: Record<VenueUnitSaleMode, string> = {
+  disabled: "Sem venda online",
+  external_link: "Link externo (ex.: Eventou)",
+  pix_manual: "PIX manual",
+};
+
+export function isSafeSaleUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  return /^https?:\/\//i.test(url.trim());
+}
+
+export function friendlyVenueUnitError(err: unknown): string {
+  const msg = err instanceof Error ? err.message : String(err ?? "");
+  if (
+    /duplicate key/i.test(msg) &&
+    /uq_venue_units_map_type_label|uq_venue_units_map_label/i.test(msg)
+  ) {
+    return "Já existe uma unidade desse tipo com esse rótulo neste mapa. Escolha outro número ou rótulo.";
+  }
+  if (/venue_units_sale_url_scheme/i.test(msg)) {
+    return "O link de venda precisa começar com http:// ou https://.";
+  }
+  if (/venue_units_sale_mode_requires_fields/i.test(msg)) {
+    return "Para venda por link externo, informe um link http/https válido.";
+  }
+  if (/venue_units_x_range|venue_units_y_range/i.test(msg)) {
+    return "Posição do hotspot fora do mapa. Tente novamente.";
+  }
+  if (/venue_units_capacity_pos/i.test(msg)) {
+    return "Capacidade deve ser maior que zero.";
+  }
+  if (/venue_units_price_nonneg/i.test(msg)) {
+    return "Preço não pode ser negativo.";
+  }
+  return "Não foi possível salvar. Verifique os dados e tente novamente.";
+}
 
 export const VENUE_MAP_TYPES: readonly VenueMapType[] = [
   "numbered_units",
