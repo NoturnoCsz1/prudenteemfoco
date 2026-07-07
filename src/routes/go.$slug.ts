@@ -51,15 +51,15 @@ export const Route = createFileRoute("/go/$slug")({
 
         const { data: destination, error } = await supabase.rpc("resolve_and_track_short_link", {
           _slug: slug,
-          _referrer: referrer,
-          _user_agent: ua || null,
+          _referrer: referrer ?? undefined,
+          _user_agent: ua || undefined,
           _device: device,
           _browser: browser,
-          _utm_source: url.searchParams.get("utm_source"),
-          _utm_medium: url.searchParams.get("utm_medium"),
-          _utm_campaign: url.searchParams.get("utm_campaign"),
-          _utm_content: url.searchParams.get("utm_content"),
-          _utm_term: url.searchParams.get("utm_term"),
+          _utm_source: url.searchParams.get("utm_source") ?? undefined,
+          _utm_medium: url.searchParams.get("utm_medium") ?? undefined,
+          _utm_campaign: url.searchParams.get("utm_campaign") ?? undefined,
+          _utm_content: url.searchParams.get("utm_content") ?? undefined,
+          _utm_term: url.searchParams.get("utm_term") ?? undefined,
         });
 
         if (error || !destination || !isSafeDestination(destination)) {
