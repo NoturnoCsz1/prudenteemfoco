@@ -8,7 +8,7 @@ type Props = {
   onClose?: () => void;
 };
 
-type CamState = "starting" | "active" | "error";
+type CamState = "idle" | "starting" | "active" | "stopping" | "error";
 
 type CameraErrorKind =
   | "permission_denied"
@@ -19,18 +19,44 @@ type CameraErrorKind =
   | "overconstrained"
   | "unknown";
 
-function classifyCameraError(err: unknown): { kind: CameraErrorKind; message: string } {
-  const e = err as { name?: string; message?: string } | undefined;
+function errorDetails(err: unknown) {
+  const e = err as { name?: string; message?: string; constraint?: string; stack?: string } | undefined;
+  return {
+    name: e?.name ?? "",
+    message: e?.message ?? (typeof err === "string" ? err : ""),
+    constraint: e?.constraint ?? null,
+    stack: e?.stack ?? null,
+  };
+}
+
+function logCameraError(label: string, err: unknown, extra?: Record<string, unknown>) {
+  const d = errorDetails(err);
+  // eslint-disable-next-line no-console
+  console.error(`[CAMERA] ${label} name=${d.name || "unknown"} message=${d.message || "unknown"}`, {
+    ...extra,
+    constraint: d.constraint,
+    stack: d.stack,
+  });
+}
+
+function classifyCameraError(err: unknown, stage?: "permission" | "enumerate" | "start"): { kind: CameraErrorKind; message: string } {
+  const e = errorDetails(err);
   const name = e?.name ?? "";
   const raw = e?.message ?? "";
   if (typeof window !== "undefined" && !window.isSecureContext) {
     return { kind: "insecure_context", message: "A câmera exige HTTPS. Abra o site em conexão segura." };
   }
   if (name === "NotAllowedError" || /permission|denied/i.test(raw))
-    return { kind: "permission_denied", message: "Permissão da câmera negada. Autorize nas configurações do navegador." };
+    return {
+      kind: "permission_denied",
+      message:
+        stage === "start"
+          ? "O navegador bloqueou a abertura da câmera pelo scanner. Verifique se a câmera está permitida para este site."
+          : "Permissão da câmera negada. Autorize nas configurações do navegador.",
+    };
   if (name === "NotFoundError" || /not\s*found|devices? not/i.test(raw))
     return { kind: "not_found", message: "Nenhuma câmera encontrada no dispositivo." };
-  if (name === "NotReadableError" || /in use|busy|readable/i.test(raw))
+  if (name === "NotReadableError" || /in use|busy|readable|could not start|not started/i.test(raw))
     return { kind: "in_use", message: "Câmera em uso por outro aplicativo. Feche outros apps e tente novamente." };
   if (name === "OverconstrainedError" || /constraint/i.test(raw))
     return { kind: "overconstrained", message: "Configuração de câmera não suportada. Tente trocar a câmera." };
@@ -45,11 +71,15 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const lastDecodedRef = useRef<{ text: string; at: number } | null>(null);
   const runningRef = useRef(false);
+  const startLockRef = useRef(false);
+  const startPromiseRef = useRef<Promise<unknown> | null>(null);
+  const stopLockRef = useRef<Promise<void> | null>(null);
+  const operationRef = useRef(0);
   const pausedRef = useRef<boolean>(!!paused);
 
   const [torchOn, setTorchOn] = useState(false);
   const [torchSupported, setTorchSupported] = useState(false);
-  const [state, setState] = useState<CamState>("starting");
+  const [state, setState] = useState<CamState>("idle");
   const [errorKind, setErrorKind] = useState<CameraErrorKind | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -59,31 +89,72 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
     pausedRef.current = !!paused;
   }, [paused]);
 
-  useEffect(() => {
-    let cancelled = false;
-    setState("starting");
-    setErrorKind(null);
-    setErrorMsg(null);
+  const stopScanner = async (reason: string, invalidatePendingStart = true) => {
+    if (invalidatePendingStart) operationRef.current += 1;
+    if (startPromiseRef.current && reason !== "before-start") {
+      // eslint-disable-next-line no-console
+      console.log("[CAMERA] scanner:stop waiting for pending start", { reason });
+      try {
+        await startPromiseRef.current;
+      } catch {
+        // The start error is logged at the start attempt site.
+      }
+    }
+    const s = scannerRef.current;
+    scannerRef.current = null;
+    setTorchSupported(false);
+    setTorchOn(false);
 
-    const stopScanner = async () => {
-      const s = scannerRef.current;
-      scannerRef.current = null;
+    if (stopLockRef.current) await stopLockRef.current;
+
+    const task = (async () => {
       if (!s) return;
+      setState((current) => (current === "active" || current === "starting" ? "stopping" : current));
+      // eslint-disable-next-line no-console
+      console.log("[CAMERA] scanner:stop", { reason, wasRunning: runningRef.current });
       try {
         if (runningRef.current) await s.stop();
-      } catch {
-        // ignore
+      } catch (err) {
+        logCameraError("scanner:stop:error", err, { reason });
       } finally {
         runningRef.current = false;
+        // eslint-disable-next-line no-console
+        console.log("[CAMERA] scanner:clear", { reason });
         try {
           await s.clear();
-        } catch {
-          // ignore
+        } catch (err) {
+          logCameraError("scanner:clear:error", err, { reason });
         }
       }
-    };
+    })();
+
+    stopLockRef.current = task;
+    try {
+      await task;
+    } finally {
+      if (stopLockRef.current === task) stopLockRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
 
     const bootstrap = async () => {
+      if (startLockRef.current) {
+        // eslint-disable-next-line no-console
+        console.log("[CAMERA] scanner:start skipped - start already in progress");
+        return;
+      }
+
+      startLockRef.current = true;
+      const op = operationRef.current + 1;
+      operationRef.current = op;
+      setState("starting");
+      setErrorKind(null);
+      setErrorMsg(null);
+      setTorchSupported(false);
+      setTorchOn(false);
+
       // 0) Environment sanity
       if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
         if (!cancelled) {
@@ -91,6 +162,7 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
           setErrorMsg("Este navegador não suporta acesso à câmera.");
           setState("error");
         }
+        startLockRef.current = false;
         return;
       }
       if (typeof window !== "undefined" && !window.isSecureContext) {
@@ -99,59 +171,58 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
           setErrorMsg("A câmera exige HTTPS. Abra o site em conexão segura.");
           setState("error");
         }
+        startLockRef.current = false;
         return;
       }
 
-      // 1) Request permission first (so labels + deviceIds are populated on Android/iOS).
-      let permStream: MediaStream | null = null;
-      const facingPref: "environment" | "user" = preferFront ? "user" : "environment";
       try {
         // eslint-disable-next-line no-console
-        console.log("[CAMERA] permission request", { facing: facingPref });
-        permStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: facingPref } },
-          audio: false,
-        });
-      } catch (err) {
-        // Try the other facing before giving up.
-        try {
-          // eslint-disable-next-line no-console
-          console.log("[CAMERA] permission retry any camera", { firstError: (err as Error)?.name });
-          permStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        } catch (err2) {
-          const c = classifyCameraError(err2);
-          // eslint-disable-next-line no-console
-          console.log("[CAMERA] error", { name: (err2 as Error)?.name, message: (err2 as Error)?.message });
-          if (!cancelled) {
-            setErrorKind(c.kind);
-            setErrorMsg(c.message);
-            setState("error");
-          }
-          return;
+        console.log("[CAMERA] secureContext", window.isSecureContext);
+        // eslint-disable-next-line no-console
+        console.log("[CAMERA] mediaDevices available", Boolean(navigator.mediaDevices?.getUserMedia));
+        if (navigator.permissions?.query) {
+          navigator.permissions
+            .query({ name: "camera" as PermissionName })
+            .then((permission) => {
+              // eslint-disable-next-line no-console
+              console.log("[CAMERA] permissions.query result", permission.state);
+            })
+            .catch((err) => logCameraError("permissions.query:error", err));
         }
+      } catch (err) {
+        logCameraError("environment:diagnostic:error", err);
       }
 
-      // Close permission stream — html5-qrcode will open its own.
-      try {
-        permStream?.getTracks().forEach((t) => t.stop());
-      } catch {
-        // ignore
+      const facingPref: "environment" | "user" = preferFront ? "user" : "environment";
+
+      await stopScanner("before-start", false);
+
+      if (cancelled || operationRef.current !== op) {
+        startLockRef.current = false;
+        return;
       }
-      // eslint-disable-next-line no-console
-      console.log("[CAMERA] permission granted");
 
-      if (cancelled) return;
-
-      // 2) Enumerate cameras (labels now available after permission).
+      // 1) Enumerate cameras without opening a manual MediaStream. Html5Qrcode.start owns the camera.
       let cams: { id: string; label: string }[] = [];
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter((d) => d.kind === "videoinput");
+        // eslint-disable-next-line no-console
+        console.log("[CAMERA] enumerate:success", {
+          count: videoDevices.length,
+          devices: videoDevices.map((d) => ({ kind: d.kind, label: d.label ? "available" : "hidden" })),
+        });
+      } catch (e) {
+        logCameraError("enumerate:error", e);
+      }
+
       try {
         const list = await Html5Qrcode.getCameras();
         cams = (list ?? []).map((d) => ({ id: d.id, label: d.label || "Câmera" }));
         // eslint-disable-next-line no-console
-        console.log("[CAMERA] devices found", cams.length, cams.map((c) => c.label));
+        console.log("[CAMERA] getCameras result", { count: cams.length, labels: cams.map((c) => (c.label ? "available" : "hidden")) });
       } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log("[CAMERA] getCameras failed", (e as Error)?.message);
+        logCameraError("getCameras:error", e);
       }
 
       // Order by rear-first (or front-first if user requested)
@@ -172,10 +243,11 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
           setErrorMsg("Container do scanner não encontrado.");
           setState("error");
         }
+        startLockRef.current = false;
         return;
       }
 
-      // 3) Try to start — cascade: facingMode → each enumerated device → front camera fallback
+      // 2) Try to start — cascade: facingMode → each enumerated device → opposite facingMode.
       const scanner = new Html5Qrcode(containerId, {
         formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
         verbose: false,
@@ -201,13 +273,13 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
         aspectRatio: 1,
       };
 
-      const attempts: Array<{ label: string; source: MediaTrackConstraints | { deviceId: { exact: string } } }> = [];
+      const attempts: Array<{ label: string; source: string | MediaTrackConstraints }> = [];
       attempts.push({
         label: `facingMode:${facingPref}`,
         source: { facingMode: { ideal: facingPref } } as MediaTrackConstraints,
       });
       for (const cam of sorted) {
-        attempts.push({ label: `device:${cam.label}`, source: { deviceId: { exact: cam.id } } });
+        attempts.push({ label: `device:${cam.label}`, source: cam.id });
       }
       // Last resort: try the opposite facing
       attempts.push({
@@ -216,48 +288,53 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
       });
 
       let lastErr: unknown = null;
-      for (const a of attempts) {
-        if (cancelled) return;
-        try {
-          // eslint-disable-next-line no-console
-          console.log("[CAMERA] start attempt", a.label);
-          await scanner.start(a.source, config, decodeCb, () => {});
-          runningRef.current = true;
-          if (!cancelled) setState("active");
+      try {
+        for (const a of attempts) {
+          if (cancelled || operationRef.current !== op) return;
           try {
-            const capsUnknown = (scanner as unknown as { getRunningTrackCapabilities?: () => unknown }).getRunningTrackCapabilities?.();
-            const caps = capsUnknown as { torch?: boolean } | undefined;
-            setTorchSupported(Boolean(caps?.torch));
-          } catch {
-            setTorchSupported(false);
+            // eslint-disable-next-line no-console
+            console.log(`[CAMERA] scanner:start attempt=${a.label}`);
+            const startPromise = scanner.start(a.source, config, decodeCb, () => {});
+            startPromiseRef.current = startPromise;
+            await startPromise;
+            runningRef.current = true;
+            // eslint-disable-next-line no-console
+            console.log("[CAMERA] scanner:start:success", { attempt: a.label });
+            if (!cancelled && operationRef.current === op) setState("active");
+            try {
+              const capsUnknown = (scanner as unknown as { getRunningTrackCapabilities?: () => unknown }).getRunningTrackCapabilities?.();
+              const caps = capsUnknown as { torch?: boolean } | undefined;
+              setTorchSupported(Boolean(caps?.torch));
+            } catch {
+              setTorchSupported(false);
+            }
+            return;
+          } catch (e) {
+            lastErr = e;
+            logCameraError("scanner:start:error", e, { attempt: a.label });
+            runningRef.current = false;
+          } finally {
+            startPromiseRef.current = null;
           }
-          return;
-        } catch (e) {
-          lastErr = e;
-          // eslint-disable-next-line no-console
-          console.log("[CAMERA] start error", a.label, (e as Error)?.name, (e as Error)?.message);
-          // ensure state is clean before next attempt
-          try {
-            if (runningRef.current) await scanner.stop();
-          } catch {
-            // ignore
-          }
-          runningRef.current = false;
         }
-      }
 
-      if (!cancelled) {
-        const c = classifyCameraError(lastErr);
-        setErrorKind(c.kind);
-        setErrorMsg(c.message);
-        setState("error");
+        if (!cancelled && operationRef.current === op) {
+          const c = classifyCameraError(lastErr, "start");
+          setErrorKind(c.kind);
+          setErrorMsg(c.message);
+          setState("error");
+        }
+      } finally {
+        startPromiseRef.current = null;
+        startLockRef.current = false;
       }
     };
 
     bootstrap();
     return () => {
       cancelled = true;
-      stopScanner();
+      startLockRef.current = false;
+      stopScanner("unmount");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attempt, preferFront]);
@@ -274,8 +351,14 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
     }
   };
 
-  const retry = () => setAttempt((n) => n + 1);
-  const flipFacing = () => setPreferFront((v) => !v);
+  const retry = async () => {
+    await stopScanner("retry");
+    setAttempt((n) => n + 1);
+  };
+  const flipFacing = async () => {
+    await stopScanner("switch-camera");
+    setPreferFront((v) => !v);
+  };
 
   return (
     <div className="relative isolate w-full">
@@ -293,11 +376,11 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
           </div>
         ) : null}
 
-        {state === "starting" ? (
+        {state === "starting" || state === "stopping" ? (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-black/70 text-white">
             <Camera className="h-6 w-6 animate-pulse" />
-            <div className="text-sm">Iniciando câmera…</div>
-            <div className="text-[11px] opacity-70">Toque em "Permitir" se o navegador perguntar.</div>
+            <div className="text-sm">{state === "stopping" ? "Liberando câmera…" : "Iniciando câmera…"}</div>
+            {state === "starting" ? <div className="text-[11px] opacity-70">Toque em "Permitir" se o navegador perguntar.</div> : null}
           </div>
         ) : null}
 
@@ -330,6 +413,15 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
               >
                 <RefreshCw className="h-4 w-4" /> Trocar câmera
               </button>
+              {onClose ? (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="inline-flex h-10 items-center gap-2 rounded-md border border-white/40 px-3 text-sm"
+                >
+                  <XCircle className="h-4 w-4" /> Fechar
+                </button>
+              ) : null}
             </div>
             {errorKind === "permission_denied" ? (
               <div className="mt-2 max-w-xs text-[11px] opacity-70">
@@ -351,21 +443,25 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
             {torchOn ? "Desligar" : "Lanterna"}
           </button>
         ) : null}
-        <button
-          type="button"
-          onClick={flipFacing}
-          className="inline-flex h-11 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm"
-        >
-          <RefreshCw className="h-4 w-4" /> Trocar câmera
-        </button>
-        <button
-          type="button"
-          onClick={retry}
-          className="inline-flex h-11 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm"
-        >
-          <RotateCw className="h-4 w-4" /> Reiniciar
-        </button>
-        {onClose ? (
+        {state !== "error" ? (
+          <>
+            <button
+              type="button"
+              onClick={flipFacing}
+              className="inline-flex h-11 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm"
+            >
+              <RefreshCw className="h-4 w-4" /> Trocar câmera
+            </button>
+            <button
+              type="button"
+              onClick={retry}
+              className="inline-flex h-11 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm"
+            >
+              <RotateCw className="h-4 w-4" /> Reiniciar
+            </button>
+          </>
+        ) : null}
+        {onClose && state !== "error" ? (
           <button
             type="button"
             onClick={onClose}
