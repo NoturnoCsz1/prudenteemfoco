@@ -167,8 +167,10 @@ export function CoverUpload({
           )}
         </div>
         <p className="text-xs text-muted-foreground">
-          JPEG, PNG ou WebP. Máx. 5 MB. A capa fica visível publicamente
-          quando o evento é publicado.
+          JPEG, PNG ou WebP. Máx. 5 MB. Recomendado: <strong>1920×1080 px (16:9)</strong>.
+          No mobile, as laterais podem ser cortadas — mantenha rostos e textos
+          importantes no centro. A capa fica visível publicamente quando o evento
+          é publicado.
         </p>
       </div>
     </div>
