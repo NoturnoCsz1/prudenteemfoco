@@ -1173,6 +1173,7 @@ function UnitRow({
   }
 
   return (
+    <>
     <tr className="border-t border-border bg-accent/30">
       <td className="px-3 py-2">
         <input
