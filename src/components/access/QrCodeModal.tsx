@@ -214,26 +214,26 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
           {canShareFiles ? (
             <Button onClick={share} disabled={!dataUrl} className="min-h-[48px] w-full sm:w-auto">
               <Share2 className="mr-2 h-4 w-4" />
-              Compartilhar / Salvar
+              Compartilhar / Salvar QR
             </Button>
           ) : null}
           <Button
-            variant={canShareFiles ? "outline" : "default"}
-            onClick={download}
-            disabled={!dataUrl}
-            className="min-h-[48px] w-full sm:w-auto"
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Baixar PNG
-          </Button>
-          <Button
-            variant="outline"
+            variant={canShareFiles ? "outline" : isMobile ? "default" : "outline"}
             onClick={openInNewTab}
             disabled={!dataUrl}
             className="min-h-[48px] w-full sm:w-auto"
           >
             <ExternalLink className="mr-2 h-4 w-4" />
             Abrir imagem
+          </Button>
+          <Button
+            variant={!canShareFiles && !isMobile ? "default" : "outline"}
+            onClick={download}
+            disabled={!dataUrl}
+            className="min-h-[48px] w-full sm:w-auto"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Baixar PNG
           </Button>
           <Button variant="ghost" onClick={() => onOpenChange(false)} className="min-h-[48px] w-full sm:w-auto">
             Fechar
