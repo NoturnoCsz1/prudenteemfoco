@@ -46,6 +46,30 @@ const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 100;
 const ACCEPTED_MIME = ["image/jpeg", "image/png", "image/webp"] as const;
 const MAX_BYTES = 12 * 1024 * 1024;
 
+const DISPLAY_PREFIX: Record<VenueUnitType, string> = {
+  bistro: "B",
+  table: "M",
+  box: "C",
+  vip: "VIP",
+  front: "FRONT",
+  open_bar: "OPEN",
+  pista: "PISTA",
+  lounge: "L",
+  grandstand: "A",
+  sector: "S",
+  other: "",
+};
+
+function displayLabelFor(type: VenueUnitType, label: string): string {
+  const prefix = DISPLAY_PREFIX[type];
+  const num = label.match(/\d+/)?.[0] ?? "";
+  if (!prefix) return label;
+  // Word prefixes: only append number when present
+  if (prefix.length > 1) return num ? `${prefix}${num}` : prefix;
+  // Single-letter prefixes: use number when available, otherwise fall back to label
+  return `${prefix}${num || label}`;
+}
+
 export const Route = createFileRoute("/_authenticated/admin/eventos/$id/mapa")({
   head: () => ({
     meta: [
