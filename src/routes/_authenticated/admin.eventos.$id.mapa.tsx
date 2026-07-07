@@ -918,6 +918,63 @@ function PlacingBar({
               )}
             </select>
           </label>
+          <label className="block md:col-span-4">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+              Canal de venda
+            </span>
+            <select
+              value={bulkSaleMode}
+              onChange={(e) =>
+                setBulkSaleMode(e.target.value as VenueUnitSaleMode | "")
+              }
+              className="input mt-1"
+            >
+              <option value="">— manter —</option>
+              {VENUE_UNIT_SALE_MODES.map((m) => (
+                <option key={m} value={m}>
+                  {VENUE_UNIT_SALE_MODE_LABEL[m]}
+                </option>
+              ))}
+            </select>
+          </label>
+          {bulkSaleMode === "external_link" && (
+            <label className="block md:col-span-4">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Link de venda (http/https)
+              </span>
+              <input
+                value={bulkSaleUrl}
+                onChange={(e) => setBulkSaleUrl(e.target.value)}
+                className="input mt-1"
+                placeholder="https://eventou.com.br/..."
+                inputMode="url"
+              />
+            </label>
+          )}
+          {bulkSaleMode === "pix_manual" && (
+            <>
+              <label className="block md:col-span-2">
+                <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Chave PIX
+                </span>
+                <input
+                  value={bulkPixKey}
+                  onChange={(e) => setBulkPixKey(e.target.value)}
+                  className="input mt-1"
+                />
+              </label>
+              <label className="block md:col-span-2">
+                <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Instruções
+                </span>
+                <input
+                  value={bulkPixInstructions}
+                  onChange={(e) => setBulkPixInstructions(e.target.value)}
+                  className="input mt-1"
+                />
+              </label>
+            </>
+          )}
           <button
             type="button"
             onClick={async () => {
@@ -925,6 +982,10 @@ function PlacingBar({
                 price_cents?: number | null;
                 capacity?: number | null;
                 status?: VenueUnitStatus;
+                sale_mode?: VenueUnitSaleMode;
+                sale_url?: string | null;
+                pix_key?: string | null;
+                pix_instructions?: string | null;
               } = {};
               if (bulkPrice.trim()) {
                 const n = parseFloat(bulkPrice.replace(",", "."));
@@ -936,6 +997,32 @@ function PlacingBar({
                 if (Number.isFinite(n) && n > 0) patch.capacity = n;
               }
               if (bulkStatus) patch.status = bulkStatus;
+              if (bulkSaleMode) {
+                if (bulkSaleMode === "external_link") {
+                  const url = bulkSaleUrl.trim();
+                  if (!isSafeSaleUrl(url)) {
+                    toast.error(
+                      "Link de venda inválido. Use http:// ou https://.",
+                    );
+                    return;
+                  }
+                  patch.sale_mode = "external_link";
+                  patch.sale_url = url;
+                  patch.pix_key = null;
+                  patch.pix_instructions = null;
+                } else if (bulkSaleMode === "pix_manual") {
+                  patch.sale_mode = "pix_manual";
+                  patch.sale_url = null;
+                  patch.pix_key = bulkPixKey.trim() || null;
+                  patch.pix_instructions =
+                    bulkPixInstructions.trim() || null;
+                } else {
+                  patch.sale_mode = "disabled";
+                  patch.sale_url = null;
+                  patch.pix_key = null;
+                  patch.pix_instructions = null;
+                }
+              }
               if (Object.keys(patch).length === 0) {
                 toast.error("Preencha ao menos um campo.");
                 return;
@@ -944,6 +1031,10 @@ function PlacingBar({
               setBulkPrice("");
               setBulkCapacity("");
               setBulkStatus("");
+              setBulkSaleMode("");
+              setBulkSaleUrl("");
+              setBulkPixKey("");
+              setBulkPixInstructions("");
             }}
             className="inline-flex items-center gap-1.5 self-end rounded-md bg-primary px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground"
           >
