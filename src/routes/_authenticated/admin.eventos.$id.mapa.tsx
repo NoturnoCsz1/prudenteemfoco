@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  ChevronDown,
   Image as ImageIcon,
   Loader2,
   Plus,
@@ -11,6 +12,7 @@ import {
   X,
   Check,
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrgMembership } from "@/hooks/use-org-membership";
@@ -43,6 +45,30 @@ const BUCKET = "venue-maps";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 100;
 const ACCEPTED_MIME = ["image/jpeg", "image/png", "image/webp"] as const;
 const MAX_BYTES = 12 * 1024 * 1024;
+
+const DISPLAY_PREFIX: Record<VenueUnitType, string> = {
+  bistro: "B",
+  table: "M",
+  box: "C",
+  vip: "VIP",
+  front: "FRONT",
+  open_bar: "OPEN",
+  pista: "PISTA",
+  lounge: "L",
+  grandstand: "A",
+  sector: "S",
+  other: "",
+};
+
+function displayLabelFor(type: VenueUnitType, label: string): string {
+  const prefix = DISPLAY_PREFIX[type];
+  const num = label.match(/\d+/)?.[0] ?? "";
+  if (!prefix) return label;
+  // Word prefixes: only append number when present
+  if (prefix.length > 1) return num ? `${prefix}${num}` : prefix;
+  // Single-letter prefixes: use number when available, otherwise fall back to label
+  return `${prefix}${num || label}`;
+}
 
 export const Route = createFileRoute("/_authenticated/admin/eventos/$id/mapa")({
   head: () => ({
@@ -318,55 +344,21 @@ function MapEditor({
     qc.invalidateQueries({ queryKey: ["admin", "venue-units", map.id] });
   }
 
-  return (
-    <div className="space-y-6">
-      <MapHeader map={map} onChanged={onChanged} />
+  const unitsList = unitsQ.data ?? [];
 
-      <MapImageEditor
-        map={map}
-        units={unitsQ.data ?? []}
-        placingType={placingType}
-        selectedIds={selectedIds}
-        onToggleSelect={(id) => {
-          setSelectedIds((prev) => {
-            const next = new Set(prev);
-            if (next.has(id)) next.delete(id);
-            else next.add(id);
-            return next;
-          });
-        }}
-        onPlace={async (xPercent, yPercent) => {
-          if (!placingType) return;
-          const currentType = placingType;
-          const nextLabel = nextLabelFor(unitsQ.data ?? [], currentType);
-          const { error } = await supabase.from("venue_units").insert({
-            organization_id: map.organization_id,
-            event_id: map.event_id,
-            venue_map_id: map.id,
-            type: currentType,
-            label: nextLabel,
-            number: parseInt(nextLabel, 10) || null,
-            x_percent: xPercent,
-            y_percent: yPercent,
-            status: "blocked",
-          });
-          if (error) toast.error(friendlyVenueUnitError(error));
-          else {
-            invalidateUnits();
-            toast.success(
-              `${VENUE_UNIT_TYPE_LABEL[currentType]} ${nextLabel} adicionada.`,
-            );
-          }
-        }}
-        onMove={async (id, xPercent, yPercent) => {
-          const { error } = await supabase
-            .from("venue_units")
-            .update({ x_percent: xPercent, y_percent: yPercent })
-            .eq("id", id);
-          if (error) toast.error(friendlyVenueUnitError(error));
-          else invalidateUnits();
-        }}
-      />
+  return (
+    <div className="space-y-4 md:space-y-6">
+      <details className="group rounded-lg border border-border open:pb-2" open>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 md:px-4">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Configurações do mapa
+          </span>
+          <ChevronDown className="h-4 w-4 text-muted-foreground transition group-open:rotate-180" />
+        </summary>
+        <div className="px-3 pb-2 md:px-4">
+          <MapHeader map={map} onChanged={onChanged} />
+        </div>
+      </details>
 
       <PlacingBar
         placingType={placingType}
@@ -400,8 +392,64 @@ function MapEditor({
         onClearSelection={() => setSelectedIds(new Set())}
       />
 
+      <MapImageEditor
+        map={map}
+        units={unitsList}
+        placingType={placingType}
+        selectedIds={selectedIds}
+        onCancelPlacing={() => setPlacingType(null)}
+        onToggleSelect={(id) => {
+          setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) {
+              next.delete(id);
+            } else {
+              next.add(id);
+              const u = unitsList.find((x) => x.id === id);
+              if (u) {
+                toast(
+                  `Editando ${VENUE_UNIT_TYPE_LABEL[u.type as VenueUnitType]} ${u.label}`,
+                );
+              }
+            }
+            return next;
+          });
+        }}
+        onPlace={async (xPercent, yPercent) => {
+          if (!placingType) return;
+          const currentType = placingType;
+          const nextLabel = nextLabelFor(unitsList, currentType);
+          const { error } = await supabase.from("venue_units").insert({
+            organization_id: map.organization_id,
+            event_id: map.event_id,
+            venue_map_id: map.id,
+            type: currentType,
+            label: nextLabel,
+            number: parseInt(nextLabel, 10) || null,
+            x_percent: xPercent,
+            y_percent: yPercent,
+            status: "blocked",
+          });
+          if (error) toast.error(friendlyVenueUnitError(error));
+          else {
+            invalidateUnits();
+            toast.success(
+              `${VENUE_UNIT_TYPE_LABEL[currentType]} ${nextLabel} adicionado ao mapa.`,
+            );
+          }
+        }}
+        onMove={async (id, xPercent, yPercent) => {
+          const { error } = await supabase
+            .from("venue_units")
+            .update({ x_percent: xPercent, y_percent: yPercent })
+            .eq("id", id);
+          if (error) toast.error(friendlyVenueUnitError(error));
+          else invalidateUnits();
+        }}
+      />
+
       <UnitsList
-        units={unitsQ.data ?? []}
+        units={unitsList}
         loading={unitsQ.isLoading}
         selectedIds={selectedIds}
         editingId={editingId}
@@ -566,6 +614,7 @@ function MapImageEditor({
   units,
   placingType,
   selectedIds,
+  onCancelPlacing,
   onToggleSelect,
   onPlace,
   onMove,
@@ -574,10 +623,12 @@ function MapImageEditor({
   units: VenueUnitRow[];
   placingType: VenueUnitType | null;
   selectedIds: Set<string>;
+  onCancelPlacing: () => void;
   onToggleSelect: (id: string) => void;
   onPlace: (xPercent: number, yPercent: number) => void;
   onMove: (id: string, xPercent: number, yPercent: number) => void;
 }) {
+  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -662,11 +713,20 @@ function MapImageEditor({
         <p className="text-xs text-muted-foreground">
           {map.image_url
             ? placingType
-              ? `Modo colocar: clique no mapa para adicionar um(a) ${VENUE_UNIT_TYPE_LABEL[placingType]}.`
-              : "Arraste os pontos para reposicionar. Clique num ponto para selecionar."
+              ? `Adicionar ${VENUE_UNIT_TYPE_LABEL[placingType]} — toque no ponto correspondente do mapa.`
+              : "Arraste os pontos para reposicionar. Toque num ponto para selecionar."
             : "Envie a imagem do mapa (JPG/PNG/WebP, máx. 12 MB). Recomendado 1920×1080 px."}
         </p>
         <div className="flex items-center gap-2">
+          {placingType && (
+            <button
+              type="button"
+              onClick={onCancelPlacing}
+              className="inline-flex items-center gap-1 rounded-md border border-border-strong px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent"
+            >
+              <X className="h-3.5 w-3.5" /> Cancelar colocação
+            </button>
+          )}
           <input
             ref={inputRef}
             type="file"
@@ -692,11 +752,11 @@ function MapImageEditor({
           </button>
         </div>
       </div>
-      <div className="mx-auto w-full">
+      <div className="mx-auto w-full md:max-h-[70vh] md:flex md:justify-center">
         <div
           ref={containerRef}
           onClick={handleContainerClick}
-          className={`relative mx-auto w-full max-w-full overflow-hidden rounded-lg border border-border bg-muted ${
+          className={`relative w-full max-w-full overflow-hidden rounded-lg border border-border bg-muted md:max-h-[70vh] ${
             placingType ? "cursor-crosshair" : ""
           }`}
           style={{ aspectRatio: naturalRatio ?? 16 / 9 }}
@@ -723,6 +783,7 @@ function MapImageEditor({
           .filter((u) => u.x_percent != null && u.y_percent != null)
           .map((u) => (
             <Hotspot
+              isMobile={isMobile}
               key={u.id}
               unit={u}
               selected={selectedIds.has(u.id)}
@@ -762,6 +823,7 @@ function MapImageEditor({
 function Hotspot({
   unit,
   selected,
+  isMobile,
   onPointerDown,
   onPointerMove,
   onPointerUp,
@@ -769,11 +831,13 @@ function Hotspot({
 }: {
   unit: VenueUnitRow;
   selected: boolean;
+  isMobile: boolean;
   onPointerDown: (e: React.PointerEvent) => void;
   onPointerMove: (e: React.PointerEvent) => void;
   onPointerUp: (e: React.PointerEvent) => void;
   onClick: (e: React.MouseEvent) => void;
 }) {
+  const display = displayLabelFor(unit.type as VenueUnitType, unit.label);
   return (
     <button
       type="button"
@@ -785,19 +849,33 @@ function Hotspot({
       }}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 px-2 py-0.5 font-display text-[10px] font-bold uppercase tracking-[0.1em] shadow-md touch-none ${
-        VENUE_UNIT_STATUS_COLOR[unit.status as VenueUnitStatus]
-      } ${selected ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
+      className={`absolute -translate-x-1/2 -translate-y-1/2 touch-none ${
+        selected ? "z-20" : "z-10"
+      }`}
       style={{
         left: `${unit.x_percent}%`,
         top: `${unit.y_percent}%`,
+        minWidth: isMobile ? 44 : undefined,
+        minHeight: isMobile ? 44 : undefined,
       }}
       aria-label={`${VENUE_UNIT_TYPE_LABEL[unit.type as VenueUnitType]} ${unit.label}`}
     >
-      {unit.label}
+      {/* Visual pill centered inside the (potentially larger) tap target */}
+      <span
+        className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 px-2 py-0.5 font-display text-[10px] font-bold uppercase tracking-[0.1em] shadow-md ${
+          VENUE_UNIT_STATUS_COLOR[unit.status as VenueUnitStatus]
+        } ${
+          selected
+            ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110"
+            : ""
+        }`}
+      >
+        {display}
+      </span>
     </button>
   );
 }
+
 
 // ---------- Placing / bulk bar ----------
 function PlacingBar({
@@ -833,35 +911,38 @@ function PlacingBar({
   const [bulkPixInstructions, setBulkPixInstructions] = useState("");
 
   return (
-    <div className="rounded-lg border border-border p-3 md:p-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+    <div className="sticky top-0 z-20 -mx-5 rounded-none border-y border-border bg-background/95 p-3 backdrop-blur md:static md:mx-0 md:rounded-lg md:border md:p-4">
+      <div className="flex items-center gap-2">
+        <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground md:inline">
           Colocar no mapa:
         </span>
-        {VENUE_UNIT_TYPES.map((t) => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setPlacingType(placingType === t ? null : t)}
-            className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
-              placingType === t
-                ? "border-primary bg-primary/10 text-foreground"
-                : "border-border text-muted-foreground hover:bg-accent"
-            }`}
-          >
-            {VENUE_UNIT_TYPE_LABEL[t]}
-          </button>
-        ))}
+        <div className="-mx-1 flex flex-1 items-center gap-2 overflow-x-auto px-1 py-0.5 whitespace-nowrap md:flex-wrap md:overflow-visible md:whitespace-normal">
+          {VENUE_UNIT_TYPES.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setPlacingType(placingType === t ? null : t)}
+              className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium transition min-w-[64px] ${
+                placingType === t
+                  ? "border-primary bg-primary/10 text-foreground"
+                  : "border-border text-muted-foreground hover:bg-accent"
+              }`}
+            >
+              {VENUE_UNIT_TYPE_LABEL[t]}
+            </button>
+          ))}
+        </div>
         {placingType && (
           <button
             type="button"
             onClick={() => setPlacingType(null)}
-            className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+            className="ml-1 inline-flex shrink-0 items-center gap-1 rounded-md border border-border-strong px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
           >
-            <X className="h-3 w-3" /> cancelar
+            <X className="h-3 w-3" /> Cancelar
           </button>
         )}
       </div>
+
 
       {selectedCount > 0 && (
         <div className="mt-4 grid gap-3 border-t border-border pt-3 md:grid-cols-[1fr_1fr_1fr_auto_auto]">
@@ -1117,38 +1198,114 @@ function UnitsList({
     );
   }
   return (
-    <div className="overflow-x-auto rounded-lg border border-border">
-      <table className="w-full min-w-[720px] text-sm">
-        <thead className="bg-muted/50">
-          <tr className="text-left text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-            <th className="w-8 px-3 py-2"></th>
-            <th className="px-3 py-2">Rótulo</th>
-            <th className="px-3 py-2">Tipo</th>
-            <th className="px-3 py-2">Setor</th>
-            <th className="px-3 py-2">Cap.</th>
-            <th className="px-3 py-2">Preço</th>
-            <th className="px-3 py-2">Status</th>
-            <th className="px-3 py-2">Venda</th>
-            <th className="px-3 py-2"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {units.map((u) => (
-            <UnitRow
+    <>
+      {/* Mobile: card list */}
+      <ul className="space-y-2 md:hidden">
+        {units.map((u) => {
+          const isEditing = editingId === u.id;
+          return (
+            <li
               key={u.id}
-              unit={u}
-              selected={selectedIds.has(u.id)}
-              editing={editingId === u.id}
-              onToggleSelect={() => onToggleSelect(u.id)}
-              onStartEdit={() => setEditingId(u.id)}
-              onCancelEdit={() => setEditingId(null)}
-              onSave={(patch) => onSave(u.id, patch)}
-              onDelete={() => onDelete(u.id)}
-            />
-          ))}
-        </tbody>
-      </table>
-    </div>
+              className="rounded-lg border border-border bg-surface-elevated/40"
+            >
+              {!isEditing ? (
+                <div className="flex items-start gap-3 p-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(u.id)}
+                    onChange={() => onToggleSelect(u.id)}
+                    className="mt-1 h-4 w-4 shrink-0"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setEditingId(u.id)}
+                    className="flex min-w-0 flex-1 flex-col items-start text-left"
+                  >
+                    <div className="flex w-full items-center justify-between gap-2">
+                      <span className="truncate text-sm font-semibold text-foreground">
+                        {VENUE_UNIT_TYPE_LABEL[u.type as VenueUnitType]}{" "}
+                        {u.label}
+                      </span>
+                      <span
+                        className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] ${
+                          VENUE_UNIT_STATUS_COLOR[u.status as VenueUnitStatus]
+                        }`}
+                      >
+                        {VENUE_UNIT_STATUS_LABEL[u.status as VenueUnitStatus]}
+                      </span>
+                    </div>
+                    <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground">
+                      <span>{formatPriceCents(u.price_cents)}</span>
+                      {u.sector && <span>· {u.sector}</span>}
+                      {u.capacity != null && <span>· {u.capacity} lug.</span>}
+                      <span>
+                        ·{" "}
+                        {
+                          VENUE_UNIT_SALE_MODE_LABEL[
+                            (u.sale_mode as VenueUnitSaleMode) ?? "disabled"
+                          ]
+                        }
+                      </span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDelete(u.id)}
+                    aria-label="Excluir"
+                    className="shrink-0 text-destructive hover:opacity-80"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="p-3">
+                  <MobileUnitEditor
+                    unit={u}
+                    onSave={(patch) => onSave(u.id, patch)}
+                    onCancel={() => setEditingId(null)}
+                    onDelete={() => onDelete(u.id)}
+                  />
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Desktop / tablet: full table */}
+      <div className="hidden overflow-x-auto rounded-lg border border-border md:block">
+        <table className="w-full min-w-[720px] text-sm">
+          <thead className="bg-muted/50">
+            <tr className="text-left text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+              <th className="w-8 px-3 py-2"></th>
+              <th className="px-3 py-2">Rótulo</th>
+              <th className="px-3 py-2">Tipo</th>
+              <th className="px-3 py-2">Setor</th>
+              <th className="px-3 py-2">Cap.</th>
+              <th className="px-3 py-2">Preço</th>
+              <th className="px-3 py-2">Status</th>
+              <th className="px-3 py-2">Venda</th>
+              <th className="px-3 py-2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {units.map((u) => (
+              <UnitRow
+                key={u.id}
+                unit={u}
+                selected={selectedIds.has(u.id)}
+                editing={editingId === u.id}
+                onToggleSelect={() => onToggleSelect(u.id)}
+                onStartEdit={() => setEditingId(u.id)}
+                onCancelEdit={() => setEditingId(null)}
+                onSave={(patch) => onSave(u.id, patch)}
+                onDelete={() => onDelete(u.id)}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
@@ -1460,5 +1617,273 @@ function UnitRow({
       </tr>
     )}
     </>
+  );
+}
+
+// ---------- Mobile unit editor ----------
+function MobileUnitEditor({
+  unit,
+  onSave,
+  onCancel,
+  onDelete,
+}: {
+  unit: VenueUnitRow;
+  onSave: (
+    patch: Partial<
+      Pick<
+        VenueUnitRow,
+        | "label"
+        | "number"
+        | "type"
+        | "sector"
+        | "capacity"
+        | "price_cents"
+        | "status"
+        | "sale_mode"
+        | "sale_url"
+        | "pix_key"
+        | "pix_instructions"
+      >
+    >,
+  ) => Promise<void>;
+  onCancel: () => void;
+  onDelete: () => void;
+}) {
+  const [label, setLabel] = useState(unit.label);
+  const [type, setType] = useState<VenueUnitType>(unit.type as VenueUnitType);
+  const [sector, setSector] = useState(unit.sector ?? "");
+  const [capacity, setCapacity] = useState(
+    unit.capacity != null ? String(unit.capacity) : "",
+  );
+  const [price, setPrice] = useState(
+    unit.price_cents != null ? (unit.price_cents / 100).toString() : "",
+  );
+  const [status, setStatus] = useState<VenueUnitStatus>(
+    unit.status as VenueUnitStatus,
+  );
+  const [saleMode, setSaleMode] = useState<VenueUnitSaleMode>(
+    (unit.sale_mode as VenueUnitSaleMode) ?? "disabled",
+  );
+  const [saleUrl, setSaleUrl] = useState(unit.sale_url ?? "");
+  const [pixKey, setPixKey] = useState(unit.pix_key ?? "");
+  const [pixInstructions, setPixInstructions] = useState(
+    unit.pix_instructions ?? "",
+  );
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+          Editando {VENUE_UNIT_TYPE_LABEL[unit.type as VenueUnitType]}{" "}
+          {unit.label}
+        </p>
+        <button
+          type="button"
+          onClick={onCancel}
+          aria-label="Fechar"
+          className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Rótulo
+          </span>
+          <input
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            className="input mt-1"
+            maxLength={40}
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Tipo
+          </span>
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value as VenueUnitType)}
+            className="input mt-1"
+          >
+            {VENUE_UNIT_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {VENUE_UNIT_TYPE_LABEL[t]}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block col-span-2">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Setor
+          </span>
+          <input
+            value={sector}
+            onChange={(e) => setSector(e.target.value)}
+            className="input mt-1"
+            maxLength={40}
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Capacidade
+          </span>
+          <input
+            value={capacity}
+            onChange={(e) => setCapacity(e.target.value)}
+            type="number"
+            min={1}
+            className="input mt-1"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Preço (R$)
+          </span>
+          <input
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            type="number"
+            min={0}
+            step="0.01"
+            className="input mt-1"
+          />
+        </label>
+        <label className="block col-span-2">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Status
+          </span>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as VenueUnitStatus)}
+            className="input mt-1"
+          >
+            {(Object.keys(VENUE_UNIT_STATUS_LABEL) as VenueUnitStatus[]).map(
+              (s) => (
+                <option key={s} value={s}>
+                  {VENUE_UNIT_STATUS_LABEL[s]}
+                </option>
+              ),
+            )}
+          </select>
+        </label>
+        <label className="block col-span-2">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Canal de venda
+          </span>
+          <select
+            value={saleMode}
+            onChange={(e) => setSaleMode(e.target.value as VenueUnitSaleMode)}
+            className="input mt-1"
+          >
+            {VENUE_UNIT_SALE_MODES.map((m) => (
+              <option key={m} value={m}>
+                {VENUE_UNIT_SALE_MODE_LABEL[m]}
+              </option>
+            ))}
+          </select>
+        </label>
+        {saleMode === "external_link" && (
+          <label className="block col-span-2">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+              Link (http/https)
+            </span>
+            <input
+              value={saleUrl}
+              onChange={(e) => setSaleUrl(e.target.value)}
+              className="input mt-1"
+              placeholder="https://eventou.com.br/..."
+              inputMode="url"
+            />
+          </label>
+        )}
+        {saleMode === "pix_manual" && (
+          <>
+            <label className="block col-span-2">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Chave PIX
+              </span>
+              <input
+                value={pixKey}
+                onChange={(e) => setPixKey(e.target.value)}
+                className="input mt-1"
+              />
+            </label>
+            <label className="block col-span-2">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Instruções
+              </span>
+              <input
+                value={pixInstructions}
+                onChange={(e) => setPixInstructions(e.target.value)}
+                className="input mt-1"
+              />
+            </label>
+          </>
+        )}
+      </div>
+      <div className="flex items-center justify-between gap-2 pt-1">
+        <button
+          type="button"
+          onClick={onDelete}
+          className="inline-flex items-center gap-1 rounded-md border border-destructive/40 px-2.5 py-2 text-xs text-destructive hover:bg-destructive/10"
+        >
+          <Trash2 className="h-3.5 w-3.5" /> Excluir
+        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-md border border-border-strong px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              const parsedNumber = parseInt(label, 10);
+              const parsedCap = capacity ? parseInt(capacity, 10) : null;
+              const parsedPrice = price
+                ? Math.round(parseFloat(price.replace(",", ".")) * 100)
+                : null;
+              const trimmedUrl = saleUrl.trim();
+              if (saleMode === "external_link" && !isSafeSaleUrl(trimmedUrl)) {
+                toast.error(
+                  "Link de venda inválido. Use uma URL http:// ou https://.",
+                );
+                return;
+              }
+              await onSave({
+                label: label.trim(),
+                number: Number.isFinite(parsedNumber) ? parsedNumber : null,
+                type,
+                sector: sector.trim() || null,
+                capacity:
+                  parsedCap && Number.isFinite(parsedCap) && parsedCap > 0
+                    ? parsedCap
+                    : null,
+                price_cents:
+                  parsedPrice != null && Number.isFinite(parsedPrice)
+                    ? parsedPrice
+                    : null,
+                status,
+                sale_mode: saleMode,
+                sale_url: saleMode === "external_link" ? trimmedUrl : null,
+                pix_key:
+                  saleMode === "pix_manual" ? pixKey.trim() || null : null,
+                pix_instructions:
+                  saleMode === "pix_manual"
+                    ? pixInstructions.trim() || null
+                    : null,
+              });
+            }}
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground"
+          >
+            <Save className="h-3.5 w-3.5" /> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
