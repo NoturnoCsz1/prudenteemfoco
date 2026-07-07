@@ -23,11 +23,16 @@ import {
   VENUE_UNIT_TYPE_LABEL,
   VENUE_UNIT_STATUS_LABEL,
   VENUE_UNIT_STATUS_COLOR,
+  VENUE_UNIT_SALE_MODES,
+  VENUE_UNIT_SALE_MODE_LABEL,
   formatPriceCents,
+  friendlyVenueUnitError,
+  isSafeSaleUrl,
   type VenueMapType,
   type VenueMapStatus,
   type VenueUnitType,
   type VenueUnitStatus,
+  type VenueUnitSaleMode,
 } from "@/lib/venue-maps";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -332,22 +337,25 @@ function MapEditor({
         }}
         onPlace={async (xPercent, yPercent) => {
           if (!placingType) return;
-          const nextLabel = nextLabelFor(unitsQ.data ?? [], placingType);
+          const currentType = placingType;
+          const nextLabel = nextLabelFor(unitsQ.data ?? [], currentType);
           const { error } = await supabase.from("venue_units").insert({
             organization_id: map.organization_id,
             event_id: map.event_id,
             venue_map_id: map.id,
-            type: placingType,
+            type: currentType,
             label: nextLabel,
             number: parseInt(nextLabel, 10) || null,
             x_percent: xPercent,
             y_percent: yPercent,
             status: "blocked",
           });
-          if (error) toast.error(error.message);
+          if (error) toast.error(friendlyVenueUnitError(error));
           else {
             invalidateUnits();
-            toast.success(`${VENUE_UNIT_TYPE_LABEL[placingType]} ${nextLabel} adicionada.`);
+            toast.success(
+              `${VENUE_UNIT_TYPE_LABEL[currentType]} ${nextLabel} adicionada.`,
+            );
           }
         }}
         onMove={async (id, xPercent, yPercent) => {
@@ -355,7 +363,7 @@ function MapEditor({
             .from("venue_units")
             .update({ x_percent: xPercent, y_percent: yPercent })
             .eq("id", id);
-          if (error) toast.error(error.message);
+          if (error) toast.error(friendlyVenueUnitError(error));
           else invalidateUnits();
         }}
       />
@@ -370,7 +378,7 @@ function MapEditor({
             .from("venue_units")
             .update(patch)
             .in("id", Array.from(selectedIds));
-          if (error) toast.error(error.message);
+          if (error) toast.error(friendlyVenueUnitError(error));
           else {
             invalidateUnits();
             toast.success("Aplicado às unidades selecionadas.");
@@ -383,7 +391,7 @@ function MapEditor({
             .from("venue_units")
             .delete()
             .in("id", Array.from(selectedIds));
-          if (error) toast.error(error.message);
+          if (error) toast.error(friendlyVenueUnitError(error));
           else {
             setSelectedIds(new Set());
             invalidateUnits();
@@ -411,7 +419,7 @@ function MapEditor({
             .from("venue_units")
             .update(patch)
             .eq("id", id);
-          if (error) toast.error(error.message);
+          if (error) toast.error(friendlyVenueUnitError(error));
           else {
             setEditingId(null);
             invalidateUnits();
@@ -423,7 +431,7 @@ function MapEditor({
             .from("venue_units")
             .delete()
             .eq("id", id);
-          if (error) toast.error(error.message);
+          if (error) toast.error(friendlyVenueUnitError(error));
           else invalidateUnits();
         }}
       />
@@ -463,7 +471,7 @@ function MapHeader({
       .update({ title, map_type: mapType, status })
       .eq("id", map.id);
     setSaving(false);
-    if (error) toast.error(error.message);
+    if (error) toast.error(friendlyVenueUnitError(error));
     else {
       toast.success("Mapa atualizado.");
       onChanged();
@@ -473,7 +481,7 @@ function MapHeader({
   async function del() {
     if (!confirm("Excluir este mapa e todas as unidades?")) return;
     const { error } = await supabase.from("venue_maps").delete().eq("id", map.id);
-    if (error) toast.error(error.message);
+    if (error) toast.error(friendlyVenueUnitError(error));
     else {
       toast.success("Mapa excluído.");
       onChanged();
@@ -574,6 +582,7 @@ function MapImageEditor({
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragId, setDragId] = useState<string | null>(null);
+  const [naturalRatio, setNaturalRatio] = useState<number | null>(null);
 
   async function handleFile(file: File) {
     if (!ACCEPTED_MIME.includes(file.type as (typeof ACCEPTED_MIME)[number])) {
@@ -683,26 +692,33 @@ function MapImageEditor({
           </button>
         </div>
       </div>
-      <div
-        ref={containerRef}
-        onClick={handleContainerClick}
-        className={`relative w-full overflow-hidden rounded-lg border border-border bg-muted ${
-          placingType ? "cursor-crosshair" : ""
-        }`}
-        style={{ aspectRatio: "16 / 9" }}
-      >
-        {map.image_url ? (
-          <img
-            src={map.image_url}
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full object-contain"
-            draggable={false}
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/40">
-            <ImageIcon className="h-8 w-8" />
-          </div>
-        )}
+      <div className="mx-auto w-full">
+        <div
+          ref={containerRef}
+          onClick={handleContainerClick}
+          className={`relative mx-auto w-full max-w-full overflow-hidden rounded-lg border border-border bg-muted ${
+            placingType ? "cursor-crosshair" : ""
+          }`}
+          style={{ aspectRatio: naturalRatio ?? 16 / 9 }}
+        >
+          {map.image_url ? (
+            <img
+              src={map.image_url}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+              draggable={false}
+              onLoad={(e) => {
+                const img = e.currentTarget;
+                if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                  setNaturalRatio(img.naturalWidth / img.naturalHeight);
+                }
+              }}
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/40">
+              <ImageIcon className="h-8 w-8" />
+            </div>
+          )}
         {units
           .filter((u) => u.x_percent != null && u.y_percent != null)
           .map((u) => (
@@ -737,6 +753,7 @@ function MapImageEditor({
               }}
             />
           ))}
+        </div>
       </div>
     </div>
   );
@@ -976,6 +993,10 @@ function UnitsList({
         | "price_cents"
         | "status"
         | "active"
+        | "sale_mode"
+        | "sale_url"
+        | "pix_key"
+        | "pix_instructions"
       >
     >,
   ) => Promise<void>;
@@ -1008,6 +1029,7 @@ function UnitsList({
             <th className="px-3 py-2">Cap.</th>
             <th className="px-3 py-2">Preço</th>
             <th className="px-3 py-2">Status</th>
+            <th className="px-3 py-2">Venda</th>
             <th className="px-3 py-2"></th>
           </tr>
         </thead>
@@ -1059,6 +1081,10 @@ function UnitRow({
         | "price_cents"
         | "status"
         | "active"
+        | "sale_mode"
+        | "sale_url"
+        | "pix_key"
+        | "pix_instructions"
       >
     >,
   ) => Promise<void>;
@@ -1075,6 +1101,14 @@ function UnitRow({
   );
   const [status, setStatus] = useState<VenueUnitStatus>(
     unit.status as VenueUnitStatus,
+  );
+  const [saleMode, setSaleMode] = useState<VenueUnitSaleMode>(
+    (unit.sale_mode as VenueUnitSaleMode) ?? "disabled",
+  );
+  const [saleUrl, setSaleUrl] = useState(unit.sale_url ?? "");
+  const [pixKey, setPixKey] = useState(unit.pix_key ?? "");
+  const [pixInstructions, setPixInstructions] = useState(
+    unit.pix_instructions ?? "",
   );
 
   if (!editing) {
@@ -1109,6 +1143,13 @@ function UnitRow({
           >
             {VENUE_UNIT_STATUS_LABEL[unit.status as VenueUnitStatus]}
           </span>
+        </td>
+        <td className="px-3 py-2 text-xs text-muted-foreground">
+          {
+            VENUE_UNIT_SALE_MODE_LABEL[
+              (unit.sale_mode as VenueUnitSaleMode) ?? "disabled"
+            ]
+          }
         </td>
         <td className="px-3 py-2 text-right">
           <button
@@ -1204,7 +1245,20 @@ function UnitRow({
           )}
         </select>
       </td>
-      <td className="px-3 py-2 text-right">
+      <td className="px-3 py-2">
+        <select
+          value={saleMode}
+          onChange={(e) => setSaleMode(e.target.value as VenueUnitSaleMode)}
+          className="input"
+        >
+          {VENUE_UNIT_SALE_MODES.map((m) => (
+            <option key={m} value={m}>
+              {VENUE_UNIT_SALE_MODE_LABEL[m]}
+            </option>
+          ))}
+        </select>
+      </td>
+      <td className="px-3 py-2 text-right align-top">
         <button
           type="button"
           onClick={async () => {
@@ -1213,6 +1267,13 @@ function UnitRow({
             const parsedPrice = price
               ? Math.round(parseFloat(price.replace(",", ".")) * 100)
               : null;
+            const trimmedUrl = saleUrl.trim();
+            if (saleMode === "external_link" && !isSafeSaleUrl(trimmedUrl)) {
+              toast.error(
+                "Link de venda inválido. Use uma URL começando com http:// ou https://.",
+              );
+              return;
+            }
             await onSave({
               label: label.trim(),
               number: Number.isFinite(parsedNumber) ? parsedNumber : null,
@@ -1227,6 +1288,14 @@ function UnitRow({
                   ? parsedPrice
                   : null,
               status,
+              sale_mode: saleMode,
+              sale_url: saleMode === "external_link" ? trimmedUrl : null,
+              pix_key:
+                saleMode === "pix_manual" ? pixKey.trim() || null : null,
+              pix_instructions:
+                saleMode === "pix_manual"
+                  ? pixInstructions.trim() || null
+                  : null,
             });
           }}
           className="text-xs font-semibold text-primary hover:underline"

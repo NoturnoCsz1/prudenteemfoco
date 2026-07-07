@@ -2064,7 +2064,11 @@ export type Database = {
           metadata: Json
           number: number | null
           organization_id: string
+          pix_instructions: string | null
+          pix_key: string | null
           price_cents: number | null
+          sale_mode: Database["public"]["Enums"]["venue_unit_sale_mode"]
+          sale_url: string | null
           sector: string | null
           status: Database["public"]["Enums"]["venue_unit_status"]
           type: Database["public"]["Enums"]["venue_unit_type"]
@@ -2083,7 +2087,11 @@ export type Database = {
           metadata?: Json
           number?: number | null
           organization_id: string
+          pix_instructions?: string | null
+          pix_key?: string | null
           price_cents?: number | null
+          sale_mode?: Database["public"]["Enums"]["venue_unit_sale_mode"]
+          sale_url?: string | null
           sector?: string | null
           status?: Database["public"]["Enums"]["venue_unit_status"]
           type?: Database["public"]["Enums"]["venue_unit_type"]
@@ -2102,7 +2110,11 @@ export type Database = {
           metadata?: Json
           number?: number | null
           organization_id?: string
+          pix_instructions?: string | null
+          pix_key?: string | null
           price_cents?: number | null
+          sale_mode?: Database["public"]["Enums"]["venue_unit_sale_mode"]
+          sale_url?: string | null
           sector?: string | null
           status?: Database["public"]["Enums"]["venue_unit_status"]
           type?: Database["public"]["Enums"]["venue_unit_type"]
@@ -2783,6 +2795,7 @@ export type Database = {
         | "sector_map"
         | "mixed_map"
         | "informational_map"
+      venue_unit_sale_mode: "disabled" | "external_link" | "pix_manual"
       venue_unit_status:
         | "available"
         | "held"
@@ -3057,6 +3070,7 @@ export const Constants = {
         "mixed_map",
         "informational_map",
       ],
+      venue_unit_sale_mode: ["disabled", "external_link", "pix_manual"],
       venue_unit_status: [
         "available",
         "held",
