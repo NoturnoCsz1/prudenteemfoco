@@ -72,6 +72,7 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
   const lastDecodedRef = useRef<{ text: string; at: number } | null>(null);
   const runningRef = useRef(false);
   const startLockRef = useRef(false);
+  const startPromiseRef = useRef<Promise<void> | null>(null);
   const stopLockRef = useRef<Promise<void> | null>(null);
   const operationRef = useRef(0);
   const pausedRef = useRef<boolean>(!!paused);
@@ -90,6 +91,15 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
 
   const stopScanner = async (reason: string, invalidatePendingStart = true) => {
     if (invalidatePendingStart) operationRef.current += 1;
+    if (startPromiseRef.current && reason !== "before-start") {
+      // eslint-disable-next-line no-console
+      console.log("[CAMERA] scanner:stop waiting for pending start", { reason });
+      try {
+        await startPromiseRef.current;
+      } catch {
+        // The start error is logged at the start attempt site.
+      }
+    }
     const s = scannerRef.current;
     scannerRef.current = null;
     setTorchSupported(false);
@@ -263,13 +273,13 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
         aspectRatio: 1,
       };
 
-      const attempts: Array<{ label: string; source: MediaTrackConstraints | { deviceId: { exact: string } } }> = [];
+      const attempts: Array<{ label: string; source: string | MediaTrackConstraints }> = [];
       attempts.push({
         label: `facingMode:${facingPref}`,
         source: { facingMode: { ideal: facingPref } } as MediaTrackConstraints,
       });
       for (const cam of sorted) {
-        attempts.push({ label: `device:${cam.label}`, source: { deviceId: { exact: cam.id } } });
+        attempts.push({ label: `device:${cam.label}`, source: cam.id });
       }
       // Last resort: try the opposite facing
       attempts.push({
@@ -284,7 +294,9 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
           try {
             // eslint-disable-next-line no-console
             console.log(`[CAMERA] scanner:start attempt=${a.label}`);
-            await scanner.start(a.source, config, decodeCb, () => {});
+            const startPromise = scanner.start(a.source, config, decodeCb, () => {});
+            startPromiseRef.current = startPromise;
+            await startPromise;
             runningRef.current = true;
             // eslint-disable-next-line no-console
             console.log("[CAMERA] scanner:start:success", { attempt: a.label });
@@ -301,6 +313,8 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
             lastErr = e;
             logCameraError("scanner:start:error", e, { attempt: a.label });
             runningRef.current = false;
+          } finally {
+            startPromiseRef.current = null;
           }
         }
 
@@ -311,6 +325,7 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
           setState("error");
         }
       } finally {
+        startPromiseRef.current = null;
         startLockRef.current = false;
       }
     };
