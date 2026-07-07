@@ -917,7 +917,7 @@ function PlacingBar({
   const [bulkPixInstructions, setBulkPixInstructions] = useState("");
 
   return (
-    <div className="sticky top-0 z-20 -mx-4 w-[calc(100%+2rem)] max-w-[calc(100%+2rem)] rounded-none border-y border-border bg-background/95 p-3 backdrop-blur sm:-mx-5 sm:w-[calc(100%+2.5rem)] sm:max-w-[calc(100%+2.5rem)] md:static md:mx-0 md:w-full md:max-w-full md:rounded-lg md:border md:p-4">
+    <div className="sticky top-0 z-20 w-full min-w-0 max-w-full rounded-lg border border-border bg-background/95 p-3 backdrop-blur md:static md:p-4">
       <div className="flex min-w-0 max-w-full items-center gap-2">
         <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground md:inline">
           Colocar no mapa:
