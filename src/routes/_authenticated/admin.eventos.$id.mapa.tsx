@@ -1312,5 +1312,54 @@ function UnitRow({
         </button>
       </td>
     </tr>
+    {(saleMode === "external_link" || saleMode === "pix_manual") && (
+      <tr className="border-t border-border/50 bg-accent/20">
+        <td colSpan={9} className="px-3 py-3">
+          {saleMode === "external_link" ? (
+            <label className="block">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Link de venda (http/https)
+              </span>
+              <input
+                value={saleUrl}
+                onChange={(e) => setSaleUrl(e.target.value)}
+                className="input mt-1 w-full"
+                placeholder="https://eventou.com.br/evento/..."
+                inputMode="url"
+              />
+            </label>
+          ) : (
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="block">
+                <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Chave PIX
+                </span>
+                <input
+                  value={pixKey}
+                  onChange={(e) => setPixKey(e.target.value)}
+                  className="input mt-1 w-full"
+                  placeholder="email@dominio.com / CPF / chave aleatória"
+                />
+              </label>
+              <label className="block">
+                <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  Instruções ao comprador
+                </span>
+                <input
+                  value={pixInstructions}
+                  onChange={(e) => setPixInstructions(e.target.value)}
+                  className="input mt-1 w-full"
+                  placeholder="Envie o comprovante para o WhatsApp..."
+                />
+              </label>
+              <p className="text-[11px] text-muted-foreground md:col-span-2">
+                A confirmação do pagamento ainda será manual nesta fase.
+              </p>
+            </div>
+          )}
+        </td>
+      </tr>
+    )}
+    </>
   );
 }
