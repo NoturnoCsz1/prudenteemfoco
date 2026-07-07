@@ -34,7 +34,7 @@ function LinksIndex() {
   const list = useServerFn(listShortLinks);
   const create = useServerFn(createShortLink);
   const update = useServerFn(updateShortLink);
-  const navigate = useNavigate();
+  
 
   const linksQ = useQuery({
     queryKey: ["short-links", orgId],
