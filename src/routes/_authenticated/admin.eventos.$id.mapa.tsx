@@ -714,16 +714,16 @@ function MapImageEditor({
   }
 
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs text-muted-foreground">
+    <div className="w-full min-w-0 max-w-full space-y-2">
+      <div className="flex w-full min-w-0 max-w-full flex-wrap items-start justify-between gap-2">
+        <p className="min-w-0 max-w-full flex-1 whitespace-normal break-words text-xs leading-relaxed text-muted-foreground">
           {map.image_url
             ? placingType
               ? `Adicionar ${VENUE_UNIT_TYPE_LABEL[placingType]} — toque no ponto correspondente do mapa.`
               : "Arraste os pontos para reposicionar. Toque num ponto para selecionar."
             : "Envie a imagem do mapa (JPG/PNG/WebP, máx. 12 MB). Recomendado 1920×1080 px."}
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           {placingType && (
             <button
               type="button"
@@ -758,11 +758,35 @@ function MapImageEditor({
           </button>
         </div>
       </div>
-      <div className="mx-auto w-full md:max-h-[70vh] md:flex md:justify-center">
+      {!map.image_url ? (
+        <div className="flex w-full min-w-0 max-w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-muted/40 px-4 py-8 text-center min-h-[220px]">
+          <Upload className="h-8 w-8 text-muted-foreground/60" />
+          <div className="min-w-0 max-w-full">
+            <p className="text-sm font-semibold text-foreground">Enviar mapa do evento</p>
+            <p className="mt-1 whitespace-normal break-words text-xs text-muted-foreground">
+              Formatos aceitos: JPG, PNG ou WebP · máx. 12 MB
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border-strong bg-background px-3 py-1.5 text-xs font-semibold hover:bg-accent disabled:opacity-60"
+          >
+            {uploading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Upload className="h-3.5 w-3.5" />
+            )}
+            Selecionar imagem
+          </button>
+        </div>
+      ) : (
+      <div className="mx-auto w-full min-w-0 max-w-full md:max-h-[70vh] md:flex md:justify-center">
         <div
           ref={containerRef}
           onClick={handleContainerClick}
-          className={`relative w-full max-w-full overflow-hidden rounded-lg border border-border bg-muted md:max-h-[70vh] ${
+          className={`relative w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-border bg-muted md:max-h-[70vh] ${
             placingType ? "cursor-crosshair" : ""
           }`}
           style={{ aspectRatio: naturalRatio ?? 16 / 9 }}
