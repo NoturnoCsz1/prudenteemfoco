@@ -614,6 +614,7 @@ function MapImageEditor({
   units,
   placingType,
   selectedIds,
+  onCancelPlacing,
   onToggleSelect,
   onPlace,
   onMove,
@@ -622,10 +623,12 @@ function MapImageEditor({
   units: VenueUnitRow[];
   placingType: VenueUnitType | null;
   selectedIds: Set<string>;
+  onCancelPlacing: () => void;
   onToggleSelect: (id: string) => void;
   onPlace: (xPercent: number, yPercent: number) => void;
   onMove: (id: string, xPercent: number, yPercent: number) => void;
 }) {
+  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
