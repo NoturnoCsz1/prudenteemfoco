@@ -917,26 +917,28 @@ function PlacingBar({
   const [bulkPixInstructions, setBulkPixInstructions] = useState("");
 
   return (
-    <div className="sticky top-0 z-20 -mx-5 rounded-none border-y border-border bg-background/95 p-3 backdrop-blur md:static md:mx-0 md:rounded-lg md:border md:p-4">
-      <div className="flex items-center gap-2">
+    <div className="sticky top-0 z-20 -mx-4 w-[calc(100%+2rem)] max-w-[calc(100%+2rem)] rounded-none border-y border-border bg-background/95 p-3 backdrop-blur sm:-mx-5 sm:w-[calc(100%+2.5rem)] sm:max-w-[calc(100%+2.5rem)] md:static md:mx-0 md:w-full md:max-w-full md:rounded-lg md:border md:p-4">
+      <div className="flex min-w-0 max-w-full items-center gap-2">
         <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground md:inline">
           Colocar no mapa:
         </span>
-        <div className="-mx-1 flex flex-1 items-center gap-2 overflow-x-auto px-1 py-0.5 whitespace-nowrap md:flex-wrap md:overflow-visible md:whitespace-normal">
-          {VENUE_UNIT_TYPES.map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setPlacingType(placingType === t ? null : t)}
-              className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium transition min-w-[64px] ${
-                placingType === t
-                  ? "border-primary bg-primary/10 text-foreground"
-                  : "border-border text-muted-foreground hover:bg-accent"
-              }`}
-            >
-              {VENUE_UNIT_TYPE_LABEL[t]}
-            </button>
-          ))}
+        <div className="w-full min-w-0 max-w-full overflow-hidden">
+          <div className="-mx-1 flex items-center gap-2 overflow-x-auto overscroll-x-contain px-1 py-0.5 whitespace-nowrap md:flex-wrap md:overflow-visible md:whitespace-normal">
+            {VENUE_UNIT_TYPES.map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setPlacingType(placingType === t ? null : t)}
+                className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium transition ${
+                  placingType === t
+                    ? "border-primary bg-primary/10 text-foreground"
+                    : "border-border text-muted-foreground hover:bg-accent"
+                }`}
+              >
+                {VENUE_UNIT_TYPE_LABEL[t]}
+              </button>
+            ))}
+          </div>
         </div>
         {placingType && (
           <button
@@ -948,6 +950,7 @@ function PlacingBar({
           </button>
         )}
       </div>
+
 
 
       {selectedCount > 0 && (
