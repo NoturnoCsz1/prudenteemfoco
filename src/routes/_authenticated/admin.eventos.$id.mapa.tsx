@@ -783,6 +783,7 @@ function MapImageEditor({
           .filter((u) => u.x_percent != null && u.y_percent != null)
           .map((u) => (
             <Hotspot
+              isMobile={isMobile}
               key={u.id}
               unit={u}
               selected={selectedIds.has(u.id)}
