@@ -816,6 +816,10 @@ function PlacingBar({
     capacity?: number | null;
     status?: VenueUnitStatus;
     active?: boolean;
+    sale_mode?: VenueUnitSaleMode;
+    sale_url?: string | null;
+    pix_key?: string | null;
+    pix_instructions?: string | null;
   }) => Promise<void>;
   onBulkDelete: () => Promise<void>;
   onClearSelection: () => void;
@@ -823,6 +827,10 @@ function PlacingBar({
   const [bulkPrice, setBulkPrice] = useState("");
   const [bulkCapacity, setBulkCapacity] = useState("");
   const [bulkStatus, setBulkStatus] = useState<VenueUnitStatus | "">("");
+  const [bulkSaleMode, setBulkSaleMode] = useState<VenueUnitSaleMode | "">("");
+  const [bulkSaleUrl, setBulkSaleUrl] = useState("");
+  const [bulkPixKey, setBulkPixKey] = useState("");
+  const [bulkPixInstructions, setBulkPixInstructions] = useState("");
 
   return (
     <div className="rounded-lg border border-border p-3 md:p-4">
