@@ -66,28 +66,28 @@ function EnginePage() {
         regras são aplicadas automaticamente pelo motor de acesso.
       </p>
 
-      <div className="mt-5 grid grid-cols-3 gap-3">
-        <div className="rounded-lg border border-border bg-card p-3">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
+      <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
+        <div className="rounded-lg border border-border bg-card p-2.5 sm:p-3">
+          <div className="text-[10px] sm:text-xs uppercase tracking-wide text-muted-foreground">
             Total
           </div>
-          <div className="mt-1 font-display text-2xl font-semibold">
+          <div className="mt-1 font-display text-xl sm:text-2xl font-semibold">
             {attemptsQ.data?.length ?? "—"}
           </div>
         </div>
-        <div className="rounded-lg border border-border bg-card p-3">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
+        <div className="rounded-lg border border-border bg-card p-2.5 sm:p-3">
+          <div className="text-[10px] sm:text-xs uppercase tracking-wide text-muted-foreground">
             Permitidas
           </div>
-          <div className="mt-1 font-display text-2xl font-semibold text-emerald-500">
+          <div className="mt-1 font-display text-xl sm:text-2xl font-semibold text-emerald-500">
             {allowed}
           </div>
         </div>
-        <div className="rounded-lg border border-border bg-card p-3">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
+        <div className="rounded-lg border border-border bg-card p-2.5 sm:p-3">
+          <div className="text-[10px] sm:text-xs uppercase tracking-wide text-muted-foreground">
             Negadas
           </div>
-          <div className="mt-1 font-display text-2xl font-semibold text-destructive">
+          <div className="mt-1 font-display text-xl sm:text-2xl font-semibold text-destructive">
             {denied}
           </div>
         </div>
@@ -104,8 +104,8 @@ function EnginePage() {
             Nenhuma decisão registrada.
           </div>
         ) : (
-          <div className="overflow-hidden rounded-lg border border-border bg-card">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto rounded-lg border border-border bg-card">
+            <table className="w-full min-w-[640px] text-sm">
               <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
                   <th className="px-3 py-2 text-left font-medium">Quando</th>
