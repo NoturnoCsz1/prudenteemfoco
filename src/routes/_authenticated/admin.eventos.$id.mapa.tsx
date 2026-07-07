@@ -823,6 +823,7 @@ function MapImageEditor({
 function Hotspot({
   unit,
   selected,
+  isMobile,
   onPointerDown,
   onPointerMove,
   onPointerUp,
@@ -830,11 +831,13 @@ function Hotspot({
 }: {
   unit: VenueUnitRow;
   selected: boolean;
+  isMobile: boolean;
   onPointerDown: (e: React.PointerEvent) => void;
   onPointerMove: (e: React.PointerEvent) => void;
   onPointerUp: (e: React.PointerEvent) => void;
   onClick: (e: React.MouseEvent) => void;
 }) {
+  const display = displayLabelFor(unit.type as VenueUnitType, unit.label);
   return (
     <button
       type="button"
@@ -846,19 +849,33 @@ function Hotspot({
       }}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 px-2 py-0.5 font-display text-[10px] font-bold uppercase tracking-[0.1em] shadow-md touch-none ${
-        VENUE_UNIT_STATUS_COLOR[unit.status as VenueUnitStatus]
-      } ${selected ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : ""}`}
+      className={`absolute -translate-x-1/2 -translate-y-1/2 touch-none ${
+        selected ? "z-20" : "z-10"
+      }`}
       style={{
         left: `${unit.x_percent}%`,
         top: `${unit.y_percent}%`,
+        minWidth: isMobile ? 44 : undefined,
+        minHeight: isMobile ? 44 : undefined,
       }}
       aria-label={`${VENUE_UNIT_TYPE_LABEL[unit.type as VenueUnitType]} ${unit.label}`}
     >
-      {unit.label}
+      {/* Visual pill centered inside the (potentially larger) tap target */}
+      <span
+        className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 px-2 py-0.5 font-display text-[10px] font-bold uppercase tracking-[0.1em] shadow-md ${
+          VENUE_UNIT_STATUS_COLOR[unit.status as VenueUnitStatus]
+        } ${
+          selected
+            ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110"
+            : ""
+        }`}
+      >
+        {display}
+      </span>
     </button>
   );
 }
+
 
 // ---------- Placing / bulk bar ----------
 function PlacingBar({
