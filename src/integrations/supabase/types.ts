@@ -2392,6 +2392,21 @@ export type Database = {
         }[]
       }
       remove_org_member: { Args: { _member_id: string }; Returns: undefined }
+      resolve_and_track_short_link: {
+        Args: {
+          _browser?: string
+          _device?: string
+          _referrer?: string
+          _slug: string
+          _user_agent?: string
+          _utm_campaign?: string
+          _utm_content?: string
+          _utm_medium?: string
+          _utm_source?: string
+          _utm_term?: string
+        }
+        Returns: string
+      }
       revoke_access_token: { Args: { _token_id: string }; Returns: undefined }
       role_rank: {
         Args: { _role: Database["public"]["Enums"]["member_role"] }

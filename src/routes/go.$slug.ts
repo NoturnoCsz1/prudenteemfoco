@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
 function parseUA(ua: string): { device: string; browser: string } {
   const lower = ua.toLowerCase();
@@ -32,40 +34,42 @@ export const Route = createFileRoute("/go/$slug")({
           return new Response("Link inválido", { status: 404 });
         }
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: link } = await supabaseAdmin
-          .from("short_links")
-          .select("id, destination_url, active")
-          .eq("slug", slug)
-          .maybeSingle();
-
-        if (!link || !link.active || !isSafeDestination(link.destination_url)) {
-          return new Response("Link indisponível", { status: 404 });
+        const SUPABASE_URL = process.env.SUPABASE_URL;
+        const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+        if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+          return new Response("Serviço indisponível", { status: 503 });
         }
+
+        const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+          auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+        });
 
         const url = new URL(request.url);
         const ua = request.headers.get("user-agent") ?? "";
         const { device, browser } = parseUA(ua);
         const referrer = request.headers.get("referer");
 
-        // Fire-and-forget insert (do not block redirect on tracking failure)
-        void supabaseAdmin.from("short_link_clicks").insert({
-          short_link_id: link.id,
-          referrer: referrer ? referrer.slice(0, 512) : null,
-          user_agent: ua ? ua.slice(0, 512) : null,
-          device,
-          browser,
-          utm_source: url.searchParams.get("utm_source"),
-          utm_medium: url.searchParams.get("utm_medium"),
-          utm_campaign: url.searchParams.get("utm_campaign"),
-          utm_content: url.searchParams.get("utm_content"),
-          utm_term: url.searchParams.get("utm_term"),
+        const { data: destination, error } = await supabase.rpc("resolve_and_track_short_link", {
+          _slug: slug,
+          _referrer: referrer ?? undefined,
+          _user_agent: ua || undefined,
+          _device: device,
+          _browser: browser,
+          _utm_source: url.searchParams.get("utm_source") ?? undefined,
+          _utm_medium: url.searchParams.get("utm_medium") ?? undefined,
+          _utm_campaign: url.searchParams.get("utm_campaign") ?? undefined,
+          _utm_content: url.searchParams.get("utm_content") ?? undefined,
+          _utm_term: url.searchParams.get("utm_term") ?? undefined,
         });
+
+        if (error || !destination || !isSafeDestination(destination)) {
+          return new Response("Link indisponível", { status: 404 });
+        }
 
         return new Response(null, {
           status: 302,
           headers: {
-            Location: link.destination_url,
+            Location: destination,
             "Cache-Control": "no-store, no-cache, must-revalidate",
           },
         });
