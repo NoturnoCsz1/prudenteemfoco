@@ -285,7 +285,7 @@ function EventDetailPage() {
 
 
   return (
-    <article>
+    <article className="pb-20 md:pb-0">
       {/* HERO — CARTAZ DO EVENTO */}
       <section className="relative isolate -mt-14 md:-mt-16">
         {cover ? (
@@ -293,14 +293,14 @@ function EventDetailPage() {
             <img
               src={cover}
               alt=""
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-center"
             />
             <div
               aria-hidden
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(180deg, color-mix(in oklab, var(--background) 25%, transparent) 0%, color-mix(in oklab, var(--background) 10%, transparent) 45%, color-mix(in oklab, var(--background) 90%, transparent) 90%, var(--background) 100%)",
+                  "linear-gradient(180deg, color-mix(in oklab, var(--background) 35%, transparent) 0%, color-mix(in oklab, var(--background) 15%, transparent) 40%, color-mix(in oklab, var(--background) 92%, transparent) 88%, var(--background) 100%)",
               }}
             />
           </div>
@@ -315,70 +315,60 @@ function EventDetailPage() {
           />
         )}
         <div
-          className={`container-page flex flex-col justify-end pb-16 pt-32 md:pb-24 md:pt-40 ${
-            cover ? "min-h-[92vh] md:min-h-[100vh]" : "min-h-[70vh]"
-          }`}
+          className="container-page flex min-h-[70vh] flex-col justify-end pb-10 pt-24 md:min-h-[85vh] md:pb-20 md:pt-40"
         >
           <Link
             to="/eventos"
-            className="mb-8 inline-flex items-center gap-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/80 hover:text-primary"
+            className="mb-6 inline-flex items-center gap-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/80 hover:text-primary"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Todos os eventos
           </Link>
-          <p className="eyebrow-label text-primary">
-            Evento oficial · Prudente em Foco
-          </p>
-          <h1 className="mt-6 display-xl break-words text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)]">
+          <p className="eyebrow-label text-primary">{getEventSeal(event)}</p>
+          <h1 className="mt-4 text-3xl font-black leading-[1.05] tracking-tight text-foreground [text-shadow:0_2px_40px_rgba(0,0,0,0.35)] sm:text-4xl md:mt-6 md:text-6xl lg:text-7xl break-words">
             {event.title}
           </h1>
 
-          <div className="mt-10 flex flex-wrap items-baseline gap-x-10 gap-y-3">
-            <p className="date-block text-3xl text-foreground md:text-5xl">
+          <div className="mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-2 md:mt-10 md:gap-x-10 md:gap-y-3">
+            <p className="date-block text-2xl text-foreground sm:text-3xl md:text-5xl">
               {formatEventDateEditorial(event.starts_at, event.ends_at)}
             </p>
             {(event.venue_name || event.city) && (
-              <p className="flex items-center gap-1.5 font-display text-sm font-semibold uppercase tracking-[0.28em] text-foreground/85 md:text-base">
+              <p className="flex items-center gap-1.5 font-display text-xs font-semibold uppercase tracking-[0.24em] text-foreground/85 md:text-base md:tracking-[0.28em]">
                 <MapPin className="h-4 w-4" />
                 {[event.venue_name, event.city].filter(Boolean).join(" · ")}
               </p>
             )}
           </div>
 
-          {event.short_description && (
-            <p className="mt-8 max-w-2xl text-base leading-relaxed text-foreground/85 md:text-lg">
-              {event.short_description}
-            </p>
-          )}
-
-          <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
+          <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3 md:mt-10 md:gap-x-6 md:gap-y-4">
             {event.external_ticket_url && (
               <a
                 href={event.external_ticket_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-primary px-7 py-4 font-display text-xs font-bold uppercase tracking-[0.28em] text-primary-foreground hover:opacity-90"
+                className="inline-flex items-center gap-2 bg-primary px-6 py-3.5 font-display text-xs font-bold uppercase tracking-[0.28em] text-primary-foreground hover:opacity-90 md:px-7 md:py-4"
               >
                 <TicketIcon className="h-4 w-4" />
-                Comprar ingresso
+                Ver ingressos
               </a>
             )}
             <a
-              href="#reservas"
+              href="#sobre"
               className={
                 event.external_ticket_url
                   ? "inline-flex items-center gap-2 border-b border-foreground/60 pb-1 font-display text-xs font-semibold uppercase tracking-[0.28em] text-foreground/90 hover:border-primary hover:text-primary"
-                  : "inline-flex items-center gap-2 bg-foreground px-7 py-4 font-display text-xs font-bold uppercase tracking-[0.28em] text-background hover:opacity-90"
+                  : "inline-flex items-center gap-2 bg-foreground px-6 py-3.5 font-display text-xs font-bold uppercase tracking-[0.28em] text-background hover:opacity-90 md:px-7 md:py-4"
               }
             >
-              Solicitar reserva <ArrowRight className="h-3.5 w-3.5" />
+              Ver programação <ArrowRight className="h-3.5 w-3.5" />
             </a>
             {event.instagram_url && (
               <a
                 href={event.instagram_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 font-display text-xs font-semibold uppercase tracking-[0.28em] text-foreground/80 hover:text-primary"
+                className="hidden md:inline-flex items-center gap-1.5 font-display text-xs font-semibold uppercase tracking-[0.28em] text-foreground/80 hover:text-primary"
               >
                 <Instagram className="h-3.5 w-3.5" />
                 Instagram
@@ -388,14 +378,28 @@ function EventDetailPage() {
         </div>
       </section>
 
+      {/* INFORMAÇÕES RÁPIDAS */}
+      <QuickInfo event={event} />
+
       {showBanners && <BannersSlot slug={slug} placement="below_hero" />}
 
-      {event.long_description && (
-        <section className="border-y border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
-          <div className="container-page py-16 md:py-24">
-            <div className="max-w-3xl whitespace-pre-line text-base leading-relaxed text-foreground/85 md:text-lg">
-              {event.long_description}
-            </div>
+      {(event.short_description || event.long_description) && (
+        <section id="sobre" className="border-y border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
+          <div className="container-page py-14 md:py-24">
+            <p className="eyebrow-label text-primary">Sobre o evento</p>
+            <h2 className="mt-3 text-2xl font-black tracking-tight text-foreground md:text-4xl">
+              {event.title}
+            </h2>
+            {event.short_description && (
+              <p className="mt-6 max-w-3xl text-base leading-relaxed text-foreground/85 md:text-lg">
+                {event.short_description}
+              </p>
+            )}
+            {event.long_description && (
+              <div className="mt-6 max-w-3xl whitespace-pre-line text-base leading-relaxed text-foreground/85 md:text-lg">
+                {event.long_description}
+              </div>
+            )}
           </div>
         </section>
       )}
@@ -425,7 +429,136 @@ function EventDetailPage() {
       {showNews && <NewsSection slug={slug} />}
       {showInfo && <InfoSection hotsite={hotsite ?? null} event={event} />}
       {showBanners && <BannersSlot slug={slug} placement="before_footer" />}
+
+      {/* BARRA FIXA MOBILE */}
+      <MobileEventActionBar event={event} />
     </article>
+  );
+}
+
+function getEventSeal(event: PublicEvent): string {
+  const ended = event.ends_at ? new Date(event.ends_at).getTime() < Date.now() : false;
+  if (ended) return "Memória · Prudente em Foco";
+  if (event.external_ticket_url) return "Evento oficial · Prudente em Foco";
+  if (event.kind === "festival" || event.kind === "show" || event.kind === "special_event") {
+    return "Evento oficial · Prudente em Foco";
+  }
+  return "Cobertura · Prudente em Foco";
+}
+
+function formatQuickTime(iso: string | null): string | null {
+  if (!iso) return null;
+  try {
+    return new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  } catch {
+    return null;
+  }
+}
+
+function formatQuickDate(iso: string | null): string | null {
+  if (!iso) return null;
+  try {
+    return new Date(iso).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return null;
+  }
+}
+
+function QuickInfo({ event }: { event: PublicEvent }) {
+  const date = formatQuickDate(event.starts_at);
+  const time = formatQuickTime(event.starts_at);
+  const venue = event.venue_name;
+  const city = event.city;
+  const cards: { icon: React.ReactNode; label: string; value: string }[] = [];
+  if (date) cards.push({ icon: <CalendarDays className="h-4 w-4" />, label: "Data", value: date });
+  if (time) cards.push({ icon: <Clock className="h-4 w-4" />, label: "Horário", value: time });
+  if (venue) cards.push({ icon: <Building2 className="h-4 w-4" />, label: "Local", value: venue });
+  if (city) cards.push({ icon: <MapPin className="h-4 w-4" />, label: "Cidade", value: city });
+  if (cards.length === 0) return null;
+  return (
+    <section className="border-b border-[color-mix(in_oklab,var(--foreground)_10%,transparent)]">
+      <div className="container-page py-8 md:py-12">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
+          {cards.map((c) => (
+            <div
+              key={c.label}
+              className="rounded-lg border border-border/60 bg-background/60 p-3 md:p-4"
+            >
+              <div className="flex items-center gap-1.5 text-primary">
+                {c.icon}
+                <span className="font-display text-[10px] font-semibold uppercase tracking-[0.24em]">
+                  {c.label}
+                </span>
+              </div>
+              <p className="mt-1.5 text-sm font-semibold text-foreground md:text-base">
+                {c.value}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MobileEventActionBar({ event }: { event: PublicEvent }) {
+  const hasTickets = !!event.external_ticket_url;
+
+  async function handleShare() {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    const shareData = { title: event.title, text: event.short_description ?? event.title, url };
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+      }
+    } catch {
+      /* user cancelled */
+    }
+  }
+
+  if (!hasTickets) {
+    return (
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 py-2.5 backdrop-blur md:hidden">
+        <button
+          type="button"
+          onClick={handleShare}
+          className="flex w-full items-center justify-center gap-2 border border-border-strong px-4 py-3 font-display text-xs font-bold uppercase tracking-[0.28em] text-foreground"
+        >
+          <Share2 className="h-4 w-4" />
+          Compartilhar
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-[1fr_auto] gap-2 border-t border-border bg-background/95 px-4 py-2.5 backdrop-blur md:hidden">
+      <a
+        href={event.external_ticket_url!}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 bg-primary px-4 py-3 font-display text-xs font-bold uppercase tracking-[0.28em] text-primary-foreground"
+      >
+        <TicketIcon className="h-4 w-4" />
+        Ingressos
+      </a>
+      <button
+        type="button"
+        onClick={handleShare}
+        aria-label="Compartilhar"
+        className="flex items-center justify-center border border-border-strong px-4 py-3 text-foreground"
+      >
+        <Share2 className="h-4 w-4" />
+      </button>
+    </div>
   );
 }
 
