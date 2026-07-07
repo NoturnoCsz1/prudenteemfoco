@@ -329,7 +329,7 @@ export function EventForm({
         <Field
           label="URL da capa (https://)"
           error={errors.cover_image_url?.message}
-          hint="Salve o evento primeiro para enviar uma capa pelo storage seguro."
+          hint="Salve o evento primeiro para enviar uma capa pelo storage seguro. Recomendado 1920×1080 px (16:9); mantenha rostos e textos importantes no centro pois as laterais podem ser cortadas no mobile."
         >
           <input
             type="url"
