@@ -911,35 +911,38 @@ function PlacingBar({
   const [bulkPixInstructions, setBulkPixInstructions] = useState("");
 
   return (
-    <div className="rounded-lg border border-border p-3 md:p-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+    <div className="sticky top-0 z-20 -mx-5 rounded-none border-y border-border bg-background/95 p-3 backdrop-blur md:static md:mx-0 md:rounded-lg md:border md:p-4">
+      <div className="flex items-center gap-2">
+        <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground md:inline">
           Colocar no mapa:
         </span>
-        {VENUE_UNIT_TYPES.map((t) => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setPlacingType(placingType === t ? null : t)}
-            className={`rounded-md border px-2.5 py-1 text-xs font-medium transition ${
-              placingType === t
-                ? "border-primary bg-primary/10 text-foreground"
-                : "border-border text-muted-foreground hover:bg-accent"
-            }`}
-          >
-            {VENUE_UNIT_TYPE_LABEL[t]}
-          </button>
-        ))}
+        <div className="-mx-1 flex flex-1 items-center gap-2 overflow-x-auto px-1 py-0.5 whitespace-nowrap md:flex-wrap md:overflow-visible md:whitespace-normal">
+          {VENUE_UNIT_TYPES.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setPlacingType(placingType === t ? null : t)}
+              className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium transition min-w-[64px] ${
+                placingType === t
+                  ? "border-primary bg-primary/10 text-foreground"
+                  : "border-border text-muted-foreground hover:bg-accent"
+              }`}
+            >
+              {VENUE_UNIT_TYPE_LABEL[t]}
+            </button>
+          ))}
+        </div>
         {placingType && (
           <button
             type="button"
             onClick={() => setPlacingType(null)}
-            className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+            className="ml-1 inline-flex shrink-0 items-center gap-1 rounded-md border border-border-strong px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
           >
-            <X className="h-3 w-3" /> cancelar
+            <X className="h-3 w-3" /> Cancelar
           </button>
         )}
       </div>
+
 
       {selectedCount > 0 && (
         <div className="mt-4 grid gap-3 border-t border-border pt-3 md:grid-cols-[1fr_1fr_1fr_auto_auto]">
