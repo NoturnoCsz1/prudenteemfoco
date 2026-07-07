@@ -15,6 +15,9 @@ import {
   History,
   Instagram,
   Ticket as TicketIcon,
+  Clock,
+  Building2,
+  Share2,
 } from "lucide-react";
 import {
   getPublishedEventBySlug,
