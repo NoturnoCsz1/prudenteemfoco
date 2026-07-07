@@ -72,7 +72,7 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
   const lastDecodedRef = useRef<{ text: string; at: number } | null>(null);
   const runningRef = useRef(false);
   const startLockRef = useRef(false);
-  const startPromiseRef = useRef<Promise<void> | null>(null);
+  const startPromiseRef = useRef<Promise<unknown> | null>(null);
   const stopLockRef = useRef<Promise<void> | null>(null);
   const operationRef = useRef(0);
   const pausedRef = useRef<boolean>(!!paused);
