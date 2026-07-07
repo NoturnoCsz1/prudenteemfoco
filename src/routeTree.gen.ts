@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SiteRouteImport } from './routes/_site'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as SiteIndexRouteImport } from './routes/_site.index'
+import { Route as GoSlugRouteImport } from './routes/go.$slug'
 import { Route as SiteSobreRouteImport } from './routes/_site.sobre'
 import { Route as SiteExperienciasRouteImport } from './routes/_site.experiencias'
 import { Route as SiteEventosRouteImport } from './routes/_site.eventos'
@@ -62,6 +63,11 @@ const SiteIndexRoute = SiteIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SiteRoute,
+} as any)
+const GoSlugRoute = GoSlugRouteImport.update({
+  id: '/go/$slug',
+  path: '/go/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SiteSobreRoute = SiteSobreRouteImport.update({
   id: '/sobre',
@@ -249,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/eventos': typeof SiteEventosRouteWithChildren
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
+  '/go/$slug': typeof GoSlugRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/admin/portaria': typeof AuthenticatedAdminPortariaRoute
@@ -282,6 +289,7 @@ export interface FileRoutesByTo {
   '/contato': typeof SiteContatoRoute
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
+  '/go/$slug': typeof GoSlugRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/admin/portaria': typeof AuthenticatedAdminPortariaRoute
@@ -319,6 +327,7 @@ export interface FileRoutesById {
   '/_site/eventos': typeof SiteEventosRouteWithChildren
   '/_site/experiencias': typeof SiteExperienciasRoute
   '/_site/sobre': typeof SiteSobreRoute
+  '/go/$slug': typeof GoSlugRoute
   '/_site/': typeof SiteIndexRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/equipe': typeof AuthenticatedAdminEquipeRoute
@@ -357,6 +366,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/experiencias'
     | '/sobre'
+    | '/go/$slug'
     | '/admin/analytics'
     | '/admin/equipe'
     | '/admin/portaria'
@@ -390,6 +400,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/experiencias'
     | '/sobre'
+    | '/go/$slug'
     | '/admin/analytics'
     | '/admin/equipe'
     | '/admin/portaria'
@@ -426,6 +437,7 @@ export interface FileRouteTypes {
     | '/_site/eventos'
     | '/_site/experiencias'
     | '/_site/sobre'
+    | '/go/$slug'
     | '/_site/'
     | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/equipe'
@@ -459,6 +471,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   SiteRoute: typeof SiteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  GoSlugRoute: typeof GoSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -490,6 +503,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof SiteIndexRouteImport
       parentRoute: typeof SiteRoute
+    }
+    '/go/$slug': {
+      id: '/go/$slug'
+      path: '/go/$slug'
+      fullPath: '/go/$slug'
+      preLoaderRoute: typeof GoSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_site/sobre': {
       id: '/_site/sobre'
@@ -839,6 +859,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   SiteRoute: SiteRouteWithChildren,
   AuthRoute: AuthRoute,
+  GoSlugRoute: GoSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
