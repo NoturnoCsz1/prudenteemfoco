@@ -66,28 +66,28 @@ function EnginePage() {
         regras são aplicadas automaticamente pelo motor de acesso.
       </p>
 
-      <div className="mt-5 grid grid-cols-3 gap-3">
-        <div className="rounded-lg border border-border bg-card p-3">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
+      <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
+        <div className="rounded-lg border border-border bg-card p-2.5 sm:p-3">
+          <div className="text-[10px] sm:text-xs uppercase tracking-wide text-muted-foreground">
             Total
           </div>
-          <div className="mt-1 font-display text-2xl font-semibold">
+          <div className="mt-1 font-display text-xl sm:text-2xl font-semibold">
             {attemptsQ.data?.length ?? "—"}
           </div>
         </div>
-        <div className="rounded-lg border border-border bg-card p-3">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
+        <div className="rounded-lg border border-border bg-card p-2.5 sm:p-3">
+          <div className="text-[10px] sm:text-xs uppercase tracking-wide text-muted-foreground">
             Permitidas
           </div>
-          <div className="mt-1 font-display text-2xl font-semibold text-emerald-500">
+          <div className="mt-1 font-display text-xl sm:text-2xl font-semibold text-emerald-500">
             {allowed}
           </div>
         </div>
-        <div className="rounded-lg border border-border bg-card p-3">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
+        <div className="rounded-lg border border-border bg-card p-2.5 sm:p-3">
+          <div className="text-[10px] sm:text-xs uppercase tracking-wide text-muted-foreground">
             Negadas
           </div>
-          <div className="mt-1 font-display text-2xl font-semibold text-destructive">
+          <div className="mt-1 font-display text-xl sm:text-2xl font-semibold text-destructive">
             {denied}
           </div>
         </div>
