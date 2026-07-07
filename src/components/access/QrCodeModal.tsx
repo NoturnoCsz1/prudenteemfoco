@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Props = {
   open: boolean;
@@ -38,6 +39,7 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const isMobile = useIsMobile();
 
   const filename = useMemo(() => {
     const base = slugify(fileSlug ?? title);
@@ -125,7 +127,7 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
       document.body.appendChild(a);
       a.click();
       a.remove();
-      toast.success("Download iniciado");
+      toast.message("Se o arquivo não aparecer, use Compartilhar/Salvar ou Abrir imagem.");
     } catch {
       openInNewTab();
     }
@@ -212,26 +214,26 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
           {canShareFiles ? (
             <Button onClick={share} disabled={!dataUrl} className="min-h-[48px] w-full sm:w-auto">
               <Share2 className="mr-2 h-4 w-4" />
-              Compartilhar / Salvar
+              Compartilhar / Salvar QR
             </Button>
           ) : null}
           <Button
-            variant={canShareFiles ? "outline" : "default"}
-            onClick={download}
-            disabled={!dataUrl}
-            className="min-h-[48px] w-full sm:w-auto"
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Baixar PNG
-          </Button>
-          <Button
-            variant="outline"
+            variant={canShareFiles ? "outline" : isMobile ? "default" : "outline"}
             onClick={openInNewTab}
             disabled={!dataUrl}
             className="min-h-[48px] w-full sm:w-auto"
           >
             <ExternalLink className="mr-2 h-4 w-4" />
             Abrir imagem
+          </Button>
+          <Button
+            variant={!canShareFiles && !isMobile ? "default" : "outline"}
+            onClick={download}
+            disabled={!dataUrl}
+            className="min-h-[48px] w-full sm:w-auto"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Baixar PNG
           </Button>
           <Button variant="ghost" onClick={() => onOpenChange(false)} className="min-h-[48px] w-full sm:w-auto">
             Fechar
