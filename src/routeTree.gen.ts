@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as SiteRouteImport } from './routes/_site'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as SiteIndexRouteImport } from './routes/_site.index'
+import { Route as GoSlugRouteImport } from './routes/go.$slug'
 import { Route as SiteSobreRouteImport } from './routes/_site.sobre'
 import { Route as SiteExperienciasRouteImport } from './routes/_site.experiencias'
 import { Route as SiteEventosRouteImport } from './routes/_site.eventos'
@@ -25,7 +26,9 @@ import { Route as AuthenticatedAdminSiteRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminPortariaRouteImport } from './routes/_authenticated/admin.portaria'
 import { Route as AuthenticatedAdminEquipeRouteImport } from './routes/_authenticated/admin.equipe'
 import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
+import { Route as AuthenticatedAdminLinksIndexRouteImport } from './routes/_authenticated/admin.links.index'
 import { Route as AuthenticatedAdminEventosIndexRouteImport } from './routes/_authenticated/admin.eventos.index'
+import { Route as AuthenticatedAdminLinksIdRouteImport } from './routes/_authenticated/admin.links.$id'
 import { Route as AuthenticatedAdminEventosNovoRouteImport } from './routes/_authenticated/admin.eventos.novo'
 import { Route as AuthenticatedAdminEventosIdIndexRouteImport } from './routes/_authenticated/admin.eventos.$id.index'
 import { Route as SiteEventosSlugNoticiasNewsSlugRouteImport } from './routes/_site.eventos.$slug.noticias.$newsSlug'
@@ -62,6 +65,11 @@ const SiteIndexRoute = SiteIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SiteRoute,
+} as any)
+const GoSlugRoute = GoSlugRouteImport.update({
+  id: '/go/$slug',
+  path: '/go/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SiteSobreRoute = SiteSobreRouteImport.update({
   id: '/sobre',
@@ -126,10 +134,22 @@ const AuthenticatedAdminAnalyticsRoute =
     path: '/analytics',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminLinksIndexRoute =
+  AuthenticatedAdminLinksIndexRouteImport.update({
+    id: '/links/',
+    path: '/links/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminEventosIndexRoute =
   AuthenticatedAdminEventosIndexRouteImport.update({
     id: '/eventos/',
     path: '/eventos/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminLinksIdRoute =
+  AuthenticatedAdminLinksIdRouteImport.update({
+    id: '/links/$id',
+    path: '/links/$id',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminEventosNovoRoute =
@@ -249,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/eventos': typeof SiteEventosRouteWithChildren
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
+  '/go/$slug': typeof GoSlugRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/admin/portaria': typeof AuthenticatedAdminPortariaRoute
@@ -257,7 +278,9 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/eventos/': typeof SiteEventosIndexRoute
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
+  '/admin/links/$id': typeof AuthenticatedAdminLinksIdRoute
   '/admin/eventos/': typeof AuthenticatedAdminEventosIndexRoute
+  '/admin/links/': typeof AuthenticatedAdminLinksIndexRoute
   '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
   '/admin/eventos/$id/convites': typeof AuthenticatedAdminEventosIdConvitesRoute
   '/admin/eventos/$id/credenciais': typeof AuthenticatedAdminEventosIdCredenciaisRoute
@@ -282,6 +305,7 @@ export interface FileRoutesByTo {
   '/contato': typeof SiteContatoRoute
   '/experiencias': typeof SiteExperienciasRoute
   '/sobre': typeof SiteSobreRoute
+  '/go/$slug': typeof GoSlugRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/equipe': typeof AuthenticatedAdminEquipeRoute
   '/admin/portaria': typeof AuthenticatedAdminPortariaRoute
@@ -290,7 +314,9 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/eventos': typeof SiteEventosIndexRoute
   '/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
+  '/admin/links/$id': typeof AuthenticatedAdminLinksIdRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosIndexRoute
+  '/admin/links': typeof AuthenticatedAdminLinksIndexRoute
   '/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
   '/admin/eventos/$id/convites': typeof AuthenticatedAdminEventosIdConvitesRoute
   '/admin/eventos/$id/credenciais': typeof AuthenticatedAdminEventosIdCredenciaisRoute
@@ -319,6 +345,7 @@ export interface FileRoutesById {
   '/_site/eventos': typeof SiteEventosRouteWithChildren
   '/_site/experiencias': typeof SiteExperienciasRoute
   '/_site/sobre': typeof SiteSobreRoute
+  '/go/$slug': typeof GoSlugRoute
   '/_site/': typeof SiteIndexRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/equipe': typeof AuthenticatedAdminEquipeRoute
@@ -328,7 +355,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_site/eventos/': typeof SiteEventosIndexRoute
   '/_authenticated/admin/eventos/novo': typeof AuthenticatedAdminEventosNovoRoute
+  '/_authenticated/admin/links/$id': typeof AuthenticatedAdminLinksIdRoute
   '/_authenticated/admin/eventos/': typeof AuthenticatedAdminEventosIndexRoute
+  '/_authenticated/admin/links/': typeof AuthenticatedAdminLinksIndexRoute
   '/_authenticated/admin/eventos/$id/acesso': typeof AuthenticatedAdminEventosIdAcessoRoute
   '/_authenticated/admin/eventos/$id/convites': typeof AuthenticatedAdminEventosIdConvitesRoute
   '/_authenticated/admin/eventos/$id/credenciais': typeof AuthenticatedAdminEventosIdCredenciaisRoute
@@ -357,6 +386,7 @@ export interface FileRouteTypes {
     | '/eventos'
     | '/experiencias'
     | '/sobre'
+    | '/go/$slug'
     | '/admin/analytics'
     | '/admin/equipe'
     | '/admin/portaria'
@@ -365,7 +395,9 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/eventos/'
     | '/admin/eventos/novo'
+    | '/admin/links/$id'
     | '/admin/eventos/'
+    | '/admin/links/'
     | '/admin/eventos/$id/acesso'
     | '/admin/eventos/$id/convites'
     | '/admin/eventos/$id/credenciais'
@@ -390,6 +422,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/experiencias'
     | '/sobre'
+    | '/go/$slug'
     | '/admin/analytics'
     | '/admin/equipe'
     | '/admin/portaria'
@@ -398,7 +431,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/eventos'
     | '/admin/eventos/novo'
+    | '/admin/links/$id'
     | '/admin/eventos'
+    | '/admin/links'
     | '/admin/eventos/$id/acesso'
     | '/admin/eventos/$id/convites'
     | '/admin/eventos/$id/credenciais'
@@ -426,6 +461,7 @@ export interface FileRouteTypes {
     | '/_site/eventos'
     | '/_site/experiencias'
     | '/_site/sobre'
+    | '/go/$slug'
     | '/_site/'
     | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/equipe'
@@ -435,7 +471,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_site/eventos/'
     | '/_authenticated/admin/eventos/novo'
+    | '/_authenticated/admin/links/$id'
     | '/_authenticated/admin/eventos/'
+    | '/_authenticated/admin/links/'
     | '/_authenticated/admin/eventos/$id/acesso'
     | '/_authenticated/admin/eventos/$id/convites'
     | '/_authenticated/admin/eventos/$id/credenciais'
@@ -459,6 +497,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   SiteRoute: typeof SiteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  GoSlugRoute: typeof GoSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -490,6 +529,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof SiteIndexRouteImport
       parentRoute: typeof SiteRoute
+    }
+    '/go/$slug': {
+      id: '/go/$slug'
+      path: '/go/$slug'
+      fullPath: '/go/$slug'
+      preLoaderRoute: typeof GoSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_site/sobre': {
       id: '/_site/sobre'
@@ -575,11 +621,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/links/': {
+      id: '/_authenticated/admin/links/'
+      path: '/links'
+      fullPath: '/admin/links/'
+      preLoaderRoute: typeof AuthenticatedAdminLinksIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/eventos/': {
       id: '/_authenticated/admin/eventos/'
       path: '/eventos'
       fullPath: '/admin/eventos/'
       preLoaderRoute: typeof AuthenticatedAdminEventosIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/links/$id': {
+      id: '/_authenticated/admin/links/$id'
+      path: '/links/$id'
+      fullPath: '/admin/links/$id'
+      preLoaderRoute: typeof AuthenticatedAdminLinksIdRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/eventos/novo': {
@@ -718,7 +778,9 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminSiteRoute: typeof AuthenticatedAdminSiteRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminEventosNovoRoute: typeof AuthenticatedAdminEventosNovoRoute
+  AuthenticatedAdminLinksIdRoute: typeof AuthenticatedAdminLinksIdRoute
   AuthenticatedAdminEventosIndexRoute: typeof AuthenticatedAdminEventosIndexRoute
+  AuthenticatedAdminLinksIndexRoute: typeof AuthenticatedAdminLinksIndexRoute
   AuthenticatedAdminEventosIdAcessoRoute: typeof AuthenticatedAdminEventosIdAcessoRoute
   AuthenticatedAdminEventosIdConvitesRoute: typeof AuthenticatedAdminEventosIdConvitesRoute
   AuthenticatedAdminEventosIdCredenciaisRoute: typeof AuthenticatedAdminEventosIdCredenciaisRoute
@@ -744,7 +806,9 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminSiteRoute: AuthenticatedAdminSiteRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminEventosNovoRoute: AuthenticatedAdminEventosNovoRoute,
+  AuthenticatedAdminLinksIdRoute: AuthenticatedAdminLinksIdRoute,
   AuthenticatedAdminEventosIndexRoute: AuthenticatedAdminEventosIndexRoute,
+  AuthenticatedAdminLinksIndexRoute: AuthenticatedAdminLinksIndexRoute,
   AuthenticatedAdminEventosIdAcessoRoute:
     AuthenticatedAdminEventosIdAcessoRoute,
   AuthenticatedAdminEventosIdConvitesRoute:
@@ -839,6 +903,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   SiteRoute: SiteRouteWithChildren,
   AuthRoute: AuthRoute,
+  GoSlugRoute: GoSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

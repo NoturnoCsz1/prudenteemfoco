@@ -17,6 +17,7 @@ import {
   Users,
   Globe,
   BarChart3,
+  Link2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +33,7 @@ const NAV = [
   { to: "/admin/eventos", label: "Eventos", icon: CalendarDays },
   { to: "/admin/site", label: "Site", icon: Globe },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/admin/links", label: "Links", icon: Link2 },
   { to: "/admin/equipe", label: "Equipe", icon: Users },
 ] as const;
 
