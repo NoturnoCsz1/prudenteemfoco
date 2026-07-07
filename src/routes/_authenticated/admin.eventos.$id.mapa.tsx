@@ -713,11 +713,20 @@ function MapImageEditor({
         <p className="text-xs text-muted-foreground">
           {map.image_url
             ? placingType
-              ? `Modo colocar: clique no mapa para adicionar um(a) ${VENUE_UNIT_TYPE_LABEL[placingType]}.`
-              : "Arraste os pontos para reposicionar. Clique num ponto para selecionar."
+              ? `Adicionar ${VENUE_UNIT_TYPE_LABEL[placingType]} — toque no ponto correspondente do mapa.`
+              : "Arraste os pontos para reposicionar. Toque num ponto para selecionar."
             : "Envie a imagem do mapa (JPG/PNG/WebP, máx. 12 MB). Recomendado 1920×1080 px."}
         </p>
         <div className="flex items-center gap-2">
+          {placingType && (
+            <button
+              type="button"
+              onClick={onCancelPlacing}
+              className="inline-flex items-center gap-1 rounded-md border border-border-strong px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent"
+            >
+              <X className="h-3.5 w-3.5" /> Cancelar colocação
+            </button>
+          )}
           <input
             ref={inputRef}
             type="file"
@@ -743,11 +752,11 @@ function MapImageEditor({
           </button>
         </div>
       </div>
-      <div className="mx-auto w-full">
+      <div className="mx-auto w-full md:max-h-[70vh] md:flex md:justify-center">
         <div
           ref={containerRef}
           onClick={handleContainerClick}
-          className={`relative mx-auto w-full max-w-full overflow-hidden rounded-lg border border-border bg-muted ${
+          className={`relative w-full max-w-full overflow-hidden rounded-lg border border-border bg-muted md:max-h-[70vh] ${
             placingType ? "cursor-crosshair" : ""
           }`}
           style={{ aspectRatio: naturalRatio ?? 16 / 9 }}
