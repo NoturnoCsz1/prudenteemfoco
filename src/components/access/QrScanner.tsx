@@ -88,8 +88,8 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
     pausedRef.current = !!paused;
   }, [paused]);
 
-  const stopScanner = async (reason: string) => {
-    operationRef.current += 1;
+  const stopScanner = async (reason: string, invalidatePendingStart = true) => {
+    if (invalidatePendingStart) operationRef.current += 1;
     const s = scannerRef.current;
     scannerRef.current = null;
     setTorchSupported(false);
@@ -185,7 +185,7 @@ export function QrScanner({ onDecoded, paused, onClose }: Props) {
 
       const facingPref: "environment" | "user" = preferFront ? "user" : "environment";
 
-      await stopScanner("before-start");
+      await stopScanner("before-start", false);
 
       if (cancelled || operationRef.current !== op) {
         startLockRef.current = false;
