@@ -1219,7 +1219,7 @@ function UnitsList({
   }
   if (units.length === 0) {
     return (
-      <div className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+      <div className="w-full min-w-0 max-w-full whitespace-normal break-words rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
         Nenhuma unidade cadastrada. Selecione um tipo acima e clique no mapa para
         criar.
       </div>
