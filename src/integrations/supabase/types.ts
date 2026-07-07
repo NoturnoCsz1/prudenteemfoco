@@ -1454,6 +1454,116 @@ export type Database = {
           },
         ]
       }
+      short_link_clicks: {
+        Row: {
+          browser: string | null
+          clicked_at: string
+          device: string | null
+          id: string
+          referrer: string | null
+          short_link_id: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          browser?: string | null
+          clicked_at?: string
+          device?: string | null
+          id?: string
+          referrer?: string | null
+          short_link_id: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          browser?: string | null
+          clicked_at?: string
+          device?: string | null
+          id?: string
+          referrer?: string | null
+          short_link_id?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "short_link_clicks_short_link_id_fkey"
+            columns: ["short_link_id"]
+            isOneToOne: false
+            referencedRelation: "short_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      short_links: {
+        Row: {
+          active: boolean
+          campaign: string | null
+          created_at: string
+          created_by: string | null
+          destination_url: string
+          event_id: string | null
+          id: string
+          organization_id: string
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          campaign?: string | null
+          created_at?: string
+          created_by?: string | null
+          destination_url: string
+          event_id?: string | null
+          id?: string
+          organization_id: string
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          campaign?: string | null
+          created_at?: string
+          created_by?: string | null
+          destination_url?: string
+          event_id?: string | null
+          id?: string
+          organization_id?: string
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "short_links_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "short_links_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_about: {
         Row: {
           created_at: string
