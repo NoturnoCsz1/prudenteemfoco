@@ -117,14 +117,16 @@ function VenueMapPage() {
   }, [mapsQ.data, selectedMapId]);
 
   return (
-    <div className="p-5 md:p-8">
-      <OperationsNav eventId={eventId} active="spaces" />
+    <div className="w-full min-w-0 max-w-full overflow-x-hidden p-4 sm:p-5 md:p-8">
+      <div className="w-full min-w-0 max-w-full">
+        <OperationsNav eventId={eventId} active="spaces" />
+      </div>
       <div className="mt-4 flex flex-wrap items-baseline justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-black tracking-tight md:text-2xl">
+        <div className="min-w-0 max-w-full">
+          <h1 className="text-xl font-black tracking-tight md:text-2xl break-words">
             Mapa e Reservas
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground break-words whitespace-normal leading-relaxed max-w-full">
             Envie o mapa do evento, ajuste os hotspots das unidades reserváveis
             (bistrôs, mesas, camarotes, setores) e defina preços.
           </p>
@@ -136,36 +138,40 @@ function VenueMapPage() {
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : (
-        <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
-          <MapsSidebar
-            maps={mapsQ.data ?? []}
-            activeId={activeMap?.id ?? null}
-            onSelect={setSelectedMapId}
-            eventId={eventId}
-            organizationId={membership?.organization_id ?? null}
-          />
-          {activeMap ? (
-            <MapEditor
-              key={activeMap.id}
-              map={activeMap}
-              onChanged={() => {
-                qc.invalidateQueries({
-                  queryKey: ["admin", "venue-maps", eventId],
-                });
-              }}
-            />
-          ) : (
-            <EmptyState
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+          <div className="min-w-0 max-w-full">
+            <MapsSidebar
+              maps={mapsQ.data ?? []}
+              activeId={activeMap?.id ?? null}
+              onSelect={setSelectedMapId}
               eventId={eventId}
               organizationId={membership?.organization_id ?? null}
-              onCreated={(id) => {
-                setSelectedMapId(id);
-                qc.invalidateQueries({
-                  queryKey: ["admin", "venue-maps", eventId],
-                });
-              }}
             />
-          )}
+          </div>
+          <div className="min-w-0 max-w-full">
+            {activeMap ? (
+              <MapEditor
+                key={activeMap.id}
+                map={activeMap}
+                onChanged={() => {
+                  qc.invalidateQueries({
+                    queryKey: ["admin", "venue-maps", eventId],
+                  });
+                }}
+              />
+            ) : (
+              <EmptyState
+                eventId={eventId}
+                organizationId={membership?.organization_id ?? null}
+                onCreated={(id) => {
+                  setSelectedMapId(id);
+                  qc.invalidateQueries({
+                    queryKey: ["admin", "venue-maps", eventId],
+                  });
+                }}
+              />
+            )}
+          </div>
         </div>
       )}
     </div>
