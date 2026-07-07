@@ -543,15 +543,15 @@ function MapHeader({
   }
 
   return (
-    <div className="grid gap-3 rounded-lg border border-border p-3 md:grid-cols-[1fr_auto_auto_auto] md:items-end md:gap-4 md:p-4">
-      <label className="block">
+    <div className="grid w-full min-w-0 max-w-full grid-cols-1 gap-3 rounded-lg border border-border p-3 md:grid-cols-[minmax(0,1fr)_auto_auto_auto] md:items-end md:gap-4 md:p-4">
+      <label className="block min-w-0 max-w-full">
         <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
           Título do mapa
         </span>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="input mt-1"
+          className="input mt-1 w-full min-w-0 max-w-full"
           maxLength={120}
         />
       </label>
