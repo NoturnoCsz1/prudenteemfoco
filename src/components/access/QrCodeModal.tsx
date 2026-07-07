@@ -39,6 +39,7 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const isMobile = useIsMobile();
 
   const filename = useMemo(() => {
     const base = slugify(fileSlug ?? title);
