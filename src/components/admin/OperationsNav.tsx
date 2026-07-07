@@ -103,7 +103,8 @@ export function OperationsNav({
             {it.label}
           </Link>
         ))}
-      </nav>
+        </nav>
+      </div>
     </div>
   );
 }
