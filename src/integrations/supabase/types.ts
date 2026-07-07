@@ -1990,6 +1990,151 @@ export type Database = {
           },
         ]
       }
+      venue_maps: {
+        Row: {
+          analysis_result: Json | null
+          analysis_status: Database["public"]["Enums"]["venue_map_analysis_status"]
+          created_at: string
+          event_id: string
+          id: string
+          image_storage_path: string | null
+          image_url: string | null
+          map_type: Database["public"]["Enums"]["venue_map_type"]
+          organization_id: string
+          sort_order: number
+          status: Database["public"]["Enums"]["venue_map_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          analysis_result?: Json | null
+          analysis_status?: Database["public"]["Enums"]["venue_map_analysis_status"]
+          created_at?: string
+          event_id: string
+          id?: string
+          image_storage_path?: string | null
+          image_url?: string | null
+          map_type?: Database["public"]["Enums"]["venue_map_type"]
+          organization_id: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["venue_map_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          analysis_result?: Json | null
+          analysis_status?: Database["public"]["Enums"]["venue_map_analysis_status"]
+          created_at?: string
+          event_id?: string
+          id?: string
+          image_storage_path?: string | null
+          image_url?: string | null
+          map_type?: Database["public"]["Enums"]["venue_map_type"]
+          organization_id?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["venue_map_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_maps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_maps_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      venue_units: {
+        Row: {
+          active: boolean
+          capacity: number | null
+          created_at: string
+          event_id: string
+          id: string
+          label: string
+          metadata: Json
+          number: number | null
+          organization_id: string
+          price_cents: number | null
+          sector: string | null
+          status: Database["public"]["Enums"]["venue_unit_status"]
+          type: Database["public"]["Enums"]["venue_unit_type"]
+          updated_at: string
+          venue_map_id: string
+          x_percent: number | null
+          y_percent: number | null
+        }
+        Insert: {
+          active?: boolean
+          capacity?: number | null
+          created_at?: string
+          event_id: string
+          id?: string
+          label: string
+          metadata?: Json
+          number?: number | null
+          organization_id: string
+          price_cents?: number | null
+          sector?: string | null
+          status?: Database["public"]["Enums"]["venue_unit_status"]
+          type?: Database["public"]["Enums"]["venue_unit_type"]
+          updated_at?: string
+          venue_map_id: string
+          x_percent?: number | null
+          y_percent?: number | null
+        }
+        Update: {
+          active?: boolean
+          capacity?: number | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          label?: string
+          metadata?: Json
+          number?: number | null
+          organization_id?: string
+          price_cents?: number | null
+          sector?: string | null
+          status?: Database["public"]["Enums"]["venue_unit_status"]
+          type?: Database["public"]["Enums"]["venue_unit_type"]
+          updated_at?: string
+          venue_map_id?: string
+          x_percent?: number | null
+          y_percent?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_units_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_units_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_units_venue_map_id_fkey"
+            columns: ["venue_map_id"]
+            isOneToOne: false
+            referencedRelation: "venue_maps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -2000,6 +2145,7 @@ export type Database = {
         Returns: Json
       }
       can_manage_event_cover: { Args: { _path: string }; Returns: boolean }
+      can_manage_venue_map: { Args: { _path: string }; Returns: boolean }
       consume_access_session: {
         Args: { _session_id: string }
         Returns: undefined
@@ -2625,6 +2771,37 @@ export type Database = {
         | "confirmed"
       space_type_category: "camarote" | "bistro" | "mesa" | "outro"
       space_type_status: "active" | "inactive" | "archived"
+      venue_map_analysis_status:
+        | "none"
+        | "pending"
+        | "running"
+        | "complete"
+        | "failed"
+      venue_map_status: "draft" | "published" | "archived"
+      venue_map_type:
+        | "numbered_units"
+        | "sector_map"
+        | "mixed_map"
+        | "informational_map"
+      venue_unit_status:
+        | "available"
+        | "held"
+        | "pending_payment"
+        | "reserved"
+        | "sold"
+        | "blocked"
+      venue_unit_type:
+        | "bistro"
+        | "table"
+        | "box"
+        | "sector"
+        | "grandstand"
+        | "lounge"
+        | "vip"
+        | "open_bar"
+        | "pista"
+        | "front"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2866,6 +3043,41 @@ export const Constants = {
       ],
       space_type_category: ["camarote", "bistro", "mesa", "outro"],
       space_type_status: ["active", "inactive", "archived"],
+      venue_map_analysis_status: [
+        "none",
+        "pending",
+        "running",
+        "complete",
+        "failed",
+      ],
+      venue_map_status: ["draft", "published", "archived"],
+      venue_map_type: [
+        "numbered_units",
+        "sector_map",
+        "mixed_map",
+        "informational_map",
+      ],
+      venue_unit_status: [
+        "available",
+        "held",
+        "pending_payment",
+        "reserved",
+        "sold",
+        "blocked",
+      ],
+      venue_unit_type: [
+        "bistro",
+        "table",
+        "box",
+        "sector",
+        "grandstand",
+        "lounge",
+        "vip",
+        "open_bar",
+        "pista",
+        "front",
+        "other",
+      ],
     },
   },
 } as const

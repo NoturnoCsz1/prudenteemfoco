@@ -6,6 +6,7 @@ import {
   Gauge,
   Globe,
   LayoutDashboard,
+  Map as MapIcon,
   MapPin,
   Megaphone,
   Music2,
@@ -34,7 +35,8 @@ export type OperationsTab =
   | "edit"
   | "details"
   | "sectors"
-  | "access";
+  | "access"
+  | "map";
 
 
 export function OperationsNav({
@@ -59,6 +61,7 @@ export function OperationsNav({
     { key: "engine", label: "Engine", to: `/admin/eventos/${eventId}/engine`, icon: <Gauge className="h-3.5 w-3.5" /> },
     { key: "spaces", label: "Espaços", to: `/admin/eventos/${eventId}/espacos`, icon: <MapPin className="h-3.5 w-3.5" /> },
     { key: "reservations", label: "Reservas", to: `/admin/eventos/${eventId}/reservas`, icon: <Ticket className="h-3.5 w-3.5" /> },
+    { key: "map", label: "Mapa", to: `/admin/eventos/${eventId}/mapa`, icon: <MapIcon className="h-3.5 w-3.5" /> },
     { key: "lineup", label: "Line-up", to: `/admin/eventos/${eventId}/lineup`, icon: <Music2 className="h-3.5 w-3.5" /> },
     { key: "leads", label: "Leads", to: `/admin/eventos/${eventId}/leads`, icon: <UserPlus className="h-3.5 w-3.5" /> },
     { key: "promoters", label: "Promoters", to: `/admin/eventos/${eventId}/promoters`, icon: <Megaphone className="h-3.5 w-3.5" /> },
