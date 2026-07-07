@@ -344,55 +344,21 @@ function MapEditor({
     qc.invalidateQueries({ queryKey: ["admin", "venue-units", map.id] });
   }
 
-  return (
-    <div className="space-y-6">
-      <MapHeader map={map} onChanged={onChanged} />
+  const unitsList = unitsQ.data ?? [];
 
-      <MapImageEditor
-        map={map}
-        units={unitsQ.data ?? []}
-        placingType={placingType}
-        selectedIds={selectedIds}
-        onToggleSelect={(id) => {
-          setSelectedIds((prev) => {
-            const next = new Set(prev);
-            if (next.has(id)) next.delete(id);
-            else next.add(id);
-            return next;
-          });
-        }}
-        onPlace={async (xPercent, yPercent) => {
-          if (!placingType) return;
-          const currentType = placingType;
-          const nextLabel = nextLabelFor(unitsQ.data ?? [], currentType);
-          const { error } = await supabase.from("venue_units").insert({
-            organization_id: map.organization_id,
-            event_id: map.event_id,
-            venue_map_id: map.id,
-            type: currentType,
-            label: nextLabel,
-            number: parseInt(nextLabel, 10) || null,
-            x_percent: xPercent,
-            y_percent: yPercent,
-            status: "blocked",
-          });
-          if (error) toast.error(friendlyVenueUnitError(error));
-          else {
-            invalidateUnits();
-            toast.success(
-              `${VENUE_UNIT_TYPE_LABEL[currentType]} ${nextLabel} adicionada.`,
-            );
-          }
-        }}
-        onMove={async (id, xPercent, yPercent) => {
-          const { error } = await supabase
-            .from("venue_units")
-            .update({ x_percent: xPercent, y_percent: yPercent })
-            .eq("id", id);
-          if (error) toast.error(friendlyVenueUnitError(error));
-          else invalidateUnits();
-        }}
-      />
+  return (
+    <div className="space-y-4 md:space-y-6">
+      <details className="group rounded-lg border border-border open:pb-2" open>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 md:px-4">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Configurações do mapa
+          </span>
+          <ChevronDown className="h-4 w-4 text-muted-foreground transition group-open:rotate-180" />
+        </summary>
+        <div className="px-3 pb-2 md:px-4">
+          <MapHeader map={map} onChanged={onChanged} />
+        </div>
+      </details>
 
       <PlacingBar
         placingType={placingType}
@@ -426,8 +392,64 @@ function MapEditor({
         onClearSelection={() => setSelectedIds(new Set())}
       />
 
+      <MapImageEditor
+        map={map}
+        units={unitsList}
+        placingType={placingType}
+        selectedIds={selectedIds}
+        onCancelPlacing={() => setPlacingType(null)}
+        onToggleSelect={(id) => {
+          setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) {
+              next.delete(id);
+            } else {
+              next.add(id);
+              const u = unitsList.find((x) => x.id === id);
+              if (u) {
+                toast(
+                  `Editando ${VENUE_UNIT_TYPE_LABEL[u.type as VenueUnitType]} ${u.label}`,
+                );
+              }
+            }
+            return next;
+          });
+        }}
+        onPlace={async (xPercent, yPercent) => {
+          if (!placingType) return;
+          const currentType = placingType;
+          const nextLabel = nextLabelFor(unitsList, currentType);
+          const { error } = await supabase.from("venue_units").insert({
+            organization_id: map.organization_id,
+            event_id: map.event_id,
+            venue_map_id: map.id,
+            type: currentType,
+            label: nextLabel,
+            number: parseInt(nextLabel, 10) || null,
+            x_percent: xPercent,
+            y_percent: yPercent,
+            status: "blocked",
+          });
+          if (error) toast.error(friendlyVenueUnitError(error));
+          else {
+            invalidateUnits();
+            toast.success(
+              `${VENUE_UNIT_TYPE_LABEL[currentType]} ${nextLabel} adicionado ao mapa.`,
+            );
+          }
+        }}
+        onMove={async (id, xPercent, yPercent) => {
+          const { error } = await supabase
+            .from("venue_units")
+            .update({ x_percent: xPercent, y_percent: yPercent })
+            .eq("id", id);
+          if (error) toast.error(friendlyVenueUnitError(error));
+          else invalidateUnits();
+        }}
+      />
+
       <UnitsList
-        units={unitsQ.data ?? []}
+        units={unitsList}
         loading={unitsQ.isLoading}
         selectedIds={selectedIds}
         editingId={editingId}
