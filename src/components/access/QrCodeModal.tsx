@@ -127,7 +127,7 @@ export function QrCodeModal({ open, onOpenChange, token, title, description, met
       document.body.appendChild(a);
       a.click();
       a.remove();
-      toast.success("Download iniciado");
+      toast.message("Se o arquivo não aparecer, use Compartilhar/Salvar ou Abrir imagem.");
     } catch {
       openInNewTab();
     }
