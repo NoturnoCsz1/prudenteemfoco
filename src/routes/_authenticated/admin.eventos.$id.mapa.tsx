@@ -1198,38 +1198,114 @@ function UnitsList({
     );
   }
   return (
-    <div className="overflow-x-auto rounded-lg border border-border">
-      <table className="w-full min-w-[720px] text-sm">
-        <thead className="bg-muted/50">
-          <tr className="text-left text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-            <th className="w-8 px-3 py-2"></th>
-            <th className="px-3 py-2">Rótulo</th>
-            <th className="px-3 py-2">Tipo</th>
-            <th className="px-3 py-2">Setor</th>
-            <th className="px-3 py-2">Cap.</th>
-            <th className="px-3 py-2">Preço</th>
-            <th className="px-3 py-2">Status</th>
-            <th className="px-3 py-2">Venda</th>
-            <th className="px-3 py-2"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {units.map((u) => (
-            <UnitRow
+    <>
+      {/* Mobile: card list */}
+      <ul className="space-y-2 md:hidden">
+        {units.map((u) => {
+          const isEditing = editingId === u.id;
+          return (
+            <li
               key={u.id}
-              unit={u}
-              selected={selectedIds.has(u.id)}
-              editing={editingId === u.id}
-              onToggleSelect={() => onToggleSelect(u.id)}
-              onStartEdit={() => setEditingId(u.id)}
-              onCancelEdit={() => setEditingId(null)}
-              onSave={(patch) => onSave(u.id, patch)}
-              onDelete={() => onDelete(u.id)}
-            />
-          ))}
-        </tbody>
-      </table>
-    </div>
+              className="rounded-lg border border-border bg-surface-elevated/40"
+            >
+              {!isEditing ? (
+                <div className="flex items-start gap-3 p-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(u.id)}
+                    onChange={() => onToggleSelect(u.id)}
+                    className="mt-1 h-4 w-4 shrink-0"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setEditingId(u.id)}
+                    className="flex min-w-0 flex-1 flex-col items-start text-left"
+                  >
+                    <div className="flex w-full items-center justify-between gap-2">
+                      <span className="truncate text-sm font-semibold text-foreground">
+                        {VENUE_UNIT_TYPE_LABEL[u.type as VenueUnitType]}{" "}
+                        {u.label}
+                      </span>
+                      <span
+                        className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] ${
+                          VENUE_UNIT_STATUS_COLOR[u.status as VenueUnitStatus]
+                        }`}
+                      >
+                        {VENUE_UNIT_STATUS_LABEL[u.status as VenueUnitStatus]}
+                      </span>
+                    </div>
+                    <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground">
+                      <span>{formatPriceCents(u.price_cents)}</span>
+                      {u.sector && <span>· {u.sector}</span>}
+                      {u.capacity != null && <span>· {u.capacity} lug.</span>}
+                      <span>
+                        ·{" "}
+                        {
+                          VENUE_UNIT_SALE_MODE_LABEL[
+                            (u.sale_mode as VenueUnitSaleMode) ?? "disabled"
+                          ]
+                        }
+                      </span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDelete(u.id)}
+                    aria-label="Excluir"
+                    className="shrink-0 text-destructive hover:opacity-80"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="p-3">
+                  <MobileUnitEditor
+                    unit={u}
+                    onSave={(patch) => onSave(u.id, patch)}
+                    onCancel={() => setEditingId(null)}
+                    onDelete={() => onDelete(u.id)}
+                  />
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      {/* Desktop / tablet: full table */}
+      <div className="hidden overflow-x-auto rounded-lg border border-border md:block">
+        <table className="w-full min-w-[720px] text-sm">
+          <thead className="bg-muted/50">
+            <tr className="text-left text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+              <th className="w-8 px-3 py-2"></th>
+              <th className="px-3 py-2">Rótulo</th>
+              <th className="px-3 py-2">Tipo</th>
+              <th className="px-3 py-2">Setor</th>
+              <th className="px-3 py-2">Cap.</th>
+              <th className="px-3 py-2">Preço</th>
+              <th className="px-3 py-2">Status</th>
+              <th className="px-3 py-2">Venda</th>
+              <th className="px-3 py-2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {units.map((u) => (
+              <UnitRow
+                key={u.id}
+                unit={u}
+                selected={selectedIds.has(u.id)}
+                editing={editingId === u.id}
+                onToggleSelect={() => onToggleSelect(u.id)}
+                onStartEdit={() => setEditingId(u.id)}
+                onCancelEdit={() => setEditingId(null)}
+                onSave={(patch) => onSave(u.id, patch)}
+                onDelete={() => onDelete(u.id)}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
