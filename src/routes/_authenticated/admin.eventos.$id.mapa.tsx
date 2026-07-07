@@ -117,14 +117,16 @@ function VenueMapPage() {
   }, [mapsQ.data, selectedMapId]);
 
   return (
-    <div className="p-5 md:p-8">
-      <OperationsNav eventId={eventId} active="spaces" />
+    <div className="w-full min-w-0 max-w-full overflow-x-hidden p-4 sm:p-5 md:p-8">
+      <div className="w-full min-w-0 max-w-full">
+        <OperationsNav eventId={eventId} active="spaces" />
+      </div>
       <div className="mt-4 flex flex-wrap items-baseline justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-black tracking-tight md:text-2xl">
+        <div className="min-w-0 max-w-full">
+          <h1 className="text-xl font-black tracking-tight md:text-2xl break-words">
             Mapa e Reservas
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground break-words whitespace-normal leading-relaxed max-w-full">
             Envie o mapa do evento, ajuste os hotspots das unidades reserváveis
             (bistrôs, mesas, camarotes, setores) e defina preços.
           </p>
@@ -136,36 +138,40 @@ function VenueMapPage() {
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : (
-        <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
-          <MapsSidebar
-            maps={mapsQ.data ?? []}
-            activeId={activeMap?.id ?? null}
-            onSelect={setSelectedMapId}
-            eventId={eventId}
-            organizationId={membership?.organization_id ?? null}
-          />
-          {activeMap ? (
-            <MapEditor
-              key={activeMap.id}
-              map={activeMap}
-              onChanged={() => {
-                qc.invalidateQueries({
-                  queryKey: ["admin", "venue-maps", eventId],
-                });
-              }}
-            />
-          ) : (
-            <EmptyState
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+          <div className="min-w-0 max-w-full">
+            <MapsSidebar
+              maps={mapsQ.data ?? []}
+              activeId={activeMap?.id ?? null}
+              onSelect={setSelectedMapId}
               eventId={eventId}
               organizationId={membership?.organization_id ?? null}
-              onCreated={(id) => {
-                setSelectedMapId(id);
-                qc.invalidateQueries({
-                  queryKey: ["admin", "venue-maps", eventId],
-                });
-              }}
             />
-          )}
+          </div>
+          <div className="min-w-0 max-w-full">
+            {activeMap ? (
+              <MapEditor
+                key={activeMap.id}
+                map={activeMap}
+                onChanged={() => {
+                  qc.invalidateQueries({
+                    queryKey: ["admin", "venue-maps", eventId],
+                  });
+                }}
+              />
+            ) : (
+              <EmptyState
+                eventId={eventId}
+                organizationId={membership?.organization_id ?? null}
+                onCreated={(id) => {
+                  setSelectedMapId(id);
+                  qc.invalidateQueries({
+                    queryKey: ["admin", "venue-maps", eventId],
+                  });
+                }}
+              />
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -347,7 +353,7 @@ function MapEditor({
   const unitsList = unitsQ.data ?? [];
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="w-full min-w-0 max-w-full space-y-4 md:space-y-6">
       <details className="group rounded-lg border border-border open:pb-2" open>
         <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 md:px-4">
           <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -537,15 +543,15 @@ function MapHeader({
   }
 
   return (
-    <div className="grid gap-3 rounded-lg border border-border p-3 md:grid-cols-[1fr_auto_auto_auto] md:items-end md:gap-4 md:p-4">
-      <label className="block">
+    <div className="grid w-full min-w-0 max-w-full grid-cols-1 gap-3 rounded-lg border border-border p-3 md:grid-cols-[minmax(0,1fr)_auto_auto_auto] md:items-end md:gap-4 md:p-4">
+      <label className="block min-w-0 max-w-full">
         <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
           Título do mapa
         </span>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="input mt-1"
+          className="input mt-1 w-full min-w-0 max-w-full"
           maxLength={120}
         />
       </label>
@@ -708,16 +714,16 @@ function MapImageEditor({
   }
 
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs text-muted-foreground">
+    <div className="w-full min-w-0 max-w-full space-y-2">
+      <div className="flex w-full min-w-0 max-w-full flex-wrap items-start justify-between gap-2">
+        <p className="min-w-0 max-w-full flex-1 whitespace-normal break-words text-xs leading-relaxed text-muted-foreground">
           {map.image_url
             ? placingType
               ? `Adicionar ${VENUE_UNIT_TYPE_LABEL[placingType]} — toque no ponto correspondente do mapa.`
               : "Arraste os pontos para reposicionar. Toque num ponto para selecionar."
             : "Envie a imagem do mapa (JPG/PNG/WebP, máx. 12 MB). Recomendado 1920×1080 px."}
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           {placingType && (
             <button
               type="button"
@@ -752,70 +758,89 @@ function MapImageEditor({
           </button>
         </div>
       </div>
-      <div className="mx-auto w-full md:max-h-[70vh] md:flex md:justify-center">
+      {!map.image_url ? (
+        <div className="flex w-full min-w-0 max-w-full flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-muted/40 px-4 py-8 text-center min-h-[220px]">
+          <Upload className="h-8 w-8 text-muted-foreground/60" />
+          <div className="min-w-0 max-w-full">
+            <p className="text-sm font-semibold text-foreground">Enviar mapa do evento</p>
+            <p className="mt-1 whitespace-normal break-words text-xs text-muted-foreground">
+              Formatos aceitos: JPG, PNG ou WebP · máx. 12 MB
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border-strong bg-background px-3 py-1.5 text-xs font-semibold hover:bg-accent disabled:opacity-60"
+          >
+            {uploading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Upload className="h-3.5 w-3.5" />
+            )}
+            Selecionar imagem
+          </button>
+        </div>
+      ) : (
+      <div className="mx-auto w-full min-w-0 max-w-full md:max-h-[70vh] md:flex md:justify-center">
         <div
           ref={containerRef}
           onClick={handleContainerClick}
-          className={`relative w-full max-w-full overflow-hidden rounded-lg border border-border bg-muted md:max-h-[70vh] ${
+          className={`relative w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-border bg-muted md:max-h-[70vh] ${
             placingType ? "cursor-crosshair" : ""
           }`}
           style={{ aspectRatio: naturalRatio ?? 16 / 9 }}
         >
-          {map.image_url ? (
-            <img
-              src={map.image_url}
-              alt=""
-              className="pointer-events-none absolute inset-0 h-full w-full object-contain"
-              draggable={false}
-              onLoad={(e) => {
-                const img = e.currentTarget;
-                if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-                  setNaturalRatio(img.naturalWidth / img.naturalHeight);
-                }
-              }}
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/40">
-              <ImageIcon className="h-8 w-8" />
-            </div>
-          )}
-        {units
-          .filter((u) => u.x_percent != null && u.y_percent != null)
-          .map((u) => (
-            <Hotspot
-              isMobile={isMobile}
-              key={u.id}
-              unit={u}
-              selected={selectedIds.has(u.id)}
-              onPointerDown={() => setDragId(u.id)}
-              onPointerMove={(e) => {
-                if (dragId !== u.id) return;
-                const p = pctFromEvent(e as unknown as React.MouseEvent);
-                if (p) {
-                  // preview only — commit on release
-                  const el = document.getElementById(`hotspot-${u.id}`);
-                  if (el) {
-                    el.style.left = `${p.x}%`;
-                    el.style.top = `${p.y}%`;
+          <img
+            src={map.image_url}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+            draggable={false}
+            onLoad={(e) => {
+              const img = e.currentTarget;
+              if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                setNaturalRatio(img.naturalWidth / img.naturalHeight);
+              }
+            }}
+          />
+          {units
+            .filter((u) => u.x_percent != null && u.y_percent != null)
+            .map((u) => (
+              <Hotspot
+                isMobile={isMobile}
+                key={u.id}
+                unit={u}
+                selected={selectedIds.has(u.id)}
+                onPointerDown={() => setDragId(u.id)}
+                onPointerMove={(e) => {
+                  if (dragId !== u.id) return;
+                  const p = pctFromEvent(e as unknown as React.MouseEvent);
+                  if (p) {
+                    // preview only — commit on release
+                    const el = document.getElementById(`hotspot-${u.id}`);
+                    if (el) {
+                      el.style.left = `${p.x}%`;
+                      el.style.top = `${p.y}%`;
+                    }
                   }
-                }
-              }}
-              onPointerUp={(e) => {
-                if (dragId !== u.id) return;
-                const p = pctFromEvent(e as unknown as React.MouseEvent);
-                setDragId(null);
-                if (p) {
-                  onMove(u.id, Number(p.x.toFixed(2)), Number(p.y.toFixed(2)));
-                }
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (!dragId) onToggleSelect(u.id);
-              }}
-            />
-          ))}
+                }}
+                onPointerUp={(e) => {
+                  if (dragId !== u.id) return;
+                  const p = pctFromEvent(e as unknown as React.MouseEvent);
+                  setDragId(null);
+                  if (p) {
+                    onMove(u.id, Number(p.x.toFixed(2)), Number(p.y.toFixed(2)));
+                  }
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!dragId) onToggleSelect(u.id);
+                }}
+              />
+            ))}
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -911,26 +936,28 @@ function PlacingBar({
   const [bulkPixInstructions, setBulkPixInstructions] = useState("");
 
   return (
-    <div className="sticky top-0 z-20 -mx-5 rounded-none border-y border-border bg-background/95 p-3 backdrop-blur md:static md:mx-0 md:rounded-lg md:border md:p-4">
-      <div className="flex items-center gap-2">
+    <div className="sticky top-0 z-20 w-full min-w-0 max-w-full rounded-lg border border-border bg-background/95 p-3 backdrop-blur md:static md:p-4">
+      <div className="flex min-w-0 max-w-full items-center gap-2">
         <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground md:inline">
           Colocar no mapa:
         </span>
-        <div className="-mx-1 flex flex-1 items-center gap-2 overflow-x-auto px-1 py-0.5 whitespace-nowrap md:flex-wrap md:overflow-visible md:whitespace-normal">
-          {VENUE_UNIT_TYPES.map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setPlacingType(placingType === t ? null : t)}
-              className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium transition min-w-[64px] ${
-                placingType === t
-                  ? "border-primary bg-primary/10 text-foreground"
-                  : "border-border text-muted-foreground hover:bg-accent"
-              }`}
-            >
-              {VENUE_UNIT_TYPE_LABEL[t]}
-            </button>
-          ))}
+        <div className="w-full min-w-0 max-w-full overflow-hidden">
+          <div className="-mx-1 flex items-center gap-2 overflow-x-auto overscroll-x-contain px-1 py-0.5 whitespace-nowrap md:flex-wrap md:overflow-visible md:whitespace-normal">
+            {VENUE_UNIT_TYPES.map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setPlacingType(placingType === t ? null : t)}
+                className={`shrink-0 rounded-md border px-3 py-1.5 text-xs font-medium transition ${
+                  placingType === t
+                    ? "border-primary bg-primary/10 text-foreground"
+                    : "border-border text-muted-foreground hover:bg-accent"
+                }`}
+              >
+                {VENUE_UNIT_TYPE_LABEL[t]}
+              </button>
+            ))}
+          </div>
         </div>
         {placingType && (
           <button
@@ -942,6 +969,7 @@ function PlacingBar({
           </button>
         )}
       </div>
+
 
 
       {selectedCount > 0 && (
@@ -1191,7 +1219,7 @@ function UnitsList({
   }
   if (units.length === 0) {
     return (
-      <div className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+      <div className="w-full min-w-0 max-w-full whitespace-normal break-words rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
         Nenhuma unidade cadastrada. Selecione um tipo acima e clique no mapa para
         criar.
       </div>

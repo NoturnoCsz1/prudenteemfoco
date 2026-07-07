@@ -71,21 +71,24 @@ export function OperationsNav({
     { key: "edit", label: "Editar", to: `/admin/eventos/${eventId}/editar`, icon: <PencilLine className="h-3.5 w-3.5" /> },
   ];
   return (
-    <div className="border-b border-border pb-1">
-      <div className="flex items-center justify-between gap-3">
+    <div className="w-full min-w-0 max-w-full border-b border-border pb-1">
+      <div className="flex w-full min-w-0 max-w-full items-center justify-between gap-3">
         <Link
           to="/admin/eventos"
-          className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex min-w-0 items-center gap-2 truncate text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Todos os eventos
+          <ArrowLeft className="h-3.5 w-3.5 shrink-0" /> <span className="truncate">Todos os eventos</span>
         </Link>
-        <LogoPF size={26} showWordmark />
+        <div className="shrink-0">
+          <LogoPF size={26} showWordmark />
+        </div>
       </div>
       <h1 className="mt-3 break-words font-display text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-3xl md:text-4xl">
         {eventTitle ?? "Operação do evento"}
       </h1>
       <p className="eyebrow mt-1.5 text-primary">Centro de Controle</p>
-      <nav className="mt-5 -mb-px flex gap-1 overflow-x-auto [-webkit-overflow-scrolling:touch]">
+      <div className="mt-5 w-full min-w-0 max-w-full overflow-hidden">
+        <nav className="-mb-px flex gap-1 overflow-x-auto overscroll-x-contain [-webkit-overflow-scrolling:touch]">
         {items.map((it) => (
           <Link
             key={it.key}
@@ -100,7 +103,8 @@ export function OperationsNav({
             {it.label}
           </Link>
         ))}
-      </nav>
+        </nav>
+      </div>
     </div>
   );
 }
