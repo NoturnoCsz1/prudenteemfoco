@@ -353,7 +353,7 @@ function MapEditor({
   const unitsList = unitsQ.data ?? [];
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="w-full min-w-0 max-w-full space-y-4 md:space-y-6">
       <details className="group rounded-lg border border-border open:pb-2" open>
         <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 md:px-4">
           <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
