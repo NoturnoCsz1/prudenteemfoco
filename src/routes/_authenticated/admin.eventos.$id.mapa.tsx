@@ -1619,3 +1619,271 @@ function UnitRow({
     </>
   );
 }
+
+// ---------- Mobile unit editor ----------
+function MobileUnitEditor({
+  unit,
+  onSave,
+  onCancel,
+  onDelete,
+}: {
+  unit: VenueUnitRow;
+  onSave: (
+    patch: Partial<
+      Pick<
+        VenueUnitRow,
+        | "label"
+        | "number"
+        | "type"
+        | "sector"
+        | "capacity"
+        | "price_cents"
+        | "status"
+        | "sale_mode"
+        | "sale_url"
+        | "pix_key"
+        | "pix_instructions"
+      >
+    >,
+  ) => Promise<void>;
+  onCancel: () => void;
+  onDelete: () => void;
+}) {
+  const [label, setLabel] = useState(unit.label);
+  const [type, setType] = useState<VenueUnitType>(unit.type as VenueUnitType);
+  const [sector, setSector] = useState(unit.sector ?? "");
+  const [capacity, setCapacity] = useState(
+    unit.capacity != null ? String(unit.capacity) : "",
+  );
+  const [price, setPrice] = useState(
+    unit.price_cents != null ? (unit.price_cents / 100).toString() : "",
+  );
+  const [status, setStatus] = useState<VenueUnitStatus>(
+    unit.status as VenueUnitStatus,
+  );
+  const [saleMode, setSaleMode] = useState<VenueUnitSaleMode>(
+    (unit.sale_mode as VenueUnitSaleMode) ?? "disabled",
+  );
+  const [saleUrl, setSaleUrl] = useState(unit.sale_url ?? "");
+  const [pixKey, setPixKey] = useState(unit.pix_key ?? "");
+  const [pixInstructions, setPixInstructions] = useState(
+    unit.pix_instructions ?? "",
+  );
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+          Editando {VENUE_UNIT_TYPE_LABEL[unit.type as VenueUnitType]}{" "}
+          {unit.label}
+        </p>
+        <button
+          type="button"
+          onClick={onCancel}
+          aria-label="Fechar"
+          className="rounded-md p-1 text-muted-foreground hover:bg-accent"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Rótulo
+          </span>
+          <input
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            className="input mt-1"
+            maxLength={40}
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Tipo
+          </span>
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value as VenueUnitType)}
+            className="input mt-1"
+          >
+            {VENUE_UNIT_TYPES.map((t) => (
+              <option key={t} value={t}>
+                {VENUE_UNIT_TYPE_LABEL[t]}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="block col-span-2">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Setor
+          </span>
+          <input
+            value={sector}
+            onChange={(e) => setSector(e.target.value)}
+            className="input mt-1"
+            maxLength={40}
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Capacidade
+          </span>
+          <input
+            value={capacity}
+            onChange={(e) => setCapacity(e.target.value)}
+            type="number"
+            min={1}
+            className="input mt-1"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Preço (R$)
+          </span>
+          <input
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            type="number"
+            min={0}
+            step="0.01"
+            className="input mt-1"
+          />
+        </label>
+        <label className="block col-span-2">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Status
+          </span>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as VenueUnitStatus)}
+            className="input mt-1"
+          >
+            {(Object.keys(VENUE_UNIT_STATUS_LABEL) as VenueUnitStatus[]).map(
+              (s) => (
+                <option key={s} value={s}>
+                  {VENUE_UNIT_STATUS_LABEL[s]}
+                </option>
+              ),
+            )}
+          </select>
+        </label>
+        <label className="block col-span-2">
+          <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            Canal de venda
+          </span>
+          <select
+            value={saleMode}
+            onChange={(e) => setSaleMode(e.target.value as VenueUnitSaleMode)}
+            className="input mt-1"
+          >
+            {VENUE_UNIT_SALE_MODES.map((m) => (
+              <option key={m} value={m}>
+                {VENUE_UNIT_SALE_MODE_LABEL[m]}
+              </option>
+            ))}
+          </select>
+        </label>
+        {saleMode === "external_link" && (
+          <label className="block col-span-2">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+              Link (http/https)
+            </span>
+            <input
+              value={saleUrl}
+              onChange={(e) => setSaleUrl(e.target.value)}
+              className="input mt-1"
+              placeholder="https://eventou.com.br/..."
+              inputMode="url"
+            />
+          </label>
+        )}
+        {saleMode === "pix_manual" && (
+          <>
+            <label className="block col-span-2">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Chave PIX
+              </span>
+              <input
+                value={pixKey}
+                onChange={(e) => setPixKey(e.target.value)}
+                className="input mt-1"
+              />
+            </label>
+            <label className="block col-span-2">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                Instruções
+              </span>
+              <input
+                value={pixInstructions}
+                onChange={(e) => setPixInstructions(e.target.value)}
+                className="input mt-1"
+              />
+            </label>
+          </>
+        )}
+      </div>
+      <div className="flex items-center justify-between gap-2 pt-1">
+        <button
+          type="button"
+          onClick={onDelete}
+          className="inline-flex items-center gap-1 rounded-md border border-destructive/40 px-2.5 py-2 text-xs text-destructive hover:bg-destructive/10"
+        >
+          <Trash2 className="h-3.5 w-3.5" /> Excluir
+        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-md border border-border-strong px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              const parsedNumber = parseInt(label, 10);
+              const parsedCap = capacity ? parseInt(capacity, 10) : null;
+              const parsedPrice = price
+                ? Math.round(parseFloat(price.replace(",", ".")) * 100)
+                : null;
+              const trimmedUrl = saleUrl.trim();
+              if (saleMode === "external_link" && !isSafeSaleUrl(trimmedUrl)) {
+                toast.error(
+                  "Link de venda inválido. Use uma URL http:// ou https://.",
+                );
+                return;
+              }
+              await onSave({
+                label: label.trim(),
+                number: Number.isFinite(parsedNumber) ? parsedNumber : null,
+                type,
+                sector: sector.trim() || null,
+                capacity:
+                  parsedCap && Number.isFinite(parsedCap) && parsedCap > 0
+                    ? parsedCap
+                    : null,
+                price_cents:
+                  parsedPrice != null && Number.isFinite(parsedPrice)
+                    ? parsedPrice
+                    : null,
+                status,
+                sale_mode: saleMode,
+                sale_url: saleMode === "external_link" ? trimmedUrl : null,
+                pix_key:
+                  saleMode === "pix_manual" ? pixKey.trim() || null : null,
+                pix_instructions:
+                  saleMode === "pix_manual"
+                    ? pixInstructions.trim() || null
+                    : null,
+              });
+            }}
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground"
+          >
+            <Save className="h-3.5 w-3.5" /> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
