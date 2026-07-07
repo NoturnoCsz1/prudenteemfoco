@@ -791,61 +791,56 @@ function MapImageEditor({
           }`}
           style={{ aspectRatio: naturalRatio ?? 16 / 9 }}
         >
-          {map.image_url ? (
-            <img
-              src={map.image_url}
-              alt=""
-              className="pointer-events-none absolute inset-0 h-full w-full object-contain"
-              draggable={false}
-              onLoad={(e) => {
-                const img = e.currentTarget;
-                if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-                  setNaturalRatio(img.naturalWidth / img.naturalHeight);
-                }
-              }}
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/40">
-              <ImageIcon className="h-8 w-8" />
-            </div>
-          )}
-        {units
-          .filter((u) => u.x_percent != null && u.y_percent != null)
-          .map((u) => (
-            <Hotspot
-              isMobile={isMobile}
-              key={u.id}
-              unit={u}
-              selected={selectedIds.has(u.id)}
-              onPointerDown={() => setDragId(u.id)}
-              onPointerMove={(e) => {
-                if (dragId !== u.id) return;
-                const p = pctFromEvent(e as unknown as React.MouseEvent);
-                if (p) {
-                  // preview only — commit on release
-                  const el = document.getElementById(`hotspot-${u.id}`);
-                  if (el) {
-                    el.style.left = `${p.x}%`;
-                    el.style.top = `${p.y}%`;
+          <img
+            src={map.image_url}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+            draggable={false}
+            onLoad={(e) => {
+              const img = e.currentTarget;
+              if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                setNaturalRatio(img.naturalWidth / img.naturalHeight);
+              }
+            }}
+          />
+          {units
+            .filter((u) => u.x_percent != null && u.y_percent != null)
+            .map((u) => (
+              <Hotspot
+                isMobile={isMobile}
+                key={u.id}
+                unit={u}
+                selected={selectedIds.has(u.id)}
+                onPointerDown={() => setDragId(u.id)}
+                onPointerMove={(e) => {
+                  if (dragId !== u.id) return;
+                  const p = pctFromEvent(e as unknown as React.MouseEvent);
+                  if (p) {
+                    // preview only — commit on release
+                    const el = document.getElementById(`hotspot-${u.id}`);
+                    if (el) {
+                      el.style.left = `${p.x}%`;
+                      el.style.top = `${p.y}%`;
+                    }
                   }
-                }
-              }}
-              onPointerUp={(e) => {
-                if (dragId !== u.id) return;
-                const p = pctFromEvent(e as unknown as React.MouseEvent);
-                setDragId(null);
-                if (p) {
-                  onMove(u.id, Number(p.x.toFixed(2)), Number(p.y.toFixed(2)));
-                }
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (!dragId) onToggleSelect(u.id);
-              }}
-            />
-          ))}
+                }}
+                onPointerUp={(e) => {
+                  if (dragId !== u.id) return;
+                  const p = pctFromEvent(e as unknown as React.MouseEvent);
+                  setDragId(null);
+                  if (p) {
+                    onMove(u.id, Number(p.x.toFixed(2)), Number(p.y.toFixed(2)));
+                  }
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!dragId) onToggleSelect(u.id);
+                }}
+              />
+            ))}
         </div>
       </div>
+      )}
     </div>
   );
 }
