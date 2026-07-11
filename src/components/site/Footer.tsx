@@ -54,9 +54,18 @@ export function SiteFooter() {
             Presidente Prudente · SP <span className="mx-2 opacity-40">·</span>
             Eventos · Cultura · Experiências
           </div>
-          <p className="text-[0.75rem] tracking-wide">
-            © {new Date().getFullYear()} Prudente em Foco. Todos os direitos reservados.
-          </p>
+          <div className="flex flex-col gap-2 text-[0.75rem] tracking-wide md:flex-row md:items-center md:gap-4">
+            <Link
+              to="/politica-de-privacidade"
+              className="text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+            >
+              Política de Privacidade
+            </Link>
+            <span className="hidden opacity-40 md:inline">·</span>
+            <p>
+              © {new Date().getFullYear()} Prudente em Foco. Todos os direitos reservados.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
