@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as SiteIndexRouteImport } from './routes/_site.index'
 import { Route as GoSlugRouteImport } from './routes/go.$slug'
 import { Route as SiteSobreRouteImport } from './routes/_site.sobre'
+import { Route as SitePoliticaDePrivacidadeRouteImport } from './routes/_site.politica-de-privacidade'
 import { Route as SiteExperienciasRouteImport } from './routes/_site.experiencias'
 import { Route as SiteEventosRouteImport } from './routes/_site.eventos'
 import { Route as SiteContatoRouteImport } from './routes/_site.contato'
@@ -77,6 +78,12 @@ const SiteSobreRoute = SiteSobreRouteImport.update({
   path: '/sobre',
   getParentRoute: () => SiteRoute,
 } as any)
+const SitePoliticaDePrivacidadeRoute =
+  SitePoliticaDePrivacidadeRouteImport.update({
+    id: '/politica-de-privacidade',
+    path: '/politica-de-privacidade',
+    getParentRoute: () => SiteRoute,
+  } as any)
 const SiteExperienciasRoute = SiteExperienciasRouteImport.update({
   id: '/experiencias',
   path: '/experiencias',
@@ -275,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/contato': typeof SiteContatoRoute
   '/eventos': typeof SiteEventosRouteWithChildren
   '/experiencias': typeof SiteExperienciasRoute
+  '/politica-de-privacidade': typeof SitePoliticaDePrivacidadeRoute
   '/sobre': typeof SiteSobreRoute
   '/go/$slug': typeof GoSlugRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
@@ -312,6 +320,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/contato': typeof SiteContatoRoute
   '/experiencias': typeof SiteExperienciasRoute
+  '/politica-de-privacidade': typeof SitePoliticaDePrivacidadeRoute
   '/sobre': typeof SiteSobreRoute
   '/go/$slug': typeof GoSlugRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
@@ -353,6 +362,7 @@ export interface FileRoutesById {
   '/_site/contato': typeof SiteContatoRoute
   '/_site/eventos': typeof SiteEventosRouteWithChildren
   '/_site/experiencias': typeof SiteExperienciasRoute
+  '/_site/politica-de-privacidade': typeof SitePoliticaDePrivacidadeRoute
   '/_site/sobre': typeof SiteSobreRoute
   '/go/$slug': typeof GoSlugRoute
   '/_site/': typeof SiteIndexRoute
@@ -395,6 +405,7 @@ export interface FileRouteTypes {
     | '/contato'
     | '/eventos'
     | '/experiencias'
+    | '/politica-de-privacidade'
     | '/sobre'
     | '/go/$slug'
     | '/admin/analytics'
@@ -432,6 +443,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contato'
     | '/experiencias'
+    | '/politica-de-privacidade'
     | '/sobre'
     | '/go/$slug'
     | '/admin/analytics'
@@ -472,6 +484,7 @@ export interface FileRouteTypes {
     | '/_site/contato'
     | '/_site/eventos'
     | '/_site/experiencias'
+    | '/_site/politica-de-privacidade'
     | '/_site/sobre'
     | '/go/$slug'
     | '/_site/'
@@ -555,6 +568,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre'
       fullPath: '/sobre'
       preLoaderRoute: typeof SiteSobreRouteImport
+      parentRoute: typeof SiteRoute
+    }
+    '/_site/politica-de-privacidade': {
+      id: '/_site/politica-de-privacidade'
+      path: '/politica-de-privacidade'
+      fullPath: '/politica-de-privacidade'
+      preLoaderRoute: typeof SitePoliticaDePrivacidadeRouteImport
       parentRoute: typeof SiteRoute
     }
     '/_site/experiencias': {
@@ -907,6 +927,7 @@ interface SiteRouteChildren {
   SiteContatoRoute: typeof SiteContatoRoute
   SiteEventosRoute: typeof SiteEventosRouteWithChildren
   SiteExperienciasRoute: typeof SiteExperienciasRoute
+  SitePoliticaDePrivacidadeRoute: typeof SitePoliticaDePrivacidadeRoute
   SiteSobreRoute: typeof SiteSobreRoute
   SiteIndexRoute: typeof SiteIndexRoute
 }
@@ -915,6 +936,7 @@ const SiteRouteChildren: SiteRouteChildren = {
   SiteContatoRoute: SiteContatoRoute,
   SiteEventosRoute: SiteEventosRouteWithChildren,
   SiteExperienciasRoute: SiteExperienciasRoute,
+  SitePoliticaDePrivacidadeRoute: SitePoliticaDePrivacidadeRoute,
   SiteSobreRoute: SiteSobreRoute,
   SiteIndexRoute: SiteIndexRoute,
 }
@@ -930,13 +952,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
